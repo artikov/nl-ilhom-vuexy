@@ -1,17 +1,17 @@
 // ** MUI Imports
-import Card from '@mui/material/Card'
-import Grid from '@mui/material/Grid'
-import Typography from '@mui/material/Typography'
-import CardHeader from '@mui/material/CardHeader'
-import CardContent from '@mui/material/CardContent'
+import { Card, Grid, Typography, CardHeader, CardContent, Button } from '@mui/material'
 
 // ** Custom Components
-import FormLayoutsBasic from 'src/components/ProductAddView/FormLayoutsBasic'
-import FileUploaderSingle from 'src/components/ProductAddView/FileUploaderSingle'
+import FormLayoutsBasic from 'src/components/ProductAddView/ProductAddForm'
+import FileUploaderSingle from 'src/components/ProductAddView/ProductFileUploadForm'
+import ProductTypeForm from 'src/components/ProductAddView/ProductTypeForm'
 
 const ProductAdd = () => {
   return (
     <Grid container spacing={6}>
+      <Grid item xs={12}>
+        <Typography variant='h4'>Tovar qo'shish</Typography>
+      </Grid>
       <Grid item xs={12} md={8}>
         <Grid container spacing={6}>
           <Grid item xs={12}>
@@ -20,7 +20,7 @@ const ProductAdd = () => {
           <Grid item xs={12}>
             <Card>
               <CardHeader title='Rasm'></CardHeader>
-              <CardContent sx={{ border: '1px dashed #EFEEF0', borderRadius: '10px', margin: '0 2rem' }}>
+              <CardContent sx={{ border: '1px dashed #EFEEF0', borderRadius: '10px', margin: '0 2rem 2rem 2rem' }}>
                 <FileUploaderSingle />
               </CardContent>
             </Card>
@@ -29,15 +29,25 @@ const ProductAdd = () => {
       </Grid>
       <Grid item xs={12} md={4}>
         <Card>
-          <CardHeader title='ACL and JWT 🔒'></CardHeader>
+          <CardHeader title='Tovar Turi'></CardHeader>
           <CardContent>
-            <Typography sx={{ mb: 2 }}>
-              Access Control (ACL) and Authentication (JWT) are the two main security features of our template and are
-              implemented in the starter-kit as well.
-            </Typography>
-            <Typography>Please read our Authentication and ACL Documentations to get more out of them.</Typography>
+            <ProductTypeForm />
           </CardContent>
         </Card>
+      </Grid>
+      <Grid item xs={12}>
+        <Grid container spacing={4}>
+          <Grid item>
+            <Button variant='contained' color='primary'>
+              Saqlash
+            </Button>
+          </Grid>
+          <Grid item>
+            <Button variant='tonal' color='error'>
+              Bekor qilish
+            </Button>
+          </Grid>
+        </Grid>
       </Grid>
     </Grid>
   )

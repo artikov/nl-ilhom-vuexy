@@ -32,7 +32,7 @@ const FileUploaderSingle = () => {
   ))
 
   return (
-    <Box {...getRootProps({ className: 'dropzone' })} sx={files.length ? { height: 450 } : {}}>
+    <Box {...getRootProps({ className: 'dropzone' })} sx={files.length ? { height: 400 } : {}}>
       <input {...getInputProps()} />
       {files.length ? (
         img
@@ -43,13 +43,13 @@ const FileUploaderSingle = () => {
             textAlign: 'center',
             alignItems: 'center',
             flexDirection: 'column',
-            padding: '2rem',
+            padding: '1rem',
             gap: '1rem'
           }}
         >
           <Box
             sx={{
-              mb: 8.75,
+              mb: 1.75,
               width: 48,
               height: 48,
               display: 'flex',
@@ -61,11 +61,11 @@ const FileUploaderSingle = () => {
           >
             <Icon icon='tabler:upload' fontSize='1.75rem' />
           </Box>
-          <Typography variant='h4' sx={{ mb: 2.5 }}>
+          <Typography variant='h4' sx={{ mb: 0.5 }}>
             Drop files here or click to upload.
           </Typography>
           <Typography sx={{ color: 'text.secondary' }}>or</Typography>
-          <Button variant='tonal' component='label' sx={{ mt: 2.5 }}>
+          <Button variant='tonal' component='label' sx={{ mt: 0.5 }}>
             Upload File
           </Button>
         </Box>
