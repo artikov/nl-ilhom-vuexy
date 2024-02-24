@@ -1,15 +1,41 @@
 const navigation = () => [
   {
-    title: 'Dashboards',
-    icon: 'tabler:smart-home',
+    title: 'Mahsulot',
+    icon: 'tabler:apps',
     children: [
       {
-        title: "Tovar Qo'shish",
-        path: '/dashboards/add-product'
+        title: 'Guruhlar',
+        path: '/products/groups'
       },
       {
-        title: 'Tovar Qabul Qilish',
-        path: '/dashboards/accept-product'
+        title: 'Brendlar',
+        path: '/products/brands'
+      },
+      {
+        title: "O'lchovlar",
+        path: '/products/measurements'
+      },
+      {
+        title: 'Mahsulotlar',
+        path: '/products/products'
+      }
+    ]
+  },
+  {
+    title: 'Omborxona',
+    icon: 'tabler:apps',
+    children: [
+      {
+        title: 'Omborlar',
+        path: '/inventory/warehouses'
+      },
+      {
+        title: 'Yetkazib beruvchi',
+        path: '/inventory/distributors'
+      },
+      {
+        title: 'Mahsulot kirimlari',
+        path: '/inventory/entries'
       }
     ]
   }
