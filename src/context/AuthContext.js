@@ -36,14 +36,21 @@ const AuthProvider = ({ children }) => {
         await axios
           .get(authConfig.meEndpoint, {
             headers: {
-              Authorization: storedToken
+              Authorization: `Bearer ${storedToken}`
             }
           })
           .then(async response => {
             setLoading(false)
-            setUser({ ...response.data.userData })
+            setUser({
+              id: 1,
+              role: 'admin',
+              fullName: 'John Doe',
+              username: 'johndoe',
+              ...response.data
+            })
           })
-          .catch(() => {
+          .catch(error => {
+            console.log(error)
             localStorage.removeItem('userData')
             localStorage.removeItem('refreshToken')
             localStorage.removeItem('accessToken')
@@ -65,12 +72,23 @@ const AuthProvider = ({ children }) => {
     axios
       .post(authConfig.loginEndpoint, params)
       .then(async response => {
-        params.rememberMe
-          ? window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.accessToken)
-          : null
+        params.rememberMe ? window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.access) : null
         const returnUrl = router.query.returnUrl
-        setUser({ ...response.data.userData })
-        params.rememberMe ? window.localStorage.setItem('userData', JSON.stringify(response.data.userData)) : null
+        setUser({
+          id: 1,
+          role: 'admin',
+          fullName: 'John Doe',
+          username: 'johndoe',
+          ...response.data
+        })
+        params.rememberMe
+          ? window.localStorage.setItem(
+              'userData',
+              JSON.stringify({
+                ...response.data
+              })
+            )
+          : null
         const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
         router.replace(redirectURL)
       })
