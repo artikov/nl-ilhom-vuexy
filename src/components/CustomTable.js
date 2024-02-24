@@ -1,21 +1,11 @@
 import React, { useState } from 'react'
 
-import {
-  Card,
-  CardHeader,
-  Box,
-  Typography,
-  Grid,
-  MenuItem,
-  Divider,
-  CardContent,
-  Button,
-  Pagination
-} from '@mui/material'
+import { Card, Drawer, Box, Typography, Grid, MenuItem, Divider, CardContent, Button, Pagination } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 import Icon from 'src/@core/components/icon'
 
 import CustomTextField from 'src/@core/components/mui/text-field'
+import DrawerItems from './DrawerItems'
 
 import { rows } from 'src/@fake-db/table/static-data'
 
@@ -65,14 +55,16 @@ const columns = [
 ]
 
 const CustomTable = () => {
+  const [drawerOpen, setDrawerOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
+
   const rowsPerPage = 10 // Adjust as needed
 
   const handlePageChange = (event, newPage) => {
     setCurrentPage(newPage)
   }
 
-  const CustomPagination = ({ name, setName }) => (
+  const CustomPagination = () => (
     <Pagination
       count={Math.ceil(rows.length / rowsPerPage)}
       page={currentPage}
@@ -82,6 +74,12 @@ const CustomTable = () => {
       color='primary'
     />
   )
+
+  const toggleDrawer = open => () => {
+    setDrawerOpen(open)
+  }
+
+  const DrawerList = <DrawerItems toggleDrawer={toggleDrawer} />
 
   return (
     <Card>
@@ -131,9 +129,12 @@ const CustomTable = () => {
                     </CustomTextField>
                   </Grid>
                   <Grid item>
-                    <Button variant='contained' color='primary'>
+                    <Button variant='contained' color='primary' onClick={toggleDrawer(true)}>
                       + Guruh Qo'shish
                     </Button>
+                    <Drawer anchor='right' open={drawerOpen} onClose={toggleDrawer(false)}>
+                      {DrawerList}
+                    </Drawer>
                   </Grid>
                 </Grid>
               </Grid>
