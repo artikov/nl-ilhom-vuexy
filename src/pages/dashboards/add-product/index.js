@@ -2,8 +2,8 @@
 import { Card, Grid, Typography, CardHeader, CardContent, Button } from '@mui/material'
 
 // ** Custom Components
-import FormLayoutsBasic from 'src/components/ProductAddView/ProductAddForm'
-import FileUploaderSingle from 'src/components/ProductAddView/ProductFileUploadForm'
+import ProductAddForm from 'src/components/ProductAddView/ProductAddForm'
+import ProductFileUploadForm from 'src/components/ProductAddView/ProductFileUploadForm'
 import ProductTypeForm from 'src/components/ProductAddView/ProductTypeForm'
 
 const ProductAdd = () => {
@@ -15,13 +15,13 @@ const ProductAdd = () => {
       <Grid item xs={12} md={8}>
         <Grid container spacing={6}>
           <Grid item xs={12}>
-            <FormLayoutsBasic />
+            <ProductAddForm />
           </Grid>
           <Grid item xs={12}>
             <Card>
               <CardHeader title='Rasm'></CardHeader>
               <CardContent sx={{ border: '1px dashed #EFEEF0', borderRadius: '10px', margin: '0 2rem 2rem 2rem' }}>
-                <FileUploaderSingle />
+                <ProductFileUploadForm />
               </CardContent>
             </Card>
           </Grid>

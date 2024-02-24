@@ -20,7 +20,7 @@ import {
 // ** Custom Component Import
 import CustomTextField from 'src/@core/components/mui/text-field'
 
-const FormLayoutsBasic = () => {
+const ProductAddForm = () => {
   const [value, setValue] = useState('controlled-checked')
 
   const handleChange = event => {
@@ -103,4 +103,4 @@ const FormLayoutsBasic = () => {
   )
 }
 
-export default FormLayoutsBasic
+export default ProductAddForm
