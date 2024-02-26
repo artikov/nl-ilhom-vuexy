@@ -3,7 +3,7 @@ import CustomTextField from 'src/@core/components/mui/text-field'
 
 const DrawerItems = ({ toggleDrawer }) => {
   return (
-    <Box sx={{ width: 350, margin: 6 }} role='presentation'>
+    <Box sx={{ width: 'auto', margin: 6 }} role='presentation'>
       <Grid container justifyContent={'space-between'} marginY={4}>
         <Typography variant='h3'>Guruh Qo'shish</Typography>
         <Button variant='tonal' color='secondary' onClick={toggleDrawer(false)}>
