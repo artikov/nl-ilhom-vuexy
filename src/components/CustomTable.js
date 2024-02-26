@@ -9,64 +9,67 @@ import DrawerItems from './DrawerItems'
 
 import { rows } from 'src/@fake-db/table/static-data'
 
-const columns = [
-  {
-    flex: 0.1,
-    field: 'id',
-    maxWidth: 80,
-    headerName: 'ID'
-  },
-  {
-    flex: 0.35,
-    minWidth: 200,
-    field: 'name',
-    headerName: 'Name'
-  },
-  {
-    flex: 0.35,
-    minWidth: 230,
-    field: 'parent',
-    headerName: 'Parent Group'
-  },
-
-  // Edit button column
-  {
-    flex: 0.1,
-    field: 'edit',
-    maxWidth: 100,
-    renderCell: params => (
-      <Button onClick={() => handleEdit(params.row.id)}>
-        <Icon icon='tabler:edit' />
-      </Button>
-    )
-  },
-
-  // Delete button column
-  {
-    flex: 0.1,
-    field: 'delete',
-    maxWidth: 100,
-    renderCell: params => (
-      <Button color='error' onClick={() => handleDelete(params.row.id)}>
-        <Icon icon='tabler:trash' />
-      </Button>
-    )
-  }
-]
-
-const CustomTable = () => {
+const CustomTable = ({ data, page, handleAdd }) => {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
 
+  const columns = [
+    {
+      flex: 0.1,
+      field: 'id',
+      maxWidth: 80,
+      headerName: 'ID'
+    },
+    {
+      flex: 0.35,
+      minWidth: 200,
+      field: 'name',
+      headerName: 'Name'
+    },
+    {
+      flex: 0.35,
+      minWidth: 230,
+      field: 'parent',
+      headerName: `Parent ${page}`,
+      valueGetter: params => params?.row?.parent?.name || 'N/A'
+    },
+
+    // Edit button column
+    {
+      flex: 0.1,
+      field: 'edit',
+      maxWidth: 100,
+      renderCell: params => (
+        <Button onClick={() => handleEdit(params.row.id)}>
+          <Icon icon='tabler:edit' />
+        </Button>
+      )
+    },
+
+    // Delete button column
+    {
+      flex: 0.1,
+      field: 'delete',
+      maxWidth: 100,
+      renderCell: params => (
+        <Button color='error' onClick={() => handleDelete(params.row.id)}>
+          <Icon icon='tabler:trash' />
+        </Button>
+      )
+    }
+  ]
+
+  const finalData = data ? data : rows
+
   const rowsPerPage = 10 // Adjust as needed
 
-  const handlePageChange = (event, newPage) => {
+  const handlePageChange = newPage => {
     setCurrentPage(newPage)
   }
 
   const CustomPagination = () => (
     <Pagination
-      count={Math.ceil(rows.length / rowsPerPage)}
+      count={Math.ceil(finalData.length / rowsPerPage)}
       page={currentPage}
       onChange={handlePageChange}
       variant='outlined'
@@ -79,7 +82,7 @@ const CustomTable = () => {
     setDrawerOpen(open)
   }
 
-  const DrawerList = <DrawerItems toggleDrawer={toggleDrawer} />
+  const DrawerList = <DrawerItems toggleDrawer={toggleDrawer} page={page} handleAdd={handleAdd} />
 
   return (
     <Card>
@@ -99,7 +102,7 @@ const CustomTable = () => {
                   SelectProps={{ displayEmpty: true }}
                 >
                   <MenuItem disabled value=''>
-                    <em>Ota Guruhni Tanlang</em>
+                    <em>{`Ota ${page} Tanlang`}</em>
                   </MenuItem>
                   <MenuItem value={10}>Ten</MenuItem>
                   <MenuItem value={20}>Twenty</MenuItem>
@@ -130,7 +133,7 @@ const CustomTable = () => {
                   </Grid>
                   <Grid item>
                     <Button variant='contained' color='primary' onClick={toggleDrawer(true)}>
-                      + Guruh Qo'shish
+                      {`+ ${page} Qo'shish`}
                     </Button>
                     <Drawer anchor='right' open={drawerOpen} onClose={toggleDrawer(false)}>
                       {DrawerList}
@@ -145,7 +148,7 @@ const CustomTable = () => {
             <Box sx={{ height: 650 }}>
               <DataGrid
                 columns={columns}
-                rows={rows.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage)}
+                rows={finalData?.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage)}
                 slots={{
                   pagination: CustomPagination
                 }}
