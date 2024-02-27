@@ -3,20 +3,18 @@ import { useState, useEffect } from 'react'
 
 import { Typography, Grid, CircularProgress } from '@mui/material'
 
-import CustomTable from '../../components/CustomTable'
+import CustomTable from '../../components/CustomTable/CustomTable'
 
 import { useGetBrandsQuery, useAddBrandMutation, useDeleteBrandMutation } from 'src/store/slices/brandsApiSlice'
 
 const brands = () => {
   const [parent, setParent] = useState('')
   const [search, setSearch] = useState('')
-  const [pageSize, setPageSize] = useState(10)
   const [noQueryData, setNoQueryData] = useState(null)
 
   const { data: brands, isLoading } = useGetBrandsQuery({
     parent,
-    search,
-    page_size: pageSize
+    search
   })
 
   useEffect(() => {
@@ -38,13 +36,12 @@ const brands = () => {
           <CircularProgress />
         ) : (
           <CustomTable
-            data={brands}
+            data={brands?.results}
             page={'Brend'}
             addBrand={addBrand}
             deleteBrand={deleteBrand}
             onParentChange={setParent}
             onSearchChange={setSearch}
-            onPageSizeChange={setPageSize}
             search={search}
             dataWithoutQuery={noQueryData}
           />

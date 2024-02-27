@@ -6,6 +6,7 @@ import Icon from 'src/@core/components/icon'
 
 import CustomTextField from 'src/@core/components/mui/text-field'
 import DrawerItems from './DrawerItems'
+import DrawerEdit from './DrawerEdit'
 
 import { rows } from 'src/@fake-db/table/static-data'
 
@@ -16,16 +17,23 @@ const CustomTable = ({
   deleteBrand,
   onParentChange,
   onSearchChange,
-  onPageSizeChange,
   search,
   dataWithoutQuery
 }) => {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
   const [selectedParent, setSelectedParent] = useState('')
+  const [rowsPerPage, setRowsPerPage] = useState(10)
+  const [editDrawerOpen, setEditDrawerOpen] = useState(false)
+  const [brandId, setBrandId] = useState(null)
 
   const handleDelete = id => {
     deleteBrand(id)
+  }
+
+  const handleEdit = id => {
+    setEditDrawerOpen(true)
+    setBrandId(id)
   }
 
   const handleParentChange = newParent => {
@@ -36,6 +44,40 @@ const CustomTable = ({
   const handleSearchChange = newSearch => {
     onSearchChange(newSearch)
   }
+
+  const finalData = data ? data : rows
+  const pageCount = Math.ceil(finalData.length / rowsPerPage)
+
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value)
+  }
+
+  const CustomPagination = () => (
+    <Pagination
+      count={pageCount}
+      page={currentPage}
+      onChange={handlePageChange}
+      variant='outlined'
+      shape='rounded'
+      color='primary'
+    />
+  )
+
+  const toggleDrawer = open => () => {
+    setDrawerOpen(open)
+  }
+
+  const toggleEditDrawer = open => () => {
+    setEditDrawerOpen(open)
+  }
+
+  const DrawerList = (
+    <DrawerItems toggleDrawer={toggleDrawer} page={page} handleAdd={addBrand} parents={dataWithoutQuery?.results} />
+  )
+
+  const DrawerEditItem = (
+    <DrawerEdit toggleDrawer={toggleEditDrawer} page={page} brandId={brandId} parents={dataWithoutQuery?.results} />
+  )
 
   const columns = [
     {
@@ -82,33 +124,6 @@ const CustomTable = ({
       )
     }
   ]
-
-  const finalData = data ? data?.results : rows
-
-  const rowsPerPage = 10 // Adjust as needed
-
-  const handlePageChange = newPage => {
-    setCurrentPage(newPage)
-  }
-
-  const CustomPagination = () => (
-    <Pagination
-      count={Math.ceil(data?.count / rowsPerPage)}
-      page={currentPage}
-      onChange={handlePageChange}
-      variant='outlined'
-      shape='rounded'
-      color='primary'
-    />
-  )
-
-  const toggleDrawer = open => () => {
-    setDrawerOpen(open)
-  }
-
-  const DrawerList = (
-    <DrawerItems toggleDrawer={toggleDrawer} page={page} handleAdd={addBrand} parents={dataWithoutQuery?.results} />
-  )
 
   return (
     <Card>
@@ -176,7 +191,7 @@ const CustomTable = ({
                       defaultValue='10'
                       id='custom-select'
                       SelectProps={{ displayEmpty: true }}
-                      onChange={({ target }) => onPageSizeChange(target.value)}
+                      onChange={({ target }) => setRowsPerPage(target.value)}
                     >
                       <MenuItem value={10}>10</MenuItem>
                       <MenuItem value={20}>15</MenuItem>
@@ -189,6 +204,9 @@ const CustomTable = ({
                     </Button>
                     <Drawer anchor='right' open={drawerOpen} onClose={toggleDrawer(false)}>
                       {DrawerList}
+                    </Drawer>
+                    <Drawer anchor='right' open={editDrawerOpen} onClose={toggleEditDrawer(false)}>
+                      {DrawerEditItem}
                     </Drawer>
                   </Grid>
                 </Grid>

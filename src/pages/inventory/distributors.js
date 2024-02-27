@@ -1,6 +1,6 @@
 import { Typography, Grid } from '@mui/material'
 
-import CustomTable from 'src/components/CustomTable'
+import CustomTable from 'src/components/CustomTable/CustomTable'
 
 const distributors = () => {
   return (
