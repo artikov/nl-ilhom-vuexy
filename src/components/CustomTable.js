@@ -9,9 +9,13 @@ import DrawerItems from './DrawerItems'
 
 import { rows } from 'src/@fake-db/table/static-data'
 
-const CustomTable = ({ data, page, handleAdd }) => {
+const CustomTable = ({ data, page, addBrand, deleteBrand }) => {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
+
+  const handleDelete = id => {
+    deleteBrand(id)
+  }
 
   const columns = [
     {
@@ -24,13 +28,13 @@ const CustomTable = ({ data, page, handleAdd }) => {
       flex: 0.35,
       minWidth: 200,
       field: 'name',
-      headerName: 'Name'
+      headerName: 'Nomi'
     },
     {
       flex: 0.35,
       minWidth: 230,
       field: 'parent',
-      headerName: `Parent ${page}`,
+      headerName: `Ota ${page}`,
       valueGetter: params => params?.row?.parent?.name || 'N/A'
     },
 
@@ -82,7 +86,7 @@ const CustomTable = ({ data, page, handleAdd }) => {
     setDrawerOpen(open)
   }
 
-  const DrawerList = <DrawerItems toggleDrawer={toggleDrawer} page={page} handleAdd={handleAdd} />
+  const DrawerList = <DrawerItems toggleDrawer={toggleDrawer} page={page} handleAdd={addBrand} />
 
   return (
     <Card>

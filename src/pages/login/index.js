@@ -103,8 +103,8 @@ const schema = yup.object().shape({
 })
 
 const defaultValues = {
-  password: 'admin',
-  username: 'admin@vuexy.com'
+  password: '2UK4pUAL',
+  username: 'root'
 }
 
 const LoginPage = () => {
@@ -194,11 +194,11 @@ const LoginPage = () => {
                     <CustomTextField
                       fullWidth
                       autoFocus
-                      label='Email'
+                      label='Username'
                       value={value}
                       onBlur={onBlur}
                       onChange={onChange}
-                      placeholder='admin@vuexy.com'
+                      placeholder='root'
                       error={Boolean(errors.username)}
                       {...(errors.username && { helperText: errors.username.message })}
                     />

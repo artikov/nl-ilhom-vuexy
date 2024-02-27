@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { BASE_URL } from '../../cosntants.js'
+import { BASE_URL } from '../../constants.js'
 
 export const apiSlice = createApi({
   baseQuery: fetchBaseQuery({
@@ -14,6 +14,6 @@ export const apiSlice = createApi({
       return headers
     }
   }),
-  tagTypes: ['User, Auth, Stock, Product, Category, Order'],
-  endpoints: () => ({})
+  tagTypes: ['Brand'],
+  endpoints: builder => ({})
 })

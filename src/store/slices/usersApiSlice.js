@@ -1,4 +1,4 @@
-import { AUTH_URL } from '../../cosntants.js'
+import { AUTH_URL } from '../../constants.js'
 import { apiSlice } from './apiSlice.js'
 
 export const usersApiSlice = apiSlice.injectEndpoints({

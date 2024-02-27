@@ -9,7 +9,7 @@ const groups = () => {
         <Typography variant='h1'>Guruhlar</Typography>
       </Grid>
       <Grid item xs={12}>
-        <CustomTable />
+        <CustomTable page={'Guruh'} />
       </Grid>
     </Grid>
   )
