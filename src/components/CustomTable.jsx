@@ -9,12 +9,32 @@ import DrawerItems from './DrawerItems'
 
 import { rows } from 'src/@fake-db/table/static-data'
 
-const CustomTable = ({ data, page, addBrand, deleteBrand }) => {
+const CustomTable = ({
+  data,
+  page,
+  addBrand,
+  deleteBrand,
+  onParentChange,
+  onSearchChange,
+  onPageSizeChange,
+  search,
+  dataWithoutQuery
+}) => {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
+  const [selectedParent, setSelectedParent] = useState('')
 
   const handleDelete = id => {
     deleteBrand(id)
+  }
+
+  const handleParentChange = newParent => {
+    onParentChange(newParent)
+    setSelectedParent(newParent)
+  }
+
+  const handleSearchChange = newSearch => {
+    onSearchChange(newSearch)
   }
 
   const columns = [
@@ -63,7 +83,7 @@ const CustomTable = ({ data, page, addBrand, deleteBrand }) => {
     }
   ]
 
-  const finalData = data ? data : rows
+  const finalData = data ? data?.results : rows
 
   const rowsPerPage = 10 // Adjust as needed
 
@@ -73,7 +93,7 @@ const CustomTable = ({ data, page, addBrand, deleteBrand }) => {
 
   const CustomPagination = () => (
     <Pagination
-      count={Math.ceil(finalData.length / rowsPerPage)}
+      count={Math.ceil(data?.count / rowsPerPage)}
       page={currentPage}
       onChange={handlePageChange}
       variant='outlined'
@@ -86,7 +106,9 @@ const CustomTable = ({ data, page, addBrand, deleteBrand }) => {
     setDrawerOpen(open)
   }
 
-  const DrawerList = <DrawerItems toggleDrawer={toggleDrawer} page={page} handleAdd={addBrand} />
+  const DrawerList = (
+    <DrawerItems toggleDrawer={toggleDrawer} page={page} handleAdd={addBrand} parents={dataWithoutQuery?.results} />
+  )
 
   return (
     <Card>
@@ -98,20 +120,38 @@ const CustomTable = ({ data, page, addBrand, deleteBrand }) => {
                 <Typography variant='h3'>Filter</Typography>
               </Grid>
               <Grid item xs={12}>
-                <CustomTextField
-                  select
-                  defaultValue=''
-                  id='custom-select'
-                  fullWidth
-                  SelectProps={{ displayEmpty: true }}
-                >
-                  <MenuItem disabled value=''>
-                    <em>{`Ota ${page} Tanlang`}</em>
-                  </MenuItem>
-                  <MenuItem value={10}>Ten</MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
-                </CustomTextField>
+                <Grid container spacing={4}>
+                  <Grid item xs={10}>
+                    <CustomTextField
+                      select
+                      value={selectedParent}
+                      name='parent'
+                      id='custom-select'
+                      fullWidth
+                      onChange={({ target }) => handleParentChange(target.value)}
+                      SelectProps={{ displayEmpty: true }}
+                    >
+                      <MenuItem disabled value={''}>
+                        <em>{`Parent ${page} Tanlang`}</em>
+                      </MenuItem>
+                      {dataWithoutQuery?.results?.map((parent, index) => (
+                        <MenuItem key={index} value={parent.id}>
+                          {parent.name}
+                        </MenuItem>
+                      ))}
+                    </CustomTextField>
+                  </Grid>
+                  <Grid item xs={2}>
+                    <Button
+                      variant='contained'
+                      color='primary'
+                      onClick={() => handleParentChange('')}
+                      disabled={selectedParent === ''}
+                    >
+                      Reset
+                    </Button>
+                  </Grid>
+                </Grid>
               </Grid>
             </Grid>
           </Grid>
@@ -121,18 +161,26 @@ const CustomTable = ({ data, page, addBrand, deleteBrand }) => {
           <Grid item xs={12} marginBottom={6}>
             <Grid container spacing={6}>
               <Grid item xs={12} md={8}>
-                <CustomTextField placeholder='Search' />
+                <CustomTextField
+                  placeholder='Search'
+                  value={search}
+                  name='search'
+                  onChange={({ target }) => handleSearchChange(target.value)}
+                />
               </Grid>
               <Grid item xs={12} md={4}>
                 <Grid container spacing={6} justifyContent={'end'}>
                   <Grid item>
-                    <CustomTextField select defaultValue='' id='custom-select' SelectProps={{ displayEmpty: true }}>
-                      <MenuItem disabled value=''>
-                        <em>10</em>
-                      </MenuItem>
-                      <MenuItem value={10}>Ten</MenuItem>
-                      <MenuItem value={20}>Twenty</MenuItem>
-                      <MenuItem value={30}>Thirty</MenuItem>
+                    <CustomTextField
+                      select
+                      defaultValue='10'
+                      id='custom-select'
+                      SelectProps={{ displayEmpty: true }}
+                      onChange={({ target }) => onPageSizeChange(target.value)}
+                    >
+                      <MenuItem value={10}>10</MenuItem>
+                      <MenuItem value={20}>15</MenuItem>
+                      <MenuItem value={30}>20</MenuItem>
                     </CustomTextField>
                   </Grid>
                   <Grid item>

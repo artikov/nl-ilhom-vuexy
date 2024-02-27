@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { Box, Grid, Button, Divider, Typography, MenuItem } from '@mui/material'
 import CustomTextField from 'src/@core/components/mui/text-field'
 
-const DrawerItems = ({ toggleDrawer, page, handleAdd }) => {
+const DrawerItems = ({ toggleDrawer, page, parents, handleAdd }) => {
   const [body, setBody] = useState({ name: '', parent: '' })
 
   const handleChange = e => {
@@ -49,9 +49,11 @@ const DrawerItems = ({ toggleDrawer, page, handleAdd }) => {
             <MenuItem disabled value=''>
               <em>Ota {page} Tanlang</em>
             </MenuItem>
-            <MenuItem value={1}>Ten</MenuItem>
-            <MenuItem value={2}>Twenty</MenuItem>
-            <MenuItem value={3}>Thirty</MenuItem>
+            {parents.map((parent, index) => (
+              <MenuItem key={index} value={parent.id}>
+                {parent.name}
+              </MenuItem>
+            ))}
           </CustomTextField>
         </Grid>
       </Grid>

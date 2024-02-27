@@ -5,7 +5,19 @@ import { apiSlice } from './apiSlice'
 export const brandsApiSlice = apiSlice.injectEndpoints({
   endpoints: builder => ({
     getBrands: builder.query({
-      query: () => `${BRANDS_URL}`,
+      query: ({ parent, search, page_size }) => {
+        let apiUrl = `${BRANDS_URL}?page_size=${page_size}`
+
+        if (parent) {
+          apiUrl += `&parent=${parent}`
+        }
+
+        if (search) {
+          apiUrl += `&search=${search}`
+        }
+
+        return apiUrl
+      },
       providesTags: ['Brand']
     }),
     addBrand: builder.mutation({
