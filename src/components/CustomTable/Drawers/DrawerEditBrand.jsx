@@ -5,17 +5,18 @@ import CustomTextField from 'src/@core/components/mui/text-field'
 
 import { useUpdateBrandMutation, useGetBrandQuery } from 'src/store/slices/brandsApiSlice'
 
-const DrawerEdit = ({ toggleDrawer, page, parents, brandId }) => {
+const DrawerEditBrand = ({ toggleDrawer, page, parents, itemId }) => {
   const [body, setBody] = useState({ name: '', parent: '' })
+
   const [updateBrand] = useUpdateBrandMutation()
-  const { data: brand, isLoading } = useGetBrandQuery(brandId)
+  const { data: brand, isLoading } = useGetBrandQuery(itemId)
 
   const handleChange = e => {
     setBody({ ...body, [e.target.name]: e.target.value })
   }
 
   const handleSave = () => {
-    const updatePayload = { id: brandId, name: brand.name, parent: brand.parent }
+    const updatePayload = { id: itemId, name: brand.name, parent: brand.parent }
 
     if (body.name.trim() !== '') {
       updatePayload.name = body.name.trim()
@@ -42,7 +43,7 @@ const DrawerEdit = ({ toggleDrawer, page, parents, brandId }) => {
           <Grid item xs={12}>
             <CustomTextField
               label={`${page} Nomi`}
-              placeholder={brand.name}
+              placeholder={brand?.name}
               name='name'
               value={body.name}
               onChange={handleChange}
@@ -85,4 +86,4 @@ const DrawerEdit = ({ toggleDrawer, page, parents, brandId }) => {
   )
 }
 
-export default DrawerEdit
+export default DrawerEditBrand

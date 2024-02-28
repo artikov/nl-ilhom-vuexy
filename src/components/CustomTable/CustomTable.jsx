@@ -5,8 +5,7 @@ import { DataGrid } from '@mui/x-data-grid'
 import Icon from 'src/@core/components/icon'
 
 import CustomTextField from 'src/@core/components/mui/text-field'
-import DrawerItems from './DrawerItems'
-import DrawerEdit from './DrawerEdit'
+import { DrawerItems, DrawerEditBrand, DrawerEditCategory } from './Drawers'
 
 import { rows } from 'src/@fake-db/table/static-data'
 
@@ -25,7 +24,7 @@ const CustomTable = ({
   const [selectedParent, setSelectedParent] = useState('')
   const [rowsPerPage, setRowsPerPage] = useState(10)
   const [editDrawerOpen, setEditDrawerOpen] = useState(false)
-  const [brandId, setBrandId] = useState(null)
+  const [itemId, setItemId] = useState(null)
 
   const handleDelete = id => {
     handleDeleteApi(id)
@@ -33,7 +32,7 @@ const CustomTable = ({
 
   const handleEdit = id => {
     setEditDrawerOpen(true)
-    setBrandId(id)
+    setItemId(id)
   }
 
   const handleParentChange = newParent => {
@@ -80,9 +79,24 @@ const CustomTable = ({
     />
   )
 
-  const DrawerEditItem = (
-    <DrawerEdit toggleDrawer={toggleEditDrawer} page={page} brandId={brandId} parents={dataWithoutQuery?.results} />
-  )
+  const DrawerEditItem =
+    page === 'Brend' ? (
+      <DrawerEditBrand
+        toggleDrawer={toggleEditDrawer}
+        page={page}
+        itemId={itemId}
+        parents={dataWithoutQuery?.results}
+      />
+    ) : (
+      page === 'Guruh' && (
+        <DrawerEditCategory
+          toggleDrawer={toggleEditDrawer}
+          page={page}
+          itemId={itemId}
+          parents={dataWithoutQuery?.results}
+        />
+      )
+    )
 
   const columns = [
     {
