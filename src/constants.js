@@ -5,3 +5,5 @@ export const AUTH_URL = 'auth/'
 export const BRANDS_URL = 'brands/'
 
 export const CATEGORIES_URL = 'categories/'
+
+export const MEASUREMENTS_URL = 'unit-measures/'

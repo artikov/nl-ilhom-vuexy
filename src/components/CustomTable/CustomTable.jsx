@@ -5,7 +5,7 @@ import { DataGrid } from '@mui/x-data-grid'
 import Icon from 'src/@core/components/icon'
 
 import CustomTextField from 'src/@core/components/mui/text-field'
-import { DrawerItems, DrawerEditBrand, DrawerEditCategory } from './Drawers'
+import { DrawerItems, DrawerEditBrand, DrawerEditCategory, DrawerEditMeasurement } from './Drawers'
 
 import { rows } from 'src/@fake-db/table/static-data'
 
@@ -87,15 +87,15 @@ const CustomTable = ({
         itemId={itemId}
         parents={dataWithoutQuery?.results}
       />
+    ) : page === 'Guruh' ? (
+      <DrawerEditCategory
+        toggleDrawer={toggleEditDrawer}
+        page={page}
+        itemId={itemId}
+        parents={dataWithoutQuery?.results}
+      />
     ) : (
-      page === 'Guruh' && (
-        <DrawerEditCategory
-          toggleDrawer={toggleEditDrawer}
-          page={page}
-          itemId={itemId}
-          parents={dataWithoutQuery?.results}
-        />
-      )
+      page === "O'lchov" && <DrawerEditMeasurement toggleDrawer={toggleEditDrawer} page={page} itemId={itemId} />
     )
 
   const columns = [
@@ -111,6 +111,7 @@ const CustomTable = ({
       field: 'name',
       headerName: 'Nomi'
     },
+
     {
       flex: 0.35,
       minWidth: 230,
@@ -146,52 +147,64 @@ const CustomTable = ({
 
   return (
     <Card>
+      <div>
+        <Drawer anchor='right' open={drawerOpen} onClose={toggleDrawer(false)}>
+          {DrawerList}
+        </Drawer>
+        <Drawer anchor='right' open={editDrawerOpen} onClose={toggleEditDrawer(false)}>
+          {DrawerEditItem}
+        </Drawer>
+      </div>
       <CardContent>
         <Grid container spacing={6}>
-          <Grid item xs={6}>
-            <Grid container spacing={4}>
-              <Grid item xs={12}>
-                <Typography variant='h3'>Filter</Typography>
-              </Grid>
-              <Grid item xs={12}>
+          {page !== "O'lchov" && (
+            <>
+              <Grid item xs={6}>
                 <Grid container spacing={4}>
-                  <Grid item xs={10}>
-                    <CustomTextField
-                      select
-                      value={selectedParent}
-                      name='parent'
-                      id='custom-select'
-                      fullWidth
-                      onChange={({ target }) => handleParentChange(target.value)}
-                      SelectProps={{ displayEmpty: true }}
-                    >
-                      <MenuItem disabled value={''}>
-                        <em>{`Parent ${page} Tanlang`}</em>
-                      </MenuItem>
-                      {dataWithoutQuery?.results?.map((parent, index) => (
-                        <MenuItem key={index} value={parent.id}>
-                          {parent.name}
-                        </MenuItem>
-                      ))}
-                    </CustomTextField>
+                  <Grid item xs={12}>
+                    <Typography variant='h3'>Filter</Typography>
                   </Grid>
-                  <Grid item xs={2}>
-                    <Button
-                      variant='contained'
-                      color='primary'
-                      onClick={() => handleParentChange('')}
-                      disabled={selectedParent === ''}
-                    >
-                      Reset
-                    </Button>
+                  <Grid item xs={12}>
+                    <Grid container spacing={4}>
+                      <Grid item xs={10}>
+                        <CustomTextField
+                          select
+                          value={selectedParent}
+                          name='parent'
+                          id='custom-select'
+                          fullWidth
+                          onChange={({ target }) => handleParentChange(target.value)}
+                          SelectProps={{ displayEmpty: true }}
+                        >
+                          <MenuItem disabled value={''}>
+                            <em>{`Parent ${page} Tanlang`}</em>
+                          </MenuItem>
+                          {dataWithoutQuery?.results?.map((parent, index) => (
+                            <MenuItem key={index} value={parent.id}>
+                              {parent.name}
+                            </MenuItem>
+                          ))}
+                        </CustomTextField>
+                      </Grid>
+                      <Grid item xs={2}>
+                        <Button
+                          variant='contained'
+                          color='primary'
+                          onClick={() => handleParentChange('')}
+                          disabled={selectedParent === ''}
+                        >
+                          Reset
+                        </Button>
+                      </Grid>
+                    </Grid>
                   </Grid>
                 </Grid>
               </Grid>
-            </Grid>
-          </Grid>
-          <Grid item xs={12}>
-            <Divider />
-          </Grid>
+              <Grid item xs={12}>
+                <Divider />
+              </Grid>
+            </>
+          )}
           <Grid item xs={12} marginBottom={6}>
             <Grid container spacing={6}>
               <Grid item xs={12} md={8}>
@@ -221,12 +234,6 @@ const CustomTable = ({
                     <Button variant='contained' color='primary' onClick={toggleDrawer(true)}>
                       {`+ ${page} Qo'shish`}
                     </Button>
-                    <Drawer anchor='right' open={drawerOpen} onClose={toggleDrawer(false)}>
-                      {DrawerList}
-                    </Drawer>
-                    <Drawer anchor='right' open={editDrawerOpen} onClose={toggleEditDrawer(false)}>
-                      {DrawerEditItem}
-                    </Drawer>
                   </Grid>
                 </Grid>
               </Grid>
@@ -236,6 +243,14 @@ const CustomTable = ({
           <Grid item xs={12}>
             <Box sx={{ height: 650 }}>
               <DataGrid
+                initialState={{
+                  columns: {
+                    columnVisibilityModel: {
+                      // Hide columns status and traderName, the other columns will remain visible
+                      parent: false
+                    }
+                  }
+                }}
                 columns={columns}
                 rows={finalData?.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage)}
                 slots={{

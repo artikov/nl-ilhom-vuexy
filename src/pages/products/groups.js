@@ -8,7 +8,6 @@ import CustomTable from 'src/components/CustomTable/CustomTable'
 import {
   useGetCategoriesQuery,
   useCreateCategoryMutation,
-  useUpdateCategoryMutation,
   useDeleteCategoryMutation
 } from 'src/store/slices/categoriesApiSlice'
 
@@ -22,7 +21,6 @@ const groups = () => {
     search
   })
   const [createCategory] = useCreateCategoryMutation()
-  const [updateCategory] = useUpdateCategoryMutation()
   const [deleteCategory] = useDeleteCategoryMutation()
 
   useEffect(() => {

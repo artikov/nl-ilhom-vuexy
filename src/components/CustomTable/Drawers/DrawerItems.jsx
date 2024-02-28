@@ -34,28 +34,30 @@ const DrawerItems = ({ toggleDrawer, page, parents, handleAdd }) => {
             fullWidth
           ></CustomTextField>
         </Grid>
-        <Grid item xs={12}>
-          <CustomTextField
-            select
-            fullWidth
-            name='parent'
-            value={body.parent}
-            onChange={handleChange}
-            defaultValue=''
-            id='custom-select'
-            label={`Ota ${page} Tanlang`}
-            SelectProps={{ displayEmpty: true }}
-          >
-            <MenuItem disabled value=''>
-              <em>Ota {page} Tanlang</em>
-            </MenuItem>
-            {parents?.map((parent, index) => (
-              <MenuItem key={index} value={parent.id}>
-                {parent.name}
+        {page !== "O'lchov" && (
+          <Grid item xs={12}>
+            <CustomTextField
+              select
+              fullWidth
+              name='parent'
+              value={body.parent}
+              onChange={handleChange}
+              defaultValue=''
+              id='custom-select'
+              label={`Ota ${page} Tanlang`}
+              SelectProps={{ displayEmpty: true }}
+            >
+              <MenuItem disabled value=''>
+                <em>Ota {page} Tanlang</em>
               </MenuItem>
-            ))}
-          </CustomTextField>
-        </Grid>
+              {parents?.map((parent, index) => (
+                <MenuItem key={index} value={parent.id}>
+                  {parent.name}
+                </MenuItem>
+              ))}
+            </CustomTextField>
+          </Grid>
+        )}
       </Grid>
       <Grid container spacing={6} marginY={4}>
         <Grid item onClick={toggleDrawer(false)}>
