@@ -1,6 +1,6 @@
 import { Typography, Grid } from '@mui/material'
 
-import CustomTable from 'src/components/CustomTable/CustomTable'
+import ProductsTable from 'src/components/ProductsTable/ProductsTable'
 
 const products = () => {
   return (
@@ -9,7 +9,7 @@ const products = () => {
         <Typography variant='h1'>Mahsulotlar</Typography>
       </Grid>
       <Grid item xs={12}>
-        <CustomTable page={'Mahsulot'} />
+        <ProductsTable />
       </Grid>
     </Grid>
   )
