@@ -16,15 +16,14 @@ const brands = () => {
     parent,
     search
   })
+  const [addBrand] = useAddBrandMutation()
+  const [deleteBrand] = useDeleteBrandMutation()
 
   useEffect(() => {
     if (!parent && !search && brands) {
       setNoQueryData(brands)
     }
   }, [parent, search, brands])
-
-  const [addBrand] = useAddBrandMutation()
-  const [deleteBrand] = useDeleteBrandMutation()
 
   return (
     <Grid container spacing={6}>
@@ -38,8 +37,8 @@ const brands = () => {
           <CustomTable
             data={brands?.results}
             page={'Brend'}
-            addBrand={addBrand}
-            deleteBrand={deleteBrand}
+            handleCreateApi={addBrand}
+            handleDeleteApi={deleteBrand}
             onParentChange={setParent}
             onSearchChange={setSearch}
             search={search}

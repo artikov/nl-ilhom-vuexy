@@ -49,7 +49,7 @@ const DrawerItems = ({ toggleDrawer, page, parents, handleAdd }) => {
             <MenuItem disabled value=''>
               <em>Ota {page} Tanlang</em>
             </MenuItem>
-            {parents.map((parent, index) => (
+            {parents?.map((parent, index) => (
               <MenuItem key={index} value={parent.id}>
                 {parent.name}
               </MenuItem>

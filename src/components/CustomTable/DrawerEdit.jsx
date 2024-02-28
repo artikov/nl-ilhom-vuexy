@@ -60,7 +60,7 @@ const DrawerEdit = ({ toggleDrawer, page, parents, brandId }) => {
               label={`Parent ${page} Tanlang`}
               SelectProps={{ displayEmpty: true }}
             >
-              {parents.map((parent, index) => (
+              {parents?.map((parent, index) => (
                 <MenuItem key={index} value={parent.id}>
                   {parent.name}
                 </MenuItem>

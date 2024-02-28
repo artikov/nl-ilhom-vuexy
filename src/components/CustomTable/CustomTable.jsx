@@ -13,8 +13,8 @@ import { rows } from 'src/@fake-db/table/static-data'
 const CustomTable = ({
   data,
   page,
-  addBrand,
-  deleteBrand,
+  handleCreateApi,
+  handleDeleteApi,
   onParentChange,
   onSearchChange,
   search,
@@ -28,7 +28,7 @@ const CustomTable = ({
   const [brandId, setBrandId] = useState(null)
 
   const handleDelete = id => {
-    deleteBrand(id)
+    handleDeleteApi(id)
   }
 
   const handleEdit = id => {
@@ -72,7 +72,12 @@ const CustomTable = ({
   }
 
   const DrawerList = (
-    <DrawerItems toggleDrawer={toggleDrawer} page={page} handleAdd={addBrand} parents={dataWithoutQuery?.results} />
+    <DrawerItems
+      toggleDrawer={toggleDrawer}
+      page={page}
+      handleAdd={handleCreateApi}
+      parents={dataWithoutQuery?.results}
+    />
   )
 
   const DrawerEditItem = (
