@@ -1,19 +1,14 @@
-// ** React Imports
 import { useState } from 'react'
 
-// ** MUI Imports
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
 
-// ** Icon Imports
 import Icon from 'src/@core/components/icon'
 
-// ** Third Party Imports
 import { useDropzone } from 'react-dropzone'
 
-const FileUploaderSingle = () => {
-  // ** State
+const ProductFileUploadForm = ({ setImage }) => {
   const [files, setFiles] = useState([])
 
   // ** Hooks
@@ -23,12 +18,25 @@ const FileUploaderSingle = () => {
       'image/*': ['.png', '.jpg', '.jpeg', '.gif']
     },
     onDrop: acceptedFiles => {
-      setFiles(acceptedFiles.map(file => Object.assign(file)))
+      // Assuming only one file is being uploaded
+      const uploadedFile = acceptedFiles[0]
+
+      // Set the image URL using URL.createObjectURL
+      setImage(uploadedFile)
+
+      // Set the file in the state
+      setFiles([Object.assign(uploadedFile)])
     }
   })
 
   const img = files.map(file => (
-    <img key={file.name} alt={file.name} className='single-file-image' src={URL.createObjectURL(file)} />
+    <img
+      key={file.name}
+      alt={file.name}
+      className='single-file-image'
+      style={{ width: '100%' }}
+      src={URL.createObjectURL(file)}
+    />
   ))
 
   return (
@@ -55,8 +63,7 @@ const FileUploaderSingle = () => {
               display: 'flex',
               borderRadius: 1,
               alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: theme => `rgba(${theme.palette.customColors.main}, 0.08)`
+              justifyContent: 'center'
             }}
           >
             <Icon icon='tabler:upload' fontSize='1.75rem' />
@@ -74,4 +81,4 @@ const FileUploaderSingle = () => {
   )
 }
 
-export default FileUploaderSingle
+export default ProductFileUploadForm

@@ -26,6 +26,8 @@ const ProductsTable = ({
   const [editDrawerOpen, setEditDrawerOpen] = useState(false)
   const [itemId, setItemId] = useState(null)
 
+  console.log('data', data)
+
   const handleDelete = id => {
     handleDeleteApi(id)
   }

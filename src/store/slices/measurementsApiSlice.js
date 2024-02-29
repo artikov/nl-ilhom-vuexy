@@ -1,9 +1,9 @@
 import { MEASUREMENTS_URL } from 'src/constants'
 import { apiSlice } from './apiSlice'
 
-const measurementsApiSlice = apiSlice.injectEndpoints({
-  endpoints: build => ({
-    getMeasurements: build.query({
+export const measurementsApiSlice = apiSlice.injectEndpoints({
+  endpoints: builder => ({
+    getMeasurements: builder.query({
       query: ({ search }) => {
         let apiUrl = `${MEASUREMENTS_URL}`
 
@@ -15,10 +15,10 @@ const measurementsApiSlice = apiSlice.injectEndpoints({
       },
       providesTags: ['Measurement']
     }),
-    getMeasurement: build.query({
+    getMeasurement: builder.query({
       query: id => `${MEASUREMENTS_URL}${id}/`
     }),
-    addMeasurement: build.mutation({
+    addMeasurement: builder.mutation({
       query: body => ({
         url: MEASUREMENTS_URL,
         method: 'POST',
@@ -26,7 +26,7 @@ const measurementsApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['Measurement']
     }),
-    updateMeasurement: build.mutation({
+    updateMeasurement: builder.mutation({
       query: ({ id, ...body }) => ({
         url: `${MEASUREMENTS_URL}${id}`,
         method: 'PUT',
@@ -34,7 +34,7 @@ const measurementsApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['Measurement']
     }),
-    deleteMeasurement: build.mutation({
+    deleteMeasurement: builder.mutation({
       query: id => ({
         url: `${MEASUREMENTS_URL}${id}/`,
         method: 'DELETE'
