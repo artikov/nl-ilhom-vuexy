@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useRouter } from 'next/router'
+import Link from 'next/link'
 
 import {
   Card,
@@ -19,7 +20,7 @@ import {
 } from '@mui/material'
 
 import CustomTextField from 'src/@core/components/mui/text-field'
-import ProductFileUploadForm from 'src/components/productAddPage/ProductFileUploadForm'
+import ProductFileUploadForm from 'src/components/ProductAddPage/ProductFileUploadForm'
 
 import { useGetCategoriesQuery } from '../../store/slices/categoriesApiSlice'
 import { useGetBrandsQuery } from 'src/store/slices/brandsApiSlice'
@@ -60,10 +61,11 @@ const ProductAddForm = () => {
     formData.append('is_active', status)
     formData.append('image', image)
 
+    console.log(formData)
     await addProduct(formData)
 
     if (!isError) {
-      router.push('/products/products')
+      router.push('/products')
     }
   }
 
@@ -224,9 +226,11 @@ const ProductAddForm = () => {
             </Button>
           </Grid>
           <Grid item>
-            <Button variant='tonal' color='error'>
-              Bekor qilish
-            </Button>
+            <Link href='/products'>
+              <Button variant='tonal' color='error'>
+                Bekor qilish
+              </Button>
+            </Link>
           </Grid>
         </Grid>
       </Grid>

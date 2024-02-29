@@ -8,7 +8,7 @@ import Icon from 'src/@core/components/icon'
 
 import { useDropzone } from 'react-dropzone'
 
-const ProductFileUploadForm = ({ setImage }) => {
+const ProductFileUploadForm = ({ setImage, height }) => {
   const [files, setFiles] = useState([])
 
   // ** Hooks
@@ -40,7 +40,7 @@ const ProductFileUploadForm = ({ setImage }) => {
   ))
 
   return (
-    <Box {...getRootProps({ className: 'dropzone' })} sx={files.length ? { height: 400 } : {}}>
+    <Box {...getRootProps({ className: 'dropzone' })} sx={files.length ? { height: height } : {}}>
       <input {...getInputProps()} />
       {files.length ? (
         img

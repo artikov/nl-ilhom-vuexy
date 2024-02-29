@@ -1,6 +1,6 @@
 import { Card, Grid, Typography, CardHeader, CardContent, Button } from '@mui/material'
 
-import ProductAddForm from 'src/components/productAddPage/ProductAddForm'
+import ProductAddForm from 'src/components/ProductAddPage/ProductAddForm'
 
 const addProduct = () => {
   return (

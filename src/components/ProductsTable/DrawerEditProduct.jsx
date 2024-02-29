@@ -1,19 +1,39 @@
 import { useState } from 'react'
 
-import { Box, Grid, Button, Divider, Typography, MenuItem, CircularProgress } from '@mui/material'
+import {
+  Box,
+  Grid,
+  Button,
+  Divider,
+  Typography,
+  MenuItem,
+  CircularProgress,
+  RadioGroup,
+  Radio,
+  FormControlLabel
+} from '@mui/material'
 import CustomTextField from 'src/@core/components/mui/text-field'
+import ProductFileUploadForm from '../ProductAddPage/ProductFileUploadForm'
 
 import { useUpdateProductMutation, useGetProductQuery } from 'src/store/slices/productsApiSlice'
 import { useGetBrandsQuery } from 'src/store/slices/brandsApiSlice'
 import { useGetCategoriesQuery } from 'src/store/slices/categoriesApiSlice'
 import { useGetMeasurementsQuery } from 'src/store/slices/measurementsApiSlice'
 
-const DrawerEditProduct = ({ toggleDrawer, data, itemId }) => {
-  const [body, setBody] = useState({ name: '', brand: '', category: '', unit_measure: '' })
+const DrawerEditProduct = ({ toggleDrawer, itemId }) => {
+  const [body, setBody] = useState({
+    name: '',
+    product_type: '',
+    brand: '',
+    category: '',
+    unit_measure: '',
+    isActive: ''
+  })
+  const [image, setImage] = useState(null)
   const parent = ''
   const search = ''
 
-  const [updateProduct, { error }] = useUpdateProductMutation()
+  const [updateProduct] = useUpdateProductMutation()
   const { data: product, isLoading } = useGetProductQuery(itemId)
 
   const { data: brands } = useGetBrandsQuery({
@@ -29,29 +49,40 @@ const DrawerEditProduct = ({ toggleDrawer, data, itemId }) => {
   const { data: measurements } = useGetMeasurementsQuery({
     search
   })
-  console.log(product)
 
   const handleChange = e => {
-    setBody({ ...body, [e.target.name]: e.target.value })
+    const newValue = e.target.type === 'checkbox' ? e.target.checked : e.target.value
+
+    setBody(prevBody => ({
+      ...prevBody,
+      [e.target.name]: newValue
+    }))
   }
 
-  const handleSave = async () => {
-    const updatePayload = {
-      id: itemId,
-      name: product.name,
-      category: product.category,
-      unit_measure: product.unit_measure,
-      brand: product.brand
+  const handleSave = () => {
+    const updatePayload = new FormData()
+
+    // Helper function to append a field if it exists
+    const appendFieldIfExists = (fieldName, value) => {
+      if (value) {
+        updatePayload.append(fieldName, value)
+      }
     }
 
-    if (body.name.trim() !== '') {
-      updatePayload.name = body.name.trim()
-    } else if (body.parent !== '') {
-      updatePayload.category = body.category
-    }
+    // Append fields based on the existence of values in body or product
+    appendFieldIfExists('name', body.name || product?.name)
+    appendFieldIfExists('category', body.category?.id || product?.category?.id)
+    appendFieldIfExists('unit_measure', body.unit_measure?.id || product?.unit_measure?.id)
+    appendFieldIfExists('brand', body.brand?.id || product?.brand?.id)
+    appendFieldIfExists('is_active', body.isActive || product?.isActive)
+    appendFieldIfExists('product_type', body.product_type || product?.product_type)
+    appendFieldIfExists('image', image)
 
-    await updateProduct(updatePayload)
-    console.log(error)
+    updatePayload.append('generate_barcode', 'false')
+
+    console.log(updatePayload)
+
+    updateProduct({ id: itemId, body: updatePayload })
   }
 
   return (
@@ -75,7 +106,17 @@ const DrawerEditProduct = ({ toggleDrawer, data, itemId }) => {
               value={body.name}
               onChange={handleChange}
               fullWidth
-            ></CustomTextField>
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <CustomTextField
+              label={`Mahsulot Turi`}
+              placeholder={product?.product_type}
+              name='product_type'
+              value={body.product_type}
+              onChange={handleChange}
+              fullWidth
+            />
           </Grid>
           <Grid item xs={12}>
             <CustomTextField
@@ -83,9 +124,9 @@ const DrawerEditProduct = ({ toggleDrawer, data, itemId }) => {
               fullWidth
               name='category'
               onChange={handleChange}
-              defaultValue={product?.category?.id || ''}
+              value={product?.category?.id || ''}
               id='custom-select'
-              label={`Guruhni Tanlang`}
+              label={`Kategoriyani Tanlang`}
               SelectProps={{ displayEmpty: true }}
             >
               {categories?.results?.map((item, index) => (
@@ -101,7 +142,7 @@ const DrawerEditProduct = ({ toggleDrawer, data, itemId }) => {
               fullWidth
               name='brand'
               onChange={handleChange}
-              defaultValue={product?.brand?.id || ''}
+              value={product?.brand?.id || ''}
               id='custom-select'
               label={`Brandni Tanlang`}
               SelectProps={{ displayEmpty: true }}
@@ -119,7 +160,7 @@ const DrawerEditProduct = ({ toggleDrawer, data, itemId }) => {
               fullWidth
               name='measurements'
               onChange={handleChange}
-              defaultValue={product?.unit_measure?.id || ''}
+              value={product?.unit_measure?.id || ''}
               id='custom-select'
               label={`O'lchovni Tanlang`}
               SelectProps={{ displayEmpty: true }}
@@ -131,8 +172,27 @@ const DrawerEditProduct = ({ toggleDrawer, data, itemId }) => {
               ))}
             </CustomTextField>
           </Grid>
+          <Grid item xs={12}>
+            <Grid item xs={12} sm={6}>
+              <Typography>Status</Typography>
+              <RadioGroup
+                row
+                aria-label='controlled'
+                name='isActive'
+                defaultValue={product?.is_active}
+                onChange={handleChange}
+              >
+                <FormControlLabel value={true} control={<Radio />} label='Active' />
+                <FormControlLabel value={false} control={<Radio />} label='Inactive' />
+              </RadioGroup>
+            </Grid>
+          </Grid>
         </Grid>
       )}
+
+      <Box sx={{ maxWidth: '200px' }}>
+        <ProductFileUploadForm setImage={setImage} height={'200px'} />
+      </Box>
       <Grid container spacing={6} marginY={4}>
         <Grid item onClick={toggleDrawer(false)}>
           <Button variant='contained' onClick={handleSave}>

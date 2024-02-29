@@ -4,7 +4,7 @@ import { Card, Grid, CardHeader, CardContent, MenuItem } from '@mui/material'
 
 import CustomTextField from 'src/@core/components/mui/text-field'
 
-const ProductInfoForm = ({ multiple }) => {
+const EntryInfoForm = ({ multiple }) => {
   const [value, setValue] = useState('controlled-checked')
 
   const handleChange = event => {
@@ -110,4 +110,4 @@ const ProductInfoForm = ({ multiple }) => {
   )
 }
 
-export default ProductInfoForm
+export default EntryInfoForm
