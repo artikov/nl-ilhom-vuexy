@@ -2,31 +2,30 @@
 import { useState } from 'react'
 import Link from 'next/link'
 
-import { Card, Drawer, Box, Typography, Grid, MenuItem, Divider, CardContent, Button, Pagination } from '@mui/material'
+import { Card, Drawer, Box, Grid, MenuItem, CardContent, Button, Pagination, Chip } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 import Icon from 'src/@core/components/icon'
 
 import CustomTextField from 'src/@core/components/mui/text-field'
+import ProductFilters from './ProductFilters'
+import DrawerEditProduct from './DrawerEditProduct'
 
 import { rows } from 'src/@fake-db/table/static-data'
 
 const ProductsTable = ({
   data,
-  handleCreateApi,
   handleDeleteApi,
-  onParentChange,
+  onCategoryChange,
+  onBrandChange,
+  onActiveChange,
   onSearchChange,
   search,
   dataWithoutQuery
 }) => {
-  const [drawerOpen, setDrawerOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
-  const [selectedParent, setSelectedParent] = useState('')
   const [rowsPerPage, setRowsPerPage] = useState(10)
   const [editDrawerOpen, setEditDrawerOpen] = useState(false)
   const [itemId, setItemId] = useState(null)
-
-  console.log('data', data)
 
   const handleDelete = id => {
     handleDeleteApi(id)
@@ -35,15 +34,6 @@ const ProductsTable = ({
   const handleEdit = id => {
     setEditDrawerOpen(true)
     setItemId(id)
-  }
-
-  const handleParentChange = newParent => {
-    onParentChange(newParent)
-    setSelectedParent(newParent)
-  }
-
-  const handleSearchChange = newSearch => {
-    onSearchChange(newSearch)
   }
 
   const finalData = data ? data : rows
@@ -63,10 +53,6 @@ const ProductsTable = ({
       color='primary'
     />
   )
-
-  const toggleDrawer = open => () => {
-    setDrawerOpen(open)
-  }
 
   const toggleEditDrawer = open => () => {
     setEditDrawerOpen(open)
@@ -91,19 +77,22 @@ const ProductsTable = ({
       minWidth: 200,
       field: 'parent',
       headerName: `Guruh`,
-      valueGetter: params => params?.row?.parent?.name || 'N/A'
+      valueGetter: params => params?.row?.category?.name || 'N/A'
     },
     {
       flex: 0.2,
       minWidth: 200,
       field: 'brand',
-      headerName: `Brend`
+      headerName: `Brend`,
+      valueGetter: params => params?.row?.brand?.name || 'N/A'
     },
     {
       flex: 0.1,
-      minWidth: 200,
+      maxWidth: 120,
       field: 'status',
-      headerName: `Status`
+      headerName: `Status`,
+      renderCell: params =>
+        params?.row?.is_active ? <Chip label='Active' color='success' /> : <Chip label='Inactive' color='error' />
     },
 
     // Edit button column
@@ -124,102 +113,30 @@ const ProductsTable = ({
       field: 'delete',
       maxWidth: 100,
       renderCell: params => (
-        <Button color='error' onClick={() => handleDelete(params.row.id)}>
+        <Button color='error' onClick={() => handleDelete(params?.row?.id)}>
           <Icon icon='tabler:trash' />
         </Button>
       )
     }
   ]
 
+  const DrawerEdit = (
+    <DrawerEditProduct toggleDrawer={toggleEditDrawer} data={dataWithoutQuery?.results} itemId={itemId} />
+  )
+
   return (
     <Card>
+      <Drawer anchor='right' open={editDrawerOpen} onClose={toggleEditDrawer(false)}>
+        {DrawerEdit}
+      </Drawer>
       <CardContent>
         <Grid container spacing={6}>
-          <Grid item xs={12}>
-            <Grid container spacing={4}>
-              <Grid item xs={12}>
-                <Typography variant='h3'>Filter</Typography>
-              </Grid>
-              <Grid item xs={12}>
-                <Grid container spacing={4}>
-                  <Grid item xs={4}>
-                    <CustomTextField
-                      select
-                      value={selectedParent}
-                      name='parent'
-                      id='custom-select'
-                      fullWidth
-                      onChange={({ target }) => handleParentChange(target.value)}
-                      SelectProps={{ displayEmpty: true }}
-                    >
-                      <MenuItem disabled value={''}>
-                        <em>{`Parent Tanlang`}</em>
-                      </MenuItem>
-                      {dataWithoutQuery?.results?.map((parent, index) => (
-                        <MenuItem key={index} value={parent.id}>
-                          {parent.name}
-                        </MenuItem>
-                      ))}
-                    </CustomTextField>
-                  </Grid>
-                  <Grid item xs={3}>
-                    <CustomTextField
-                      select
-                      defaultValue=''
-                      name='brand'
-                      id='custom-select'
-                      fullWidth
-                      // onChange={({ target }) => handleParentChange(target.value)}
-                      SelectProps={{ displayEmpty: true }}
-                    >
-                      <MenuItem disabled value={''}>
-                        <em>{`Brend`}</em>
-                      </MenuItem>
-                      {dataWithoutQuery?.results?.map((parent, index) => (
-                        <MenuItem key={index} value={parent.id}>
-                          {parent.name}
-                        </MenuItem>
-                      ))}
-                    </CustomTextField>
-                  </Grid>
-                  <Grid item xs={3}>
-                    <CustomTextField
-                      select
-                      defaultValue=''
-                      name='status'
-                      id='custom-select'
-                      fullWidth
-                      // onChange={({ target }) => handleParentChange(target.value)}
-                      SelectProps={{ displayEmpty: true }}
-                    >
-                      <MenuItem disabled value={''}>
-                        <em>{`Status`}</em>
-                      </MenuItem>
-                      {dataWithoutQuery?.results?.map((parent, index) => (
-                        <MenuItem key={index} value={parent.id}>
-                          {parent.name}
-                        </MenuItem>
-                      ))}
-                    </CustomTextField>
-                  </Grid>
-                  <Grid item xs={2}>
-                    <Button
-                      fullWidth
-                      variant='contained'
-                      color='primary'
-                      onClick={() => handleParentChange('')}
-                      disabled={selectedParent === ''}
-                    >
-                      Reset
-                    </Button>
-                  </Grid>
-                </Grid>
-              </Grid>
-            </Grid>
-          </Grid>
-          <Grid item xs={12}>
-            <Divider />
-          </Grid>
+          <ProductFilters
+            onCategoryChange={onCategoryChange}
+            onActiveChange={onActiveChange}
+            onBrandChange={onBrandChange}
+            dataWithoutQuery={dataWithoutQuery}
+          />
           <Grid item xs={12} marginBottom={6}>
             <Grid container spacing={6}>
               <Grid item xs={12} md={8}>
@@ -227,7 +144,7 @@ const ProductsTable = ({
                   placeholder='Search'
                   value={search}
                   name='search'
-                  onChange={({ target }) => handleSearchChange(target.value)}
+                  onChange={({ target }) => onSearchChange(target.value)}
                 />
               </Grid>
               <Grid item xs={12} md={4}>

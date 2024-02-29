@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useRouter } from 'next/router'
 
 import {
   Card,
@@ -26,6 +27,7 @@ import { useGetMeasurementsQuery } from 'src/store/slices/measurementsApiSlice'
 import { useAddProductMutation } from 'src/store/slices/productsApiSlice'
 
 const ProductAddForm = () => {
+  const router = useRouter()
   const [category, setCategory] = useState('')
   const [brand, setBrand] = useState('')
   const [measurement, setMeasurement] = useState('')
@@ -36,7 +38,7 @@ const ProductAddForm = () => {
   const [status, setStatus] = useState(true)
   const [image, setImage] = useState('')
 
-  const [addProduct] = useAddProductMutation()
+  const [addProduct, { isError, isLoading: isAdding }] = useAddProductMutation()
 
   const parent = ''
   const search = ''
@@ -44,7 +46,7 @@ const ProductAddForm = () => {
   const { data: brands } = useGetBrandsQuery({ parent, search })
   const { data: measurements } = useGetMeasurementsQuery({ search })
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault()
 
     let formData = new FormData()
@@ -58,7 +60,11 @@ const ProductAddForm = () => {
     formData.append('is_active', status)
     formData.append('image', image)
 
-    addProduct(formData)
+    await addProduct(formData)
+
+    if (!isError) {
+      router.push('/products/products')
+    }
   }
 
   return (
@@ -214,7 +220,7 @@ const ProductAddForm = () => {
         <Grid container spacing={4}>
           <Grid item>
             <Button variant='contained' color='primary' onClick={handleSubmit}>
-              Saqlash
+              {isAdding ? <CircularProgress /> : 'Saqlash'}
             </Button>
           </Grid>
           <Grid item>
