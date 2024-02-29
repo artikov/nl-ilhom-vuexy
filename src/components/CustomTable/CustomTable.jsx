@@ -8,6 +8,7 @@ import CustomTextField from 'src/@core/components/mui/text-field'
 import { DrawerItems, DrawerEditBrand, DrawerEditCategory, DrawerEditMeasurement } from './Drawers'
 
 import { rows } from 'src/@fake-db/table/static-data'
+import DrawerAddWarehouses from './Drawers/DrawerAddWarehouse'
 
 const CustomTable = ({
   data,
@@ -70,14 +71,17 @@ const CustomTable = ({
     setEditDrawerOpen(open)
   }
 
-  const DrawerList = (
-    <DrawerItems
-      toggleDrawer={toggleDrawer}
-      page={page}
-      handleAdd={handleCreateApi}
-      parents={dataWithoutQuery?.results}
-    />
-  )
+  const DrawerList =
+    page === 'Ombor' ? (
+      <DrawerAddWarehouses toggleDrawer={toggleDrawer} handleAdd={handleCreateApi} />
+    ) : (
+      <DrawerItems
+        toggleDrawer={toggleDrawer}
+        page={page}
+        handleAdd={handleCreateApi}
+        parents={dataWithoutQuery?.results}
+      />
+    )
 
   const DrawerEditItem =
     page === 'Brend' ? (
@@ -116,8 +120,33 @@ const CustomTable = ({
       flex: 0.35,
       minWidth: 230,
       field: 'parent',
-      headerName: `Ota ${page}`,
-      valueGetter: params => params?.row?.parent?.name || 'N/A'
+      headerName: page === 'Ombor' ? 'Masul shaxs' : `Ota ${page}`,
+      valueGetter: params => {
+        if (page === 'Ombor') {
+          const responsible = params?.row?.responsible
+          const fullName = `${responsible?.first_name || 'N/A'} ${responsible?.last_name || 'N/A'}`
+          const phoneNumber = responsible?.phone_number || 'N/A'
+
+          return `${fullName}\n${phoneNumber}`
+        } else {
+          return params?.row?.parent?.name || 'N/A'
+        }
+      },
+      renderCell: params => {
+        if (page === 'Ombor') {
+          const responsible = params?.row?.responsible
+          const fullName = `${responsible?.first_name || 'N/A'} ${responsible?.last_name || 'N/A'}`
+          const phoneNumber = responsible?.phone_number || 'N/A'
+
+          return (
+            <Typography variant='body2' noWrap>
+              {fullName}
+              <br />
+              {phoneNumber}
+            </Typography>
+          )
+        }
+      }
     },
 
     // Edit button column
@@ -177,7 +206,7 @@ const CustomTable = ({
                           SelectProps={{ displayEmpty: true }}
                         >
                           <MenuItem disabled value={''}>
-                            <em>{`Parent ${page} Tanlang`}</em>
+                            <em>{page === 'Ombor' ? 'Masul shaxs' : `Ota ${page} Tanlang`}</em>
                           </MenuItem>
                           {dataWithoutQuery?.results?.map((parent, index) => (
                             <MenuItem key={index} value={parent.id}>
