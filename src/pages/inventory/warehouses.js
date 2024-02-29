@@ -5,11 +5,7 @@ import { Typography, Grid, CircularProgress } from '@mui/material'
 
 import CustomTable from 'src/components/CustomTable/CustomTable'
 
-import {
-  useGetWarehousesQuery,
-  useCreateWarehouseMutation,
-  useDeleteWarehouseMutation
-} from 'src/store/slices/warehousesApiSlice'
+import { useGetWarehousesQuery, useDeleteWarehouseMutation } from 'src/store/slices/warehousesApiSlice'
 
 const warehouses = () => {
   const [responsible, setResponsible] = useState('')
@@ -20,7 +16,6 @@ const warehouses = () => {
     responsible,
     search
   })
-  const [createWarehouse] = useCreateWarehouseMutation()
   const [deleteWarehouse] = useDeleteWarehouseMutation()
 
   useEffect(() => {
@@ -41,7 +36,6 @@ const warehouses = () => {
           <CustomTable
             page={'Ombor'}
             data={warehouses?.results}
-            handleCreateApi={createWarehouse}
             handleDeleteApi={deleteWarehouse}
             onSearchChange={setSearch}
             onParentChange={setResponsible}

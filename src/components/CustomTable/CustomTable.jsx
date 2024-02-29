@@ -5,13 +5,16 @@ import { DataGrid } from '@mui/x-data-grid'
 import Icon from 'src/@core/components/icon'
 
 import CustomTextField from 'src/@core/components/mui/text-field'
+import CustomFilter from 'src/components/CustomTable/CustomFilter'
 import {
   DrawerItems,
   DrawerEditBrand,
   DrawerEditCategory,
   DrawerEditMeasurement,
   DrawerAddWarehouses,
-  DrawerEditWarehouse
+  DrawerEditWarehouse,
+  DrawerAddSupplier,
+  DrawerEditSupplier
 } from './Drawers'
 
 import { rows } from 'src/@fake-db/table/static-data'
@@ -28,7 +31,6 @@ const CustomTable = ({
 }) => {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
-  const [selectedParent, setSelectedParent] = useState('')
   const [rowsPerPage, setRowsPerPage] = useState(10)
   const [editDrawerOpen, setEditDrawerOpen] = useState(false)
   const [itemId, setItemId] = useState(null)
@@ -40,11 +42,6 @@ const CustomTable = ({
   const handleEdit = id => {
     setEditDrawerOpen(true)
     setItemId(id)
-  }
-
-  const handleParentChange = newParent => {
-    onParentChange(newParent)
-    setSelectedParent(newParent)
   }
 
   const handleSearchChange = newSearch => {
@@ -79,7 +76,9 @@ const CustomTable = ({
 
   const DrawerList =
     page === 'Ombor' ? (
-      <DrawerAddWarehouses toggleDrawer={toggleDrawer} handleAdd={handleCreateApi} />
+      <DrawerAddWarehouses toggleDrawer={toggleDrawer} />
+    ) : page === 'Yetkazuvchi' ? (
+      <DrawerAddSupplier toggleDrawer={toggleDrawer} />
     ) : (
       <DrawerItems
         toggleDrawer={toggleDrawer}
@@ -108,7 +107,9 @@ const CustomTable = ({
       <DrawerEditMeasurement toggleDrawer={toggleEditDrawer} page={page} itemId={itemId} />
     ) : page === 'Ombor' ? (
       <DrawerEditWarehouse toggleDrawer={toggleEditDrawer} page={page} itemId={itemId} />
-    ) : null
+    ) : (
+      page === 'Yetkazuvchi' && <DrawerEditSupplier toggleDrawer={toggleEditDrawer} itemId={itemId} />
+    )
 
   const columns = [
     {
@@ -157,6 +158,14 @@ const CustomTable = ({
       }
     },
 
+    {
+      flex: 0.35,
+      minWidth: 230,
+      field: 'phone',
+      headerName: 'Telefon Raqami',
+      valueGetter: params => params?.row?.phone_number || 'N/A'
+    },
+
     // Edit button column
     {
       flex: 0.1,
@@ -195,63 +204,7 @@ const CustomTable = ({
       <CardContent>
         <Grid container spacing={6}>
           {page !== "O'lchov" && (
-            <>
-              <Grid item xs={6}>
-                <Grid container spacing={4}>
-                  <Grid item xs={12}>
-                    <Typography variant='h3'>Filter</Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Grid container spacing={4}>
-                      <Grid item xs={10}>
-                        <CustomTextField
-                          select
-                          value={selectedParent}
-                          name='parent'
-                          id='custom-select'
-                          fullWidth
-                          onChange={({ target }) => handleParentChange(target.value)}
-                          SelectProps={{ displayEmpty: true }}
-                        >
-                          <MenuItem disabled value={''}>
-                            <em>{page === 'Ombor' ? 'Masul shaxs' : `Ota ${page} Tanlang`}</em>
-                          </MenuItem>
-                          {page === 'Ombor'
-                            ? dataWithoutQuery?.results
-                                ?.filter(
-                                  (item, index, array) =>
-                                    array.findIndex(i => i?.responsible?.id === item?.responsible?.id) === index
-                                )
-                                ?.map((item, index) => (
-                                  <MenuItem key={index} value={item?.responsible?.id}>
-                                    {`${item?.responsible?.first_name} ${item?.responsible?.last_name}`}
-                                  </MenuItem>
-                                ))
-                            : dataWithoutQuery?.results?.map((parent, index) => (
-                                <MenuItem key={index} value={parent.id}>
-                                  {parent.name}
-                                </MenuItem>
-                              ))}
-                        </CustomTextField>
-                      </Grid>
-                      <Grid item xs={2}>
-                        <Button
-                          variant='contained'
-                          color='primary'
-                          onClick={() => handleParentChange('')}
-                          disabled={selectedParent === ''}
-                        >
-                          Reset
-                        </Button>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                </Grid>
-              </Grid>
-              <Grid item xs={12}>
-                <Divider />
-              </Grid>
-            </>
+            <CustomFilter dataWithoutQuery={dataWithoutQuery} page={page} onParentChange={onParentChange} />
           )}
           <Grid item xs={12} marginBottom={6}>
             <Grid container spacing={6}>
@@ -294,7 +247,8 @@ const CustomTable = ({
                 initialState={{
                   columns: {
                     columnVisibilityModel: {
-                      parent: page !== "O'lchov"
+                      parent: page !== "O'lchov" && page !== 'Yetkazuvchi',
+                      phone: page === 'Yetkazuvchi'
                     }
                   }
                 }}

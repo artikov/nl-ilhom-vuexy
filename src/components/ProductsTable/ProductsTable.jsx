@@ -163,7 +163,7 @@ const ProductsTable = ({
                     </CustomTextField>
                   </Grid>
                   <Grid item>
-                    <Link href='./add-product'>
+                    <Link href='products/add-product'>
                       <Button variant='contained' color='primary'>
                         {`+ Mahsulot Qo'shish`}
                       </Button>

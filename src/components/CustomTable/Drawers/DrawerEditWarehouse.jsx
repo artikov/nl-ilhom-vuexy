@@ -6,7 +6,7 @@ import CustomTextField from 'src/@core/components/mui/text-field'
 import { useGetUsersQuery } from 'src/store/slices/usersApiSlice'
 import { useGetWarehouseQuery, useUpdateWarehouseMutation } from 'src/store/slices/warehousesApiSlice'
 
-const DrawerEditWarehouse = ({ toggleDrawer, handleAdd, itemId }) => {
+const DrawerEditWarehouse = ({ toggleDrawer, itemId }) => {
   const [body, setBody] = useState({ name: '', address: '', responsible: '' })
 
   const { data: users } = useGetUsersQuery()

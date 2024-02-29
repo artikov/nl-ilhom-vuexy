@@ -4,8 +4,8 @@ const navigation = () => [
     icon: 'tabler:apps',
     children: [
       {
-        title: 'Guruhlar',
-        path: '/products/groups'
+        title: 'Kategoriyalar',
+        path: '/products/categories'
       },
       {
         title: 'Brendlar',
@@ -17,7 +17,7 @@ const navigation = () => [
       },
       {
         title: 'Mahsulotlar',
-        path: '/products/products'
+        path: '/products'
       }
     ]
   },
@@ -31,7 +31,7 @@ const navigation = () => [
       },
       {
         title: 'Yetkazib beruvchi',
-        path: '/inventory/distributors'
+        path: '/inventory/suppliers'
       },
       {
         title: 'Mahsulot kirimlari',

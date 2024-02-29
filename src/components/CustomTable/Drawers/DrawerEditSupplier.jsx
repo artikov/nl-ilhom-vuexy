@@ -3,28 +3,35 @@ import { useState } from 'react'
 import { Box, Grid, Button, Divider, Typography, MenuItem } from '@mui/material'
 import CustomTextField from 'src/@core/components/mui/text-field'
 
-import { useGetUsersQuery } from 'src/store/slices/usersApiSlice'
-import { useCreateWarehouseMutation } from 'src/store/slices/warehousesApiSlice'
+import { useUpdateSupplierMutation, useGetSupplierQuery } from 'src/store/slices/suppliersApiSlice'
 
-const DrawerAddWarehouses = ({ toggleDrawer }) => {
-  const [body, setBody] = useState({ name: '', address: '', responsible: '' })
+const DrawerEditSupplier = ({ toggleDrawer, itemId }) => {
+  const [body, setBody] = useState({ name: '', phone_number: '', person_type: '' })
+  const { data: supplier } = useGetSupplierQuery(itemId)
+  const [updateSupplier] = useUpdateSupplierMutation()
 
-  const [createWarehouse] = useCreateWarehouseMutation()
-
-  const { data: users } = useGetUsersQuery()
+  console.log(supplier)
+  console.log(supplier?.person_type)
 
   const handleChange = e => {
     setBody({ ...body, [e.target.name]: e.target.value })
   }
 
   const handleSave = () => {
-    createWarehouse(body)
+    const updatePayload = {
+      id: itemId,
+      name: body.name || supplier?.name,
+      phone_number: body.phone_number || supplier?.phone_number,
+      person_type: body.person_type || supplier?.person_type
+    }
+
+    updateSupplier(updatePayload)
   }
 
   return (
     <Box sx={{ width: 'auto', margin: 6 }} role='presentation'>
       <Grid container justifyContent={'space-between'} marginY={4}>
-        <Typography variant='h3'>Omborxona Qo'shish</Typography>
+        <Typography variant='h3'>Yetkazib Beruvchini O'zgartirish</Typography>
         <Button variant='tonal' color='secondary' onClick={toggleDrawer(false)}>
           X
         </Button>
@@ -33,8 +40,8 @@ const DrawerAddWarehouses = ({ toggleDrawer }) => {
       <Grid container spacing={6} marginY={4}>
         <Grid item xs={12}>
           <CustomTextField
-            label={`Omborxona Nomi`}
-            placeholder={`Omborxona Nomi`}
+            label={`Yetkazib Beruvchi Nomi`}
+            placeholder={supplier?.name}
             name='name'
             value={body.name}
             onChange={handleChange}
@@ -43,9 +50,9 @@ const DrawerAddWarehouses = ({ toggleDrawer }) => {
         </Grid>
         <Grid item xs={12}>
           <CustomTextField
-            label={`Manzil`}
-            placeholder={`Manzil`}
-            name='address'
+            label={`Telefon Raqami`}
+            placeholder={supplier?.phone_number}
+            name='phone_number'
             value={body.address}
             onChange={handleChange}
             fullWidth
@@ -55,22 +62,18 @@ const DrawerAddWarehouses = ({ toggleDrawer }) => {
           <CustomTextField
             select
             fullWidth
-            name='responsible'
-            value={body.user}
+            name='person_type'
             onChange={handleChange}
-            defaultValue=''
+            value={supplier?.person_type || ''}
             id='custom-select'
-            label={`Ma'sul shaxs`}
+            label={`Shaxs Turi`}
             SelectProps={{ displayEmpty: true }}
           >
             <MenuItem disabled value=''>
-              <em>Ma'sul Shaxs</em>
+              <em>Shaxs Turi</em>
             </MenuItem>
-            {users?.results?.map((user, index) => (
-              <MenuItem key={index} value={user.id}>
-                {user.first_name} {user.last_name}
-              </MenuItem>
-            ))}
+            <MenuItem value={'legal_entity'}>Yuridik shaxs</MenuItem>
+            <MenuItem value={'natural_person'}>Jismoniy shaxs</MenuItem>
           </CustomTextField>
         </Grid>
       </Grid>
@@ -90,4 +93,4 @@ const DrawerAddWarehouses = ({ toggleDrawer }) => {
   )
 }
 
-export default DrawerAddWarehouses
+export default DrawerEditSupplier

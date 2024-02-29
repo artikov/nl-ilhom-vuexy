@@ -3,28 +3,25 @@ import { useState } from 'react'
 import { Box, Grid, Button, Divider, Typography, MenuItem } from '@mui/material'
 import CustomTextField from 'src/@core/components/mui/text-field'
 
-import { useGetUsersQuery } from 'src/store/slices/usersApiSlice'
-import { useCreateWarehouseMutation } from 'src/store/slices/warehousesApiSlice'
+import { useAddSupplierMutation } from 'src/store/slices/suppliersApiSlice'
 
-const DrawerAddWarehouses = ({ toggleDrawer }) => {
-  const [body, setBody] = useState({ name: '', address: '', responsible: '' })
+const DrawerAddSupplier = ({ toggleDrawer }) => {
+  const [body, setBody] = useState({ name: '', phone_number: '', person_type: '' })
 
-  const [createWarehouse] = useCreateWarehouseMutation()
-
-  const { data: users } = useGetUsersQuery()
+  const [addSupplier] = useAddSupplierMutation()
 
   const handleChange = e => {
     setBody({ ...body, [e.target.name]: e.target.value })
   }
 
   const handleSave = () => {
-    createWarehouse(body)
+    addSupplier(body)
   }
 
   return (
     <Box sx={{ width: 'auto', margin: 6 }} role='presentation'>
       <Grid container justifyContent={'space-between'} marginY={4}>
-        <Typography variant='h3'>Omborxona Qo'shish</Typography>
+        <Typography variant='h3'>Yetkazib Beruvchi Qo'shish</Typography>
         <Button variant='tonal' color='secondary' onClick={toggleDrawer(false)}>
           X
         </Button>
@@ -33,8 +30,8 @@ const DrawerAddWarehouses = ({ toggleDrawer }) => {
       <Grid container spacing={6} marginY={4}>
         <Grid item xs={12}>
           <CustomTextField
-            label={`Omborxona Nomi`}
-            placeholder={`Omborxona Nomi`}
+            label={`Yetkazib Beruvchi Nomi`}
+            placeholder={`Yetkazib Beruvchi Nomi`}
             name='name'
             value={body.name}
             onChange={handleChange}
@@ -43,10 +40,10 @@ const DrawerAddWarehouses = ({ toggleDrawer }) => {
         </Grid>
         <Grid item xs={12}>
           <CustomTextField
-            label={`Manzil`}
-            placeholder={`Manzil`}
-            name='address'
-            value={body.address}
+            label={`Telefon raqami`}
+            placeholder={`Telefon raqami`}
+            name='phone_number'
+            value={body.phone}
             onChange={handleChange}
             fullWidth
           ></CustomTextField>
@@ -55,8 +52,8 @@ const DrawerAddWarehouses = ({ toggleDrawer }) => {
           <CustomTextField
             select
             fullWidth
-            name='responsible'
-            value={body.user}
+            name='person_type'
+            value={body.person_type}
             onChange={handleChange}
             defaultValue=''
             id='custom-select'
@@ -66,11 +63,8 @@ const DrawerAddWarehouses = ({ toggleDrawer }) => {
             <MenuItem disabled value=''>
               <em>Ma'sul Shaxs</em>
             </MenuItem>
-            {users?.results?.map((user, index) => (
-              <MenuItem key={index} value={user.id}>
-                {user.first_name} {user.last_name}
-              </MenuItem>
-            ))}
+            <MenuItem value={'legal_entity'}>Yuridik shaxs</MenuItem>
+            <MenuItem value={'natural_person'}>Jismoniy shaxs</MenuItem>
           </CustomTextField>
         </Grid>
       </Grid>
@@ -90,4 +84,4 @@ const DrawerAddWarehouses = ({ toggleDrawer }) => {
   )
 }
 
-export default DrawerAddWarehouses
+export default DrawerAddSupplier
