@@ -5,10 +5,16 @@ import { DataGrid } from '@mui/x-data-grid'
 import Icon from 'src/@core/components/icon'
 
 import CustomTextField from 'src/@core/components/mui/text-field'
-import { DrawerItems, DrawerEditBrand, DrawerEditCategory, DrawerEditMeasurement } from './Drawers'
+import {
+  DrawerItems,
+  DrawerEditBrand,
+  DrawerEditCategory,
+  DrawerEditMeasurement,
+  DrawerAddWarehouses,
+  DrawerEditWarehouse
+} from './Drawers'
 
 import { rows } from 'src/@fake-db/table/static-data'
-import DrawerAddWarehouses from './Drawers/DrawerAddWarehouse'
 
 const CustomTable = ({
   data,
@@ -98,9 +104,11 @@ const CustomTable = ({
         itemId={itemId}
         parents={dataWithoutQuery?.results}
       />
-    ) : (
-      page === "O'lchov" && <DrawerEditMeasurement toggleDrawer={toggleEditDrawer} page={page} itemId={itemId} />
-    )
+    ) : page === "O'lchov" ? (
+      <DrawerEditMeasurement toggleDrawer={toggleEditDrawer} page={page} itemId={itemId} />
+    ) : page === 'Ombor' ? (
+      <DrawerEditWarehouse toggleDrawer={toggleEditDrawer} page={page} itemId={itemId} />
+    ) : null
 
   const columns = [
     {
@@ -208,11 +216,22 @@ const CustomTable = ({
                           <MenuItem disabled value={''}>
                             <em>{page === 'Ombor' ? 'Masul shaxs' : `Ota ${page} Tanlang`}</em>
                           </MenuItem>
-                          {dataWithoutQuery?.results?.map((parent, index) => (
-                            <MenuItem key={index} value={parent.id}>
-                              {parent.name}
-                            </MenuItem>
-                          ))}
+                          {page === 'Ombor'
+                            ? dataWithoutQuery?.results
+                                ?.filter(
+                                  (item, index, array) =>
+                                    array.findIndex(i => i?.responsible?.id === item?.responsible?.id) === index
+                                )
+                                ?.map((item, index) => (
+                                  <MenuItem key={index} value={item?.responsible?.id}>
+                                    {`${item?.responsible?.first_name} ${item?.responsible?.last_name}`}
+                                  </MenuItem>
+                                ))
+                            : dataWithoutQuery?.results?.map((parent, index) => (
+                                <MenuItem key={index} value={parent.id}>
+                                  {parent.name}
+                                </MenuItem>
+                              ))}
                         </CustomTextField>
                       </Grid>
                       <Grid item xs={2}>
