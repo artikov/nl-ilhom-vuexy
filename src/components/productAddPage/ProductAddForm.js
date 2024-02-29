@@ -1,10 +1,5 @@
-// ** React Imports
 import { useState } from 'react'
 
-// ** Next Import
-import Link from 'next/link'
-
-// ** MUI Imports
 import {
   Card,
   Grid,
@@ -14,7 +9,11 @@ import {
   Typography,
   FormControlLabel,
   RadioGroup,
-  Radio
+  Radio,
+  Button,
+  FormGroup,
+  Checkbox,
+  Divider
 } from '@mui/material'
 
 // ** Custom Component Import
@@ -68,9 +67,6 @@ const ProductAddForm = () => {
               </CustomTextField>
             </Grid>
             <Grid item xs={12}>
-              <CustomTextField fullWidth label='Tovar Nomi' placeholder='Tovar Nomi' />
-            </Grid>
-            <Grid item xs={12}>
               <CustomTextField
                 select
                 defaultValue=''
@@ -86,6 +82,32 @@ const ProductAddForm = () => {
                 <MenuItem value={20}>Twenty</MenuItem>
                 <MenuItem value={30}>Thirty</MenuItem>
               </CustomTextField>
+            </Grid>
+            <Grid item xs={12}>
+              <CustomTextField fullWidth label='Tovar Nomi' placeholder='Tovar Nomi' />
+            </Grid>
+            <Grid item xs={12}>
+              <CustomTextField fullWidth label='Tovar Turi' placeholder='Tovar Nomi' />
+            </Grid>
+            <Grid item xs={12}>
+              <Grid container spacing={4}>
+                <Grid item xs={10}>
+                  <CustomTextField fullWidth label='Shtrix Kod' placeholder='Shtrix Kod' />
+                </Grid>
+                <Grid item xs={2} marginY={'auto'}>
+                  <Button variant='contained' color='primary' fullWidth sx={{ marginTop: '1rem' }}>
+                    Upload
+                  </Button>
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid item xs={12}>
+              <FormGroup>
+                <FormControlLabel control={<Checkbox />} label='Shtrix kod generatsiya qilish' />
+              </FormGroup>
+            </Grid>
+            <Grid item xs={12}>
+              <Divider />
             </Grid>
             <Grid item xs={12}>
               <Grid item xs={12} sm={6}>

@@ -2,11 +2,10 @@
 import { Card, Grid, Typography, CardHeader, CardContent, Button } from '@mui/material'
 
 // ** Custom Components
-import ProductAddForm from 'src/components/ProductAddView/ProductAddForm'
-import ProductFileUploadForm from 'src/components/ProductAddView/ProductFileUploadForm'
-import ProductTypeForm from 'src/components/ProductAddView/ProductTypeForm'
+import ProductAddForm from 'src/components/productAddPage/ProductAddForm'
+import ProductFileUploadForm from 'src/components/productAddPage/ProductFileUploadForm'
 
-const ProductAdd = () => {
+const addProduct = () => {
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
@@ -17,21 +16,13 @@ const ProductAdd = () => {
           <Grid item xs={12}>
             <ProductAddForm />
           </Grid>
-          <Grid item xs={12}>
-            <Card>
-              <CardHeader title='Rasm'></CardHeader>
-              <CardContent sx={{ border: '1px dashed #EFEEF0', borderRadius: '10px', margin: '0 2rem 2rem 2rem' }}>
-                <ProductFileUploadForm />
-              </CardContent>
-            </Card>
-          </Grid>
         </Grid>
       </Grid>
       <Grid item xs={12} md={4}>
         <Card>
-          <CardHeader title='Tovar Turi'></CardHeader>
-          <CardContent>
-            <ProductTypeForm />
+          <CardHeader title='Rasm'></CardHeader>
+          <CardContent sx={{ border: '1px dashed #EFEEF0', borderRadius: '10px', margin: '0 2rem 2rem 2rem' }}>
+            <ProductFileUploadForm />
           </CardContent>
         </Card>
       </Grid>
@@ -53,4 +44,4 @@ const ProductAdd = () => {
   )
 }
 
-export default ProductAdd
+export default addProduct

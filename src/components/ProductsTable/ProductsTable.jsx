@@ -1,4 +1,6 @@
+/* eslint-disable lines-around-comment */
 import { useState } from 'react'
+import Link from 'next/link'
 
 import { Card, Drawer, Box, Typography, Grid, MenuItem, Divider, CardContent, Button, Pagination } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
@@ -8,7 +10,7 @@ import CustomTextField from 'src/@core/components/mui/text-field'
 
 import { rows } from 'src/@fake-db/table/static-data'
 
-const CustomTable = ({
+const ProductsTable = ({
   data,
   handleCreateApi,
   handleDeleteApi,
@@ -76,18 +78,30 @@ const CustomTable = ({
       headerName: 'ID'
     },
     {
-      flex: 0.35,
+      flex: 0.2,
       minWidth: 200,
       field: 'name',
       headerName: 'Nomi'
     },
 
     {
-      flex: 0.35,
-      minWidth: 230,
+      flex: 0.2,
+      minWidth: 200,
       field: 'parent',
-      headerName: `Parent`,
+      headerName: `Guruh`,
       valueGetter: params => params?.row?.parent?.name || 'N/A'
+    },
+    {
+      flex: 0.2,
+      minWidth: 200,
+      field: 'brand',
+      headerName: `Brend`
+    },
+    {
+      flex: 0.1,
+      minWidth: 200,
+      field: 'status',
+      headerName: `Status`
     },
 
     // Edit button column
@@ -119,14 +133,14 @@ const CustomTable = ({
     <Card>
       <CardContent>
         <Grid container spacing={6}>
-          <Grid item xs={6}>
+          <Grid item xs={12}>
             <Grid container spacing={4}>
               <Grid item xs={12}>
                 <Typography variant='h3'>Filter</Typography>
               </Grid>
               <Grid item xs={12}>
                 <Grid container spacing={4}>
-                  <Grid item xs={10}>
+                  <Grid item xs={4}>
                     <CustomTextField
                       select
                       value={selectedParent}
@@ -146,8 +160,49 @@ const CustomTable = ({
                       ))}
                     </CustomTextField>
                   </Grid>
+                  <Grid item xs={3}>
+                    <CustomTextField
+                      select
+                      defaultValue=''
+                      name='brand'
+                      id='custom-select'
+                      fullWidth
+                      // onChange={({ target }) => handleParentChange(target.value)}
+                      SelectProps={{ displayEmpty: true }}
+                    >
+                      <MenuItem disabled value={''}>
+                        <em>{`Brend`}</em>
+                      </MenuItem>
+                      {dataWithoutQuery?.results?.map((parent, index) => (
+                        <MenuItem key={index} value={parent.id}>
+                          {parent.name}
+                        </MenuItem>
+                      ))}
+                    </CustomTextField>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <CustomTextField
+                      select
+                      defaultValue=''
+                      name='status'
+                      id='custom-select'
+                      fullWidth
+                      // onChange={({ target }) => handleParentChange(target.value)}
+                      SelectProps={{ displayEmpty: true }}
+                    >
+                      <MenuItem disabled value={''}>
+                        <em>{`Status`}</em>
+                      </MenuItem>
+                      {dataWithoutQuery?.results?.map((parent, index) => (
+                        <MenuItem key={index} value={parent.id}>
+                          {parent.name}
+                        </MenuItem>
+                      ))}
+                    </CustomTextField>
+                  </Grid>
                   <Grid item xs={2}>
                     <Button
+                      fullWidth
                       variant='contained'
                       color='primary'
                       onClick={() => handleParentChange('')}
@@ -189,9 +244,11 @@ const CustomTable = ({
                     </CustomTextField>
                   </Grid>
                   <Grid item>
-                    <Button variant='contained' color='primary' onClick={toggleDrawer(true)}>
-                      {`+ Mahsulot Qo'shish`}
-                    </Button>
+                    <Link href='./add-product'>
+                      <Button variant='contained' color='primary'>
+                        {`+ Mahsulot Qo'shish`}
+                      </Button>
+                    </Link>
                   </Grid>
                 </Grid>
               </Grid>
@@ -217,4 +274,4 @@ const CustomTable = ({
   )
 }
 
-export default CustomTable
+export default ProductsTable
