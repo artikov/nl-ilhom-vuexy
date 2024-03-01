@@ -15,9 +15,9 @@ import { rows } from 'src/@fake-db/table/static-data'
 const EntriesTable = ({
   data,
   handleDeleteApi,
-  onCategoryChange,
+  onWarehouseChange,
   onSupplierChange,
-  onActiveChange,
+  onStatusChange,
   onSearchChange,
   search,
   dataWithoutQuery
@@ -57,8 +57,6 @@ const EntriesTable = ({
   const toggleEditDrawer = open => () => {
     setEditDrawerOpen(open)
   }
-
-  console.log(finalData)
 
   const columns = [
     {
@@ -154,10 +152,10 @@ const EntriesTable = ({
       <CardContent>
         <Grid container spacing={6}>
           <EntriesFilters
-            onCategoryChange={onCategoryChange}
-            onActiveChange={onActiveChange}
             onSupplierChange={onSupplierChange}
             dataWithoutQuery={dataWithoutQuery}
+            onWarehouseChange={onWarehouseChange}
+            onStatusChange={onStatusChange}
           />
           <Grid item xs={12} marginBottom={6}>
             <Grid container spacing={6}>

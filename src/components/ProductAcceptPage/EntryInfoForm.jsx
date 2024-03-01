@@ -41,7 +41,7 @@ const EntryInfoForm = () => {
     search
   })
 
-  const [addEntry, { isLoading: isAdding }] = useAddEntryMutation()
+  const [addEntry] = useAddEntryMutation()
 
   const columns = [
     { field: 'id', headerName: 'ID', width: 70 },

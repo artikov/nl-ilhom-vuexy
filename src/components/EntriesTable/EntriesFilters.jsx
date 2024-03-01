@@ -10,18 +10,37 @@ const EntriesFilters = ({ onStatusChange, onWarehouseChange, onSupplierChange })
   const [status, setStatus] = useState('')
   const [selectedWarehouse, setSelectedWarehouse] = useState('')
   const [selectedSupplier, setSelectedSupplier] = useState('')
+  const [filtered, setFiltered] = useState(false)
 
-  const { data: warehouses } = useGetWarehousesQuery()
+  const { data: warehouses } = useGetWarehousesQuery({ responsible: '' })
   const { data: suppliers } = useGetSuppliersQuery({ person_type: '' })
 
-  // const handleStatusChange = event => {
-  //   setStatus(event.target.value)
-  //   onStatusChange(event.target.value)
-  // }
+  const handleStatusChange = event => {
+    setStatus(event.target.value)
+    onStatusChange(event.target.value)
+    setFiltered(true)
+  }
 
   const handleSupplierChange = event => {
     setSelectedSupplier(event.target.value)
     onSupplierChange(event.target.value)
+    setFiltered(true)
+  }
+
+  const handleWarehouseChange = event => {
+    setSelectedWarehouse(event.target.value)
+    onWarehouseChange(event.target.value)
+    setFiltered(true)
+  }
+
+  const handleReset = () => {
+    setSelectedWarehouse('')
+    setSelectedSupplier('')
+    setStatus('')
+    onWarehouseChange('')
+    onSupplierChange('')
+    onStatusChange('')
+    setFiltered(false)
   }
 
   return (
@@ -31,21 +50,21 @@ const EntriesFilters = ({ onStatusChange, onWarehouseChange, onSupplierChange })
         <Grid item xs={12}>
           <Grid container spacing={6}>
             <Grid item xs={12} md={5}>
-              <CustomTextField select fullWidth defaultValue={''}>
+              <CustomTextField select fullWidth defaultValue={''} SelectProps={{ displayEmpty: true }}>
                 <MenuItem disabled value={''}>
                   <em>17/12/2022</em>
                 </MenuItem>
               </CustomTextField>
             </Grid>
             <Grid item xs={12} md={5}>
-              <CustomTextField select fullWidth defaultValue={''}>
+              <CustomTextField select fullWidth defaultValue={''} SelectProps={{ displayEmpty: true }}>
                 <MenuItem disabled value={''}>
                   <em>17/12/2022</em>
                 </MenuItem>
               </CustomTextField>
             </Grid>
             <Grid item xs={12} md={2}>
-              <Button variant='contained' color='primary' fullWidth>
+              <Button variant='contained' color='primary' fullWidth disabled>
                 Reset
               </Button>
             </Grid>
@@ -73,21 +92,44 @@ const EntriesFilters = ({ onStatusChange, onWarehouseChange, onSupplierChange })
               </CustomTextField>
             </Grid>
             <Grid item xs={12} md={3}>
-              <CustomTextField select fullWidth defaultValue={''}>
-                <MenuItem disabled value={''}>
-                  <em>17/12/2022</em>
+              <CustomTextField
+                select
+                defaultValue=''
+                id='custom-select'
+                fullWidth
+                SelectProps={{ displayEmpty: true }}
+                value={selectedWarehouse}
+                onChange={handleWarehouseChange}
+              >
+                <MenuItem disabled value=''>
+                  <em>Omborxonani Tanlang</em>
                 </MenuItem>
+                {warehouses?.results?.map(warehouse => (
+                  <MenuItem key={warehouse.id} value={warehouse.id}>
+                    {warehouse.name}
+                  </MenuItem>
+                ))}
               </CustomTextField>
             </Grid>
             <Grid item xs={12} md={3}>
-              <CustomTextField select fullWidth defaultValue={''}>
-                <MenuItem disabled value={''}>
-                  <em>17/12/2022</em>
+              <CustomTextField
+                select
+                defaultValue=''
+                id='custom-select'
+                fullWidth
+                SelectProps={{ displayEmpty: true }}
+                value={status}
+                onChange={handleStatusChange}
+              >
+                <MenuItem disabled value=''>
+                  <em>Status</em>
                 </MenuItem>
+                <MenuItem value={'in_progress'}>Jarayonda</MenuItem>
+                <MenuItem value={'done'}>Yakunlangan</MenuItem>
               </CustomTextField>
             </Grid>
             <Grid item xs={12} md={2}>
-              <Button variant='contained' color='primary' fullWidth>
+              <Button variant='contained' color='primary' fullWidth onClick={handleReset} disabled={!filtered}>
                 Reset
               </Button>
             </Grid>

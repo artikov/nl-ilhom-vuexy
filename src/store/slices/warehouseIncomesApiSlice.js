@@ -4,10 +4,19 @@ import { apiSlice } from './apiSlice'
 export const entriesApiSlice = apiSlice.injectEndpoints({
   endpoints: builder => ({
     getEntries: builder.query({
-      query: ({ supplier }) => {
-        let url = ENTRIES_URL
+      query: ({ supplier, warehouse, status, search }) => {
+        let url = `${ENTRIES_URL}?`
         if (supplier) {
-          url += `?supplier=${supplier}`
+          url += `supplier=${supplier}`
+        }
+        if (warehouse) {
+          url += `warehouse=${warehouse}`
+        }
+        if (status) {
+          url += `status=${status}`
+        }
+        if (search) {
+          url += `search=${search}`
         }
 
         return url
