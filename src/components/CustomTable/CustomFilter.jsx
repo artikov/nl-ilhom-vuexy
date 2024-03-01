@@ -19,14 +19,14 @@ const CustomFilter = ({ page, dataWithoutQuery, onParentChange }) => {
 
   return (
     <>
-      <Grid item xs={6}>
+      <Grid item xs={12} md={6}>
         <Grid container spacing={4}>
           <Grid item xs={12}>
             <Typography variant='h3'>Filter</Typography>
           </Grid>
           <Grid item xs={12}>
             <Grid container spacing={4}>
-              <Grid item xs={10}>
+              <Grid item xs={12} md={10}>
                 <CustomTextField
                   select
                   value={selectedParent}
@@ -69,10 +69,11 @@ const CustomFilter = ({ page, dataWithoutQuery, onParentChange }) => {
                       ))}
                 </CustomTextField>
               </Grid>
-              <Grid item xs={2}>
+              <Grid item xs={12} md={2}>
                 <Button
                   variant='contained'
                   color='primary'
+                  fullWidth
                   onClick={() => handleParentChange('')}
                   disabled={selectedParent === ''}
                 >

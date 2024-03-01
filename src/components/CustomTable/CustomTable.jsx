@@ -208,19 +208,21 @@ const CustomTable = ({
           )}
           <Grid item xs={12} marginBottom={6}>
             <Grid container spacing={6}>
-              <Grid item xs={12} md={8}>
+              <Grid item xs={12} md={7}>
                 <CustomTextField
                   placeholder='Search'
                   value={search}
                   name='search'
+                  fullWidth
                   onChange={({ target }) => handleSearchChange(target.value)}
                 />
               </Grid>
-              <Grid item xs={12} md={4}>
+              <Grid item xs={12} md={5}>
                 <Grid container spacing={6} justifyContent={'end'}>
-                  <Grid item>
+                  <Grid item xs={12} md={'auto'}>
                     <CustomTextField
                       select
+                      fullWidth
                       defaultValue='10'
                       id='custom-select'
                       SelectProps={{ displayEmpty: true }}
@@ -231,8 +233,8 @@ const CustomTable = ({
                       <MenuItem value={30}>20</MenuItem>
                     </CustomTextField>
                   </Grid>
-                  <Grid item>
-                    <Button variant='contained' color='primary' onClick={toggleDrawer(true)}>
+                  <Grid item xs={12} md={'auto'}>
+                    <Button variant='contained' color='primary' fullWidth onClick={toggleDrawer(true)}>
                       {`+ ${page} Qo'shish`}
                     </Button>
                   </Grid>

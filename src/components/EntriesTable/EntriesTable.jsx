@@ -88,7 +88,7 @@ const EntriesTable = ({
     },
     {
       flex: 0.1,
-      maxWidth: 120,
+      minWidth: 100,
       field: 'status',
       headerName: `Status`,
       renderCell: params =>
@@ -131,27 +131,29 @@ const EntriesTable = ({
       </Drawer> */}
       <CardContent>
         <Grid container spacing={6}>
-          {/* <ProductFilters
+          <EntriesFilters
             onCategoryChange={onCategoryChange}
             onActiveChange={onActiveChange}
             onBrandChange={onBrandChange}
             dataWithoutQuery={dataWithoutQuery}
-          /> */}
+          />
           <Grid item xs={12} marginBottom={6}>
             <Grid container spacing={6}>
-              <Grid item xs={12} md={8}>
+              <Grid item xs={12} md={7}>
                 <CustomTextField
                   placeholder='Search'
+                  fullWidth
                   value={search}
                   name='search'
                   onChange={({ target }) => onSearchChange(target.value)}
                 />
               </Grid>
-              <Grid item xs={12} md={4}>
+              <Grid item xs={12} md={5}>
                 <Grid container spacing={6} justifyContent={'end'}>
-                  <Grid item>
+                  <Grid item xs={12} md={'auto'}>
                     <CustomTextField
                       select
+                      fullWidth
                       defaultValue='10'
                       id='custom-select'
                       SelectProps={{ displayEmpty: true }}
@@ -162,9 +164,9 @@ const EntriesTable = ({
                       <MenuItem value={30}>20</MenuItem>
                     </CustomTextField>
                   </Grid>
-                  <Grid item>
+                  <Grid item xs={12} md={'auto'}>
                     <Link href='./accept-product'>
-                      <Button variant='contained' color='primary'>
+                      <Button variant='contained' color='primary' fullWidth>
                         {`+ Mahsulot Kirim Qilish`}
                       </Button>
                     </Link>

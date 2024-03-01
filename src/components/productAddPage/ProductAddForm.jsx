@@ -160,7 +160,7 @@ const ProductAddForm = () => {
                   </Grid>
                   <Grid item xs={12}>
                     <Grid container spacing={4}>
-                      <Grid item xs={10}>
+                      <Grid item xs={8}>
                         <CustomTextField
                           fullWidth
                           label='Shtrix Kod'
@@ -169,7 +169,7 @@ const ProductAddForm = () => {
                           onChange={({ target }) => setBarcode(target.value)}
                         />
                       </Grid>
-                      <Grid item xs={2} marginY={'auto'}>
+                      <Grid item xs={4} marginY={'auto'}>
                         <Button variant='contained' color='primary' fullWidth sx={{ marginTop: '1rem' }}>
                           Upload
                         </Button>

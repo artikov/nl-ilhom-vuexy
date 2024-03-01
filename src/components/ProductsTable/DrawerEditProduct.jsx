@@ -36,17 +36,17 @@ const DrawerEditProduct = ({ toggleDrawer, itemId }) => {
   const [updateProduct] = useUpdateProductMutation()
   const { data: product, isLoading } = useGetProductQuery(itemId)
 
-  const { data: brands } = useGetBrandsQuery({
+  const { data: brands, isLoading: brandsLoading } = useGetBrandsQuery({
     parent,
     search
   })
 
-  const { data: categories } = useGetCategoriesQuery({
+  const { data: categories, isLoading: categoriesLoading } = useGetCategoriesQuery({
     parent,
     search
   })
 
-  const { data: measurements } = useGetMeasurementsQuery({
+  const { data: measurements, isLoading: measurementsLoading } = useGetMeasurementsQuery({
     search
   })
 
@@ -71,9 +71,9 @@ const DrawerEditProduct = ({ toggleDrawer, itemId }) => {
 
     // Append fields based on the existence of values in body or product
     appendFieldIfExists('name', body.name || product?.name)
-    appendFieldIfExists('category', body.category?.id || product?.category?.id)
-    appendFieldIfExists('unit_measure', body.unit_measure?.id || product?.unit_measure?.id)
-    appendFieldIfExists('brand', body.brand?.id || product?.brand?.id)
+    appendFieldIfExists('category', body.category || product?.category?.id)
+    appendFieldIfExists('unit_measure', body.unit_measure || product?.unit_measure?.id)
+    appendFieldIfExists('brand', body.brand || product?.brand?.id)
     appendFieldIfExists('is_active', body.isActive || product?.isActive)
     appendFieldIfExists('product_type', body.product_type || product?.product_type)
     appendFieldIfExists('image', image)
@@ -124,16 +124,20 @@ const DrawerEditProduct = ({ toggleDrawer, itemId }) => {
               fullWidth
               name='category'
               onChange={handleChange}
-              value={product?.category?.id || ''}
+              defaultValue={product?.category?.id || ''}
               id='custom-select'
               label={`Kategoriyani Tanlang`}
               SelectProps={{ displayEmpty: true }}
             >
-              {categories?.results?.map((item, index) => (
-                <MenuItem key={index} value={item.id}>
-                  {item.name}
-                </MenuItem>
-              ))}
+              {categoriesLoading ? (
+                <CircularProgress />
+              ) : (
+                categories?.results?.map((item, index) => (
+                  <MenuItem key={index} value={item.id}>
+                    {item.name}
+                  </MenuItem>
+                ))
+              )}
             </CustomTextField>
           </Grid>
           <Grid item xs={12}>
@@ -142,16 +146,20 @@ const DrawerEditProduct = ({ toggleDrawer, itemId }) => {
               fullWidth
               name='brand'
               onChange={handleChange}
-              value={product?.brand?.id || ''}
+              defaultValue={product?.brand?.id || ''}
               id='custom-select'
               label={`Brandni Tanlang`}
               SelectProps={{ displayEmpty: true }}
             >
-              {brands?.results?.map((item, index) => (
-                <MenuItem key={index} value={item.id}>
-                  {item.name}
-                </MenuItem>
-              ))}
+              {brandsLoading ? (
+                <CircularProgress />
+              ) : (
+                brands?.results?.map((item, index) => (
+                  <MenuItem key={index} value={item.id}>
+                    {item.name}
+                  </MenuItem>
+                ))
+              )}
             </CustomTextField>
           </Grid>
           <Grid item xs={12}>
@@ -160,16 +168,20 @@ const DrawerEditProduct = ({ toggleDrawer, itemId }) => {
               fullWidth
               name='measurements'
               onChange={handleChange}
-              value={product?.unit_measure?.id || ''}
+              defaultValue={product?.unit_measure?.id || ''}
               id='custom-select'
               label={`O'lchovni Tanlang`}
               SelectProps={{ displayEmpty: true }}
             >
-              {measurements?.results?.map((item, index) => (
-                <MenuItem key={index} value={item.id}>
-                  {item.name}
-                </MenuItem>
-              ))}
+              {measurementsLoading ? (
+                <CircularProgress />
+              ) : (
+                measurements?.results?.map((item, index) => (
+                  <MenuItem key={index} value={item.id}>
+                    {item.name}
+                  </MenuItem>
+                ))
+              )}
             </CustomTextField>
           </Grid>
           <Grid item xs={12}>

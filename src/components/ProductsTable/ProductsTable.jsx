@@ -88,7 +88,7 @@ const ProductsTable = ({
     },
     {
       flex: 0.1,
-      maxWidth: 120,
+      minWidth: 100,
       field: 'status',
       headerName: `Status`,
       renderCell: params =>
@@ -142,6 +142,7 @@ const ProductsTable = ({
               <Grid item xs={12} md={8}>
                 <CustomTextField
                   placeholder='Search'
+                  fullWidth
                   value={search}
                   name='search'
                   onChange={({ target }) => onSearchChange(target.value)}
@@ -149,9 +150,10 @@ const ProductsTable = ({
               </Grid>
               <Grid item xs={12} md={4}>
                 <Grid container spacing={6} justifyContent={'end'}>
-                  <Grid item>
+                  <Grid item xs={12} md={'auto'}>
                     <CustomTextField
                       select
+                      fullWidth
                       defaultValue='10'
                       id='custom-select'
                       SelectProps={{ displayEmpty: true }}
@@ -162,9 +164,9 @@ const ProductsTable = ({
                       <MenuItem value={30}>20</MenuItem>
                     </CustomTextField>
                   </Grid>
-                  <Grid item>
+                  <Grid item xs={12} md={'auto'}>
                     <Link href='products/add-product'>
-                      <Button variant='contained' color='primary'>
+                      <Button variant='contained' color='primary' fullWidth>
                         {`+ Mahsulot Qo'shish`}
                       </Button>
                     </Link>

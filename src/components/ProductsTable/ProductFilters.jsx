@@ -46,7 +46,7 @@ const ProductFilters = ({ onCategoryChange, onBrandChange, onActiveChange, dataW
           </Grid>
           <Grid item xs={12}>
             <Grid container spacing={4}>
-              <Grid item xs={4}>
+              <Grid item xs={12} md={4}>
                 <CustomTextField
                   select
                   value={selectedParent}
@@ -72,7 +72,7 @@ const ProductFilters = ({ onCategoryChange, onBrandChange, onActiveChange, dataW
                     ))}
                 </CustomTextField>
               </Grid>
-              <Grid item xs={3}>
+              <Grid item xs={12} md={3}>
                 <CustomTextField
                   select
                   value={selectedBrand}
@@ -94,7 +94,7 @@ const ProductFilters = ({ onCategoryChange, onBrandChange, onActiveChange, dataW
                     ))}
                 </CustomTextField>
               </Grid>
-              <Grid item xs={3}>
+              <Grid item xs={12} md={3}>
                 <CustomTextField
                   select
                   value={selectedStatus}
@@ -111,7 +111,7 @@ const ProductFilters = ({ onCategoryChange, onBrandChange, onActiveChange, dataW
                   <MenuItem value={false}>Inactive</MenuItem>
                 </CustomTextField>
               </Grid>
-              <Grid item xs={2}>
+              <Grid item xs={12} md={2}>
                 <Button
                   fullWidth
                   variant='contained'
