@@ -11,21 +11,6 @@ const index = () => {
       <Grid item xs={12}>
         <EntryInfoForm />
       </Grid>
-
-      <Grid item xs={12}>
-        <Grid container spacing={4}>
-          <Grid item>
-            <Button variant='contained' color='primary'>
-              Qabul Qilish
-            </Button>
-          </Grid>
-          <Grid item>
-            <Button variant='tonal' color='error'>
-              Bekor Qilish
-            </Button>
-          </Grid>
-        </Grid>
-      </Grid>
     </Grid>
   )
 }

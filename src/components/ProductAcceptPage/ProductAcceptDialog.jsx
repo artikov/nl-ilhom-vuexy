@@ -136,7 +136,7 @@ const ProductAcceptDialog = ({ dialogOpen, onDialogClose, itemId }) => {
       </DialogContent>
       <DialogActions className='dialog-actions-dense'>
         <Grid container spacing={6} alignItems={'center'}>
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6}>
             <FormGroup row>
               <FormControlLabel
                 label='Seriya Raqam Generatsiya Qilish'
@@ -148,7 +148,7 @@ const ProductAcceptDialog = ({ dialogOpen, onDialogClose, itemId }) => {
               />
             </FormGroup>
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6}>
             <Grid container spacing={6} justifyContent={'end'}>
               <Grid item>
                 <Button variant='contained' onClick={handleClose}>

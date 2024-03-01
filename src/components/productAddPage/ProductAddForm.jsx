@@ -20,7 +20,7 @@ import {
 } from '@mui/material'
 
 import CustomTextField from 'src/@core/components/mui/text-field'
-import ProductFileUploadForm from 'src/components/ProductAddPage/ProductFileUploadForm'
+import ProductFileUploadForm from './ProductFileUploadForm'
 
 import { useGetCategoriesQuery } from '../../store/slices/categoriesApiSlice'
 import { useGetBrandsQuery } from 'src/store/slices/brandsApiSlice'
