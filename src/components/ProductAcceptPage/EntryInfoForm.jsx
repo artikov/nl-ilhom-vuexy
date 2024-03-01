@@ -26,6 +26,8 @@ const EntryInfoForm = () => {
   const [selectedProduct, setSelectedProduct] = useState('')
   const [isSearchOpen, setIsSearchOpen] = useState(false)
 
+  console.log(quantity[10])
+
   const person_type = ''
   const responsible = ''
 
@@ -113,7 +115,7 @@ const EntryInfoForm = () => {
       supplier: selectedSupplier,
       warehouse: selectedWarehouse,
       status: selectedStatus,
-      products: rows.map(row => ({
+      warehouse_items: rows.map(row => ({
         product: row.id,
         quantity: parseInt(quantity[row.id], 10),
         price: parseInt(price[row.id], 10),
@@ -122,7 +124,8 @@ const EntryInfoForm = () => {
     }
 
     console.log(submitData)
-    addEntry(submitData)
+
+    // addEntry(submitData)
   }
 
   return (
