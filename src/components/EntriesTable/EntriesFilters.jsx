@@ -1,7 +1,29 @@
+import { useState } from 'react'
+
 import { Grid, MenuItem, Typography, Divider, Button } from '@mui/material'
 import CustomTextField from 'src/@core/components/mui/text-field'
 
-const EntriesFilters = () => {
+import { useGetWarehousesQuery } from 'src/store/slices/warehousesApiSlice'
+import { useGetSuppliersQuery } from 'src/store/slices/suppliersApiSlice'
+
+const EntriesFilters = ({ onStatusChange, onWarehouseChange, onSupplierChange }) => {
+  const [status, setStatus] = useState('')
+  const [selectedWarehouse, setSelectedWarehouse] = useState('')
+  const [selectedSupplier, setSelectedSupplier] = useState('')
+
+  const { data: warehouses } = useGetWarehousesQuery()
+  const { data: suppliers } = useGetSuppliersQuery({ person_type: '' })
+
+  // const handleStatusChange = event => {
+  //   setStatus(event.target.value)
+  //   onStatusChange(event.target.value)
+  // }
+
+  const handleSupplierChange = event => {
+    setSelectedSupplier(event.target.value)
+    onSupplierChange(event.target.value)
+  }
+
   return (
     <Grid item xs={12}>
       <Typography variant='h3'>Filter</Typography>
@@ -31,10 +53,23 @@ const EntriesFilters = () => {
               <Divider />
             </Grid>
             <Grid item xs={12} md={4}>
-              <CustomTextField select fullWidth defaultValue={''}>
-                <MenuItem disabled value={''}>
-                  <em>17/12/2022</em>
+              <CustomTextField
+                select
+                defaultValue=''
+                id='custom-select'
+                fullWidth
+                SelectProps={{ displayEmpty: true }}
+                value={selectedSupplier}
+                onChange={handleSupplierChange}
+              >
+                <MenuItem disabled value=''>
+                  <em>Yetkazib Beruvchini Tanlang</em>
                 </MenuItem>
+                {suppliers?.results?.map(supplier => (
+                  <MenuItem key={supplier.id} value={supplier.id}>
+                    {supplier.name}
+                  </MenuItem>
+                ))}
               </CustomTextField>
             </Grid>
             <Grid item xs={12} md={3}>

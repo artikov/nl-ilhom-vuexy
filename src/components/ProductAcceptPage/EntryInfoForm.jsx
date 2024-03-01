@@ -10,6 +10,7 @@ import ProductAcceptDialog from './ProductAcceptDialog'
 import { useGetSuppliersQuery } from 'src/store/slices/suppliersApiSlice'
 import { useGetWarehousesQuery } from 'src/store/slices/warehousesApiSlice'
 import { useGetProductsQuery } from 'src/store/slices/productsApiSlice'
+import { useAddEntryMutation } from 'src/store/slices/warehouseIncomesApiSlice'
 
 const EntryInfoForm = () => {
   const [rows, setRows] = useState([])
@@ -25,12 +26,6 @@ const EntryInfoForm = () => {
   const [selectedProduct, setSelectedProduct] = useState('')
   const [isSearchOpen, setIsSearchOpen] = useState(false)
 
-  console.log('selectedSupplier', selectedSupplier)
-  console.log('selectedWarehouse', selectedWarehouse)
-  console.log('selectedStatus', selectedStatus)
-  console.log('selectedProduct', selectedProduct)
-  console.log('search', search)
-
   const person_type = ''
   const responsible = ''
 
@@ -45,6 +40,8 @@ const EntryInfoForm = () => {
   const { data: products, isLoading: productsLoading } = useGetProductsQuery({
     search
   })
+
+  const [addEntry, { isLoading: isAdding }] = useAddEntryMutation()
 
   const columns = [
     { field: 'id', headerName: 'ID', width: 70 },
@@ -118,13 +115,14 @@ const EntryInfoForm = () => {
       status: selectedStatus,
       products: rows.map(row => ({
         product: row.id,
-        quantity: quantity[row.id],
-        price: price[row.id],
-        selling_price: sellingPrice[row.id]
+        quantity: parseInt(quantity[row.id], 10),
+        price: parseInt(price[row.id], 10),
+        selling_price: parseInt(sellingPrice[row.id], 10)
       }))
     }
 
     console.log(submitData)
+    addEntry(submitData)
   }
 
   return (

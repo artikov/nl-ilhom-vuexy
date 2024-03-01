@@ -16,7 +16,7 @@ const EntriesTable = ({
   data,
   handleDeleteApi,
   onCategoryChange,
-  onBrandChange,
+  onSupplierChange,
   onActiveChange,
   onSearchChange,
   search,
@@ -58,6 +58,8 @@ const EntriesTable = ({
     setEditDrawerOpen(open)
   }
 
+  console.log(finalData)
+
   const columns = [
     {
       flex: 0.1,
@@ -69,7 +71,23 @@ const EntriesTable = ({
       flex: 0.2,
       minWidth: 200,
       field: 'date',
-      headerName: 'Sana'
+      headerName: 'Sana',
+      valueGetter: params => {
+        const rawDate = params?.row?.created_at
+        if (rawDate) {
+          const formattedDate = new Intl.DateTimeFormat('uz', {
+            year: 'numeric',
+            month: 'numeric',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric'
+          }).format(new Date(rawDate))
+
+          return formattedDate
+        }
+
+        return 'N/A'
+      }
     },
 
     {
@@ -84,15 +102,19 @@ const EntriesTable = ({
       minWidth: 200,
       field: 'warehouse',
       headerName: `Omborxona`,
-      valueGetter: params => params?.row?.brand?.name || 'N/A'
+      valueGetter: params => params?.row?.warehouse?.name || 'N/A'
     },
     {
       flex: 0.1,
-      minWidth: 100,
+      width: 150,
       field: 'status',
       headerName: `Status`,
       renderCell: params =>
-        params?.row?.status ? <Chip label='Active' color='success' /> : <Chip label='Inactive' color='error' />
+        params?.row?.status === 'done' ? (
+          <Chip label='Complete' color='success' />
+        ) : (
+          <Chip label='Pending' color='warning' />
+        )
     },
 
     // Edit button column
@@ -134,7 +156,7 @@ const EntriesTable = ({
           <EntriesFilters
             onCategoryChange={onCategoryChange}
             onActiveChange={onActiveChange}
-            onBrandChange={onBrandChange}
+            onSupplierChange={onSupplierChange}
             dataWithoutQuery={dataWithoutQuery}
           />
           <Grid item xs={12} marginBottom={6}>
