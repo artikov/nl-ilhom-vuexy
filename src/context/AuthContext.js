@@ -31,16 +31,37 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     const initAuth = async () => {
       const storedToken = window.localStorage.getItem(authConfig.storageTokenKeyName)
+      const storedRefreshToken = window.localStorage.getItem(authConfig.storageRefreshTokenKeyName)
+
       if (storedToken) {
         setLoading(true)
-        await axios
-          .get(authConfig.meEndpoint, {
-            headers: {
-              Authorization: `Bearer ${storedToken}`
-            }
-          })
-          .then(async response => {
-            setLoading(false)
+
+        // Function to refresh the token
+        const refreshAccessToken = async () => {
+          try {
+            const response = await axios.post(authConfig.refreshEndpoint, {
+              refresh_token: storedRefreshToken
+            })
+
+            const newAccessToken = response.data.access
+            window.localStorage.setItem(authConfig.storageTokenKeyName, newAccessToken)
+
+            return newAccessToken
+          } catch (error) {
+            console.log('Error refreshing token:', error)
+            throw error // You may want to handle this more gracefully based on your application's needs
+          }
+        }
+
+        // Function to handle initial authentication
+        const authenticateUser = async () => {
+          try {
+            const response = await axios.get(authConfig.meEndpoint, {
+              headers: {
+                Authorization: `Bearer ${storedToken}`
+              }
+            })
+
             setUser({
               id: 1,
               role: 'admin',
@@ -48,25 +69,60 @@ const AuthProvider = ({ children }) => {
               username: 'johndoe',
               ...response.data
             })
-          })
-          .catch(error => {
-            console.log(error)
-            localStorage.removeItem('userData')
-            localStorage.removeItem('refreshToken')
-            localStorage.removeItem('accessToken')
-            setUser(null)
+
             setLoading(false)
-            if (authConfig.onTokenExpiration === 'logout' && !router.pathname.includes('login')) {
-              router.replace('/login')
+          } catch (error) {
+            console.log('Error verifying access token:', error)
+
+            // Handle token expiration by refreshing the token
+            if (authConfig.onTokenExpiration === 'refresh') {
+              try {
+                const newAccessToken = await refreshAccessToken()
+
+                // Retry the original request with the new access token
+                const response = await axios.get(authConfig.meEndpoint, {
+                  headers: {
+                    Authorization: `Bearer ${newAccessToken}`
+                  }
+                })
+
+                setUser({
+                  id: 1,
+                  role: 'admin',
+                  fullName: 'John Doe',
+                  username: 'johndoe',
+                  ...response.data
+                })
+
+                setLoading(false)
+              } catch (refreshError) {
+                console.log('Error refreshing token:', refreshError)
+                handleLogout() // Log out the user if token refresh fails
+              }
+            } else {
+              // Handle other scenarios (e.g., logout immediately)
+              localStorage.removeItem('userData')
+              localStorage.removeItem('refreshToken')
+              localStorage.removeItem('accessToken')
+              setUser(null)
+              setLoading(false)
+
+              if (!router.pathname.includes('login')) {
+                router.replace('/login')
+              }
             }
-          })
+          }
+        }
+
+        await authenticateUser()
       } else {
         setLoading(false)
       }
     }
+
     initAuth()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [router])
 
   const handleLogin = (params, errorCallback) => {
     axios
