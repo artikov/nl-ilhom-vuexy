@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { Box, Grid, Button, Divider, Typography, MenuItem } from '@mui/material'
 import CustomTextField from 'src/@core/components/mui/text-field'
 
-const DrawerItems = ({ toggleDrawer, page, parents, handleAdd }) => {
+const DrawerAddItem = ({ toggleDrawer, page, parents, handleAdd }) => {
   const [body, setBody] = useState({ name: '', parent: '' })
 
   const handleChange = e => {
@@ -44,11 +44,11 @@ const DrawerItems = ({ toggleDrawer, page, parents, handleAdd }) => {
               onChange={handleChange}
               defaultValue=''
               id='custom-select'
-              label={`Ota ${page} Tanlang`}
+              label={`Asosiy ${page} Tanlang`}
               SelectProps={{ displayEmpty: true }}
             >
               <MenuItem disabled value=''>
-                <em>Ota {page} Tanlang</em>
+                <em>Asosiy {page} Tanlang</em>
               </MenuItem>
               {parents?.map((parent, index) => (
                 <MenuItem key={index} value={parent.id}>
@@ -75,4 +75,4 @@ const DrawerItems = ({ toggleDrawer, page, parents, handleAdd }) => {
   )
 }
 
-export default DrawerItems
+export default DrawerAddItem

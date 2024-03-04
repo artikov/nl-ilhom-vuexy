@@ -59,7 +59,7 @@ const ProductFilters = ({ onCategoryChange, onBrandChange, onActiveChange, dataW
                   SelectProps={{ displayEmpty: true }}
                 >
                   <MenuItem disabled value={''}>
-                    <em>{`Parent Tanlang`}</em>
+                    <em>{`Kategoriya Tanlang`}</em>
                   </MenuItem>
                   {dataWithoutQuery?.results
                     ?.filter(

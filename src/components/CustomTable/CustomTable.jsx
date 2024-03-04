@@ -7,7 +7,7 @@ import Icon from 'src/@core/components/icon'
 import CustomTextField from 'src/@core/components/mui/text-field'
 import CustomFilter from 'src/components/CustomTable/CustomFilter'
 import {
-  DrawerItems,
+  DrawerAddItem,
   DrawerEditBrand,
   DrawerEditCategory,
   DrawerEditMeasurement,
@@ -80,7 +80,7 @@ const CustomTable = ({
     ) : page === 'Yetkazuvchi' ? (
       <DrawerAddSupplier toggleDrawer={toggleDrawer} />
     ) : (
-      <DrawerItems
+      <DrawerAddItem
         toggleDrawer={toggleDrawer}
         page={page}
         handleAdd={handleCreateApi}
@@ -96,7 +96,7 @@ const CustomTable = ({
         itemId={itemId}
         parents={dataWithoutQuery?.results}
       />
-    ) : page === 'Guruh' ? (
+    ) : page === 'Kategoriya' ? (
       <DrawerEditCategory
         toggleDrawer={toggleEditDrawer}
         page={page}
@@ -129,7 +129,7 @@ const CustomTable = ({
       flex: 0.35,
       minWidth: 230,
       field: 'parent',
-      headerName: page === 'Ombor' ? 'Masul shaxs' : `Ota ${page}`,
+      headerName: page === 'Ombor' ? 'Masul shaxs' : `Asosiy ${page}`,
       valueGetter: params => {
         if (page === 'Ombor') {
           const responsible = params?.row?.responsible

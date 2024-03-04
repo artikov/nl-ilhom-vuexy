@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 
 import { Typography, Grid, CircularProgress } from '@mui/material'
 
-import ProductsTable from 'src/components/ProductsTable/ProductsTable'
+import ProductsTable from 'src/components/ProductsPage/ProductsTable'
 
 import { useGetProductsQuery, useDeleteProductMutation } from 'src/store/slices/productsApiSlice'
 

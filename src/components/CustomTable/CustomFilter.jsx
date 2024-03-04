@@ -42,7 +42,7 @@ const CustomFilter = ({ page, dataWithoutQuery, onParentChange }) => {
                         ? 'Masul shaxs'
                         : page === 'Yetkazuvchi'
                         ? 'Yetkazuvchi Turini Tanlang'
-                        : `Ota ${page} Tanlang`}
+                        : `Asosiy ${page} Tanlang`}
                     </em>
                   </MenuItem>
                   {page === 'Ombor'

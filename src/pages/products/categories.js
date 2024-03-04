@@ -32,14 +32,14 @@ const groups = () => {
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
-        <Typography variant='h1'>Guruhlar</Typography>
+        <Typography variant='h1'>Kategoriyalar</Typography>
       </Grid>
       <Grid item xs={12}>
         {isLoading ? (
           <CircularProgress />
         ) : (
           <CustomTable
-            page={'Guruh'}
+            page={'Kategoriya'}
             data={categories?.results}
             handleCreateApi={createCategory}
             handleDeleteApi={deleteCategory}

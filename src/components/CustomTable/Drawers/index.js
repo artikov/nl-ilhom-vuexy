@@ -1,5 +1,5 @@
 import DrawerEditBrand from './DrawerEditBrand'
-import DrawerItems from './DrawerItems'
+import DrawerAddItem from './DrawerAddItem'
 import DrawerEditCategory from './DrawerEditCategory'
 import DrawerEditMeasurement from './DrawerEditMeasurement'
 import DrawerAddWarehouses from './DrawerAddWarehouse'
@@ -9,7 +9,7 @@ import DrawerEditSupplier from './DrawerEditSupplier'
 
 export {
   DrawerEditBrand,
-  DrawerItems,
+  DrawerAddItem,
   DrawerEditCategory,
   DrawerEditMeasurement,
   DrawerAddWarehouses,

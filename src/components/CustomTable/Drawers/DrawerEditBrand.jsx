@@ -58,7 +58,7 @@ const DrawerEditBrand = ({ toggleDrawer, page, parents, itemId }) => {
               onChange={handleChange}
               defaultValue={brand?.parent?.id || ''}
               id='custom-select'
-              label={`Parent ${page} Tanlang`}
+              label={`Asosiy ${page} Tanlang`}
               SelectProps={{ displayEmpty: true }}
             >
               {parents?.map((parent, index) => (
