@@ -13,7 +13,6 @@ const entries = () => {
   const [status, setStatus] = useState('')
   const [search, setSearch] = useState('')
   const { data, isLoading } = useGetEntriesQuery({ supplier, warehouse, status, search })
-  console.log(data)
 
   return (
     <Grid container spacing={6}>

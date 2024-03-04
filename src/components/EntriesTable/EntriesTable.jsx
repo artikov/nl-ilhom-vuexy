@@ -93,7 +93,7 @@ const EntriesTable = ({
       minWidth: 200,
       field: 'quantity',
       headerName: `Miqdor`,
-      valueGetter: params => params?.row?.category?.name || 'N/A'
+      valueGetter: params => params?.row?.quantity || 'N/A'
     },
     {
       flex: 0.2,

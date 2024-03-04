@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 import { Card, Grid, CardHeader, CardContent, MenuItem, Button, CircularProgress } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
@@ -13,6 +15,7 @@ import { useGetProductsQuery } from 'src/store/slices/productsApiSlice'
 import { useAddEntryMutation } from 'src/store/slices/warehouseIncomesApiSlice'
 
 const EntryInfoForm = () => {
+  const router = useRouter()
   const [rows, setRows] = useState([])
   const [search, setSearch] = useState('')
   const [quantity, setQuantity] = useState({})
@@ -25,8 +28,6 @@ const EntryInfoForm = () => {
   const [selectedStatus, setSelectedStatus] = useState('')
   const [selectedProduct, setSelectedProduct] = useState('')
   const [isSearchOpen, setIsSearchOpen] = useState(false)
-
-  console.log(quantity[10])
 
   const person_type = ''
   const responsible = ''
@@ -43,16 +44,16 @@ const EntryInfoForm = () => {
     search
   })
 
-  const [addEntry] = useAddEntryMutation()
+  const [addEntry, { isError }] = useAddEntryMutation()
 
   const columns = [
-    { field: 'id', headerName: 'ID', width: 70 },
-    { field: 'name', headerName: 'Nomi', width: 230 },
+    { flex: 0.1, field: 'id', headerName: 'ID', width: 70 },
+    { flex: 0.3, field: 'name', headerName: 'Nomi', minWidth: 230 },
     {
       field: 'quantity',
       headerName: 'Miqdori',
       sortable: false,
-      width: 200,
+      minWidth: 200,
       renderCell: params => (
         <CustomTextField
           value={quantity[params.id] || ''}
@@ -64,23 +65,11 @@ const EntryInfoForm = () => {
       field: 'price',
       headerName: 'Kirim Narxi',
       sortable: false,
-      width: 200,
+      minWidth: 200,
       renderCell: params => (
         <CustomTextField
           value={price[params.id] || ''}
           onChange={e => setPrice({ ...price, [params.id]: e.target.value })}
-        />
-      )
-    },
-    {
-      field: 'sellingPrice',
-      headerName: 'Sotish Narxi',
-      sortable: false,
-      width: 200,
-      renderCell: params => (
-        <CustomTextField
-          value={sellingPrice[params.id] || ''}
-          onChange={e => setSellingPrice({ ...sellingPrice, [params.id]: e.target.value })}
         />
       )
     },
@@ -110,7 +99,9 @@ const EntryInfoForm = () => {
     setIsDialogOpen(true)
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async e => {
+    e.preventDefault()
+
     const submitData = {
       supplier: selectedSupplier,
       warehouse: selectedWarehouse,
@@ -118,14 +109,19 @@ const EntryInfoForm = () => {
       warehouse_items: rows.map(row => ({
         product: row.id,
         quantity: parseInt(quantity[row.id], 10),
-        price: parseInt(price[row.id], 10),
-        selling_price: parseInt(sellingPrice[row.id], 10)
+        input_price: parseInt(price[row.id], 10),
+        selling_price: 10000,
+        item_identities: [{}]
       }))
     }
 
-    console.log(submitData)
+    // console.log(submitData)
 
-    // addEntry(submitData)
+    await addEntry(submitData)
+
+    if (!isError) {
+      router.push('./entries')
+    }
   }
 
   return (
@@ -211,7 +207,7 @@ const EntryInfoForm = () => {
                   <Grid item xs={12} md={8}>
                     <CustomAutocomplete
                       open={isSearchOpen}
-                      options={products?.results}
+                      options={products?.results || []}
                       loading={productsLoading}
                       onOpen={() => setIsSearchOpen(true)}
                       onClose={() => setIsSearchOpen(false)}
@@ -266,9 +262,11 @@ const EntryInfoForm = () => {
             </Button>
           </Grid>
           <Grid item>
-            <Button variant='tonal' color='error'>
-              Bekor Qilish
-            </Button>
+            <Link href='./entries'>
+              <Button variant='tonal' color='error'>
+                Bekor Qilish
+              </Button>
+            </Link>
           </Grid>
         </Grid>
       </Grid>

@@ -29,8 +29,9 @@ const rows = [
 const ProductAcceptDialog = ({ dialogOpen, onDialogClose, itemId }) => {
   const [serialNumber, setSerialNumber] = useState({})
   const [markingNumber, setMarkingNumber] = useState({})
-  const [generateSerialNumber, setGenerateSerialNumber] = useState(false)
-  const [generateMarkingNumber, setGenerateMarkingNumber] = useState(false)
+
+  // const [generateSerialNumber, setGenerateSerialNumber] = useState(false)
+  // const [generateMarkingNumber, setGenerateMarkingNumber] = useState(false)
 
   const columns = [
     { field: 'id', headerName: 'ID', width: 70 },
@@ -51,22 +52,23 @@ const ProductAcceptDialog = ({ dialogOpen, onDialogClose, itemId }) => {
         </>
       )
     },
-    {
-      field: 'generateSerialNumber',
-      headerName: 'Generate',
-      width: 150,
-      renderCell: params => (
-        <Checkbox
-          checked={generateSerialNumber[params.id] || false}
-          onChange={e =>
-            setGenerateSerialNumber({
-              ...generateSerialNumber,
-              [params.id]: e.target.checked
-            })
-          }
-        />
-      )
-    },
+
+    // {
+    //   field: 'generateSerialNumber',
+    //   headerName: 'Generate',
+    //   width: 150,
+    //   renderCell: params => (
+    //     <Checkbox
+    //       checked={generateSerialNumber[params.id] || false}
+    //       onChange={e =>
+    //         setGenerateSerialNumber({
+    //           ...generateSerialNumber,
+    //           [params.id]: e.target.checked
+    //         })
+    //       }
+    //     />
+    //   )
+    // },
     {
       field: 'markingNumber',
       headerName: 'Markirovka Raqami',
@@ -83,23 +85,24 @@ const ProductAcceptDialog = ({ dialogOpen, onDialogClose, itemId }) => {
           </Button>
         </>
       )
-    },
-    {
-      field: 'generateMarkingNumber',
-      headerName: 'Generate',
-      width: 150,
-      renderCell: params => (
-        <Checkbox
-          checked={generateMarkingNumber[params.id] || false}
-          onChange={e =>
-            setGenerateMarkingNumber({
-              ...generateMarkingNumber,
-              [params.id]: e.target.checked
-            })
-          }
-        />
-      )
     }
+
+    // {
+    //   field: 'generateMarkingNumber',
+    //   headerName: 'Generate',
+    //   width: 150,
+    //   renderCell: params => (
+    //     <Checkbox
+    //       checked={generateMarkingNumber[params.id] || false}
+    //       onChange={e =>
+    //         setGenerateMarkingNumber({
+    //           ...generateMarkingNumber,
+    //           [params.id]: e.target.checked
+    //         })
+    //       }
+    //     />
+    //   )
+    // }
   ]
 
   const handleClose = () => {
@@ -110,10 +113,10 @@ const ProductAcceptDialog = ({ dialogOpen, onDialogClose, itemId }) => {
     <Dialog open={dialogOpen} onClose={handleClose} aria-labelledby='form-dialog-title' maxWidth={'lg'}>
       <DialogTitle id='form-dialog-title'>
         <Grid container alignItems={'center'}>
-          <Grid item xs={6}>
+          <Grid item xs={10}>
             <Typography variant='h4'>Seriya / Markirovka raqamlari</Typography>
           </Grid>
-          <Grid item xs={6} textAlign='right'>
+          <Grid item xs={2} textAlign='right'>
             <Button variant='contained' color='secondary' onClick={handleClose}>
               X
             </Button>
@@ -137,7 +140,7 @@ const ProductAcceptDialog = ({ dialogOpen, onDialogClose, itemId }) => {
       <DialogActions className='dialog-actions-dense'>
         <Grid container spacing={6} alignItems={'center'}>
           <Grid item xs={12} md={6}>
-            <FormGroup row>
+            {/* <FormGroup row>
               <FormControlLabel
                 label='Seriya Raqam Generatsiya Qilish'
                 control={<Checkbox checked={true} onChange={handleClose} name='controlled' />}
@@ -146,7 +149,7 @@ const ProductAcceptDialog = ({ dialogOpen, onDialogClose, itemId }) => {
                 label='Markirovka Raqam Generatsiya Qilish'
                 control={<Checkbox checked={true} onChange={handleClose} name='controlled' />}
               />
-            </FormGroup>
+            </FormGroup> */}
           </Grid>
           <Grid item xs={12} md={6}>
             <Grid container spacing={6} justifyContent={'end'}>

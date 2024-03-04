@@ -61,7 +61,7 @@ const ProductAddForm = () => {
     formData.append('is_active', status)
     formData.append('image', image)
 
-    console.log(formData)
+    // console.log(formData)
     await addProduct(formData)
 
     if (!isError) {
