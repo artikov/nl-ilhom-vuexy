@@ -54,5 +54,10 @@ export const entriesApiSlice = apiSlice.injectEndpoints({
   })
 })
 
-export const { useGetEntriesQuery, useAddEntryMutation, useUpdateEntryMutation, useDeleteEntryMutation } =
-  entriesApiSlice
+export const {
+  useGetEntriesQuery,
+  useGetEntryQuery,
+  useAddEntryMutation,
+  useUpdateEntryMutation,
+  useDeleteEntryMutation
+} = entriesApiSlice

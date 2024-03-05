@@ -14,80 +14,84 @@ import {
 } from '@mui/material'
 import CustomTextField from 'src/@core/components/mui/text-field'
 
-import { useUpdateProductMutation, useGetProductQuery } from 'src/store/slices/productsApiSlice'
-import { useGetBrandsQuery } from 'src/store/slices/brandsApiSlice'
-import { useGetCategoriesQuery } from 'src/store/slices/categoriesApiSlice'
-import { useGetMeasurementsQuery } from 'src/store/slices/measurementsApiSlice'
+import { useGetEntryQuery, useUpdateEntryMutation } from 'src/store/slices/warehouseIncomesApiSlice'
+import { useGetWarehousesQuery } from 'src/store/slices/warehousesApiSlice'
+import { useGetSuppliersQuery } from 'src/store/slices/suppliersApiSlice'
+import { borderTop } from '@mui/system'
 
 const DrawerEditEntry = ({ toggleDrawer, itemId }) => {
   const [body, setBody] = useState({
-    name: '',
-    product_type: '',
-    brand: '',
-    category: '',
-    unit_measure: '',
-    isActive: ''
+    warehouse: '',
+    supplier: '',
+    status: ''
   })
-  const [image, setImage] = useState(null)
-  const parent = ''
-  const search = ''
+  const [products, setProducts] = useState([])
 
-  const [updateProduct] = useUpdateProductMutation()
-  const { data: product, isLoading } = useGetProductQuery(itemId)
+  const responsible = ''
+  const person_type = ''
 
-  const { data: brands, isLoading: brandsLoading } = useGetBrandsQuery({
-    parent,
-    search
-  })
+  const [updateEntry, { isError }] = useUpdateEntryMutation()
+  const { data: warehouses, isLoading: warehousesLoading } = useGetWarehousesQuery({ responsible })
+  const { data: suppliers, isLoading: suppliersLoading } = useGetSuppliersQuery({ person_type })
+  const { data: entry, isLoading } = useGetEntryQuery(itemId)
+  console.log(entry)
 
-  const { data: categories, isLoading: categoriesLoading } = useGetCategoriesQuery({
-    parent,
-    search
-  })
-
-  const { data: measurements, isLoading: measurementsLoading } = useGetMeasurementsQuery({
-    search
-  })
-
-  const handleChange = e => {
+  const handleChange = (e, productId) => {
     const newValue = e.target.type === 'checkbox' ? e.target.checked : e.target.value
 
-    setBody(prevBody => ({
-      ...prevBody,
-      [e.target.name]: newValue
-    }))
+    if (e.target.name !== 'quantity' && e.target.name !== 'input_price') {
+      setBody(prevBody => ({
+        ...prevBody,
+        [e.target.name]: newValue
+      }))
+    } else {
+      // Check if the product already exists in the array
+      const existingProductIndex = products.findIndex(product => product.id === productId)
+
+      if (existingProductIndex !== -1) {
+        // Update the existing product in the array
+        const updatedProducts = [...products]
+        updatedProducts[existingProductIndex] = {
+          ...updatedProducts[existingProductIndex],
+          id: productId,
+          quantity:
+            e.target.name === 'quantity' ? parseInt(newValue, 10) : updatedProducts[existingProductIndex].quantity,
+          item_price:
+            e.target.name === 'input_price' ? parseInt(newValue, 10) : updatedProducts[existingProductIndex].price
+        }
+
+        setProducts(updatedProducts)
+      } else {
+        // Create a new product object with id, quantity, and price
+        const newProduct = {
+          id: productId,
+          quantity: e.target.name === 'quantity' ? parseInt(newValue, 10) : '',
+          item_price: e.target.name === 'input_price' ? parseInt(newValue, 10) : ''
+        }
+
+        // Add the new product to the products array
+        setProducts(prevProducts => [...prevProducts, newProduct])
+      }
+    }
   }
 
   const handleSave = () => {
-    const updatePayload = new FormData()
-
-    // Helper function to append a field if it exists
-    const appendFieldIfExists = (fieldName, value) => {
-      if (value) {
-        updatePayload.append(fieldName, value)
-      }
+    let updateData = {
+      warehouse: body.warehouse || entry?.warehouse?.id,
+      supplier: body.supplier || entry?.supplier?.id,
+      status: body.status || entry?.status,
+      warehouse_items: products
     }
 
-    // Append fields based on the existence of values in body or product
-    appendFieldIfExists('name', body.name || product?.name)
-    appendFieldIfExists('category', body.category || product?.category?.id)
-    appendFieldIfExists('unit_measure', body.unit_measure || product?.unit_measure?.id)
-    appendFieldIfExists('brand', body.brand || product?.brand?.id)
-    appendFieldIfExists('is_active', body.isActive || product?.isActive)
-    appendFieldIfExists('product_type', body.product_type || product?.product_type)
-    appendFieldIfExists('image', image)
+    console.log(updateData)
 
-    updatePayload.append('generate_barcode', 'false')
-
-    console.log(updatePayload)
-
-    updateProduct({ id: itemId, body: updatePayload })
+    updateEntry({ id: itemId, updateData })
   }
 
   return (
     <Box sx={{ maxWidth: '400px', margin: 6 }} role='presentation'>
       <Grid container justifyContent={'space-between'} marginY={4}>
-        <Typography variant='h3'>Mahsulotni O'zgartirish</Typography>
+        <Typography variant='h3'>Kirimni O'zgartirish</Typography>
         <Button variant='tonal' color='secondary' onClick={toggleDrawer(false)}>
           X
         </Button>
@@ -99,39 +103,19 @@ const DrawerEditEntry = ({ toggleDrawer, itemId }) => {
         <Grid container spacing={6} marginY={4}>
           <Grid item xs={12}>
             <CustomTextField
-              label={`Mahsulot Nomi`}
-              placeholder={product?.name}
-              name='name'
-              value={body.name}
-              onChange={handleChange}
-              fullWidth
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <CustomTextField
-              label={`Mahsulot Turi`}
-              placeholder={product?.product_type}
-              name='product_type'
-              value={body.product_type}
-              onChange={handleChange}
-              fullWidth
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <CustomTextField
               select
               fullWidth
               name='category'
               onChange={handleChange}
-              defaultValue={product?.category?.id || ''}
+              defaultValue={entry?.warehouse?.id || ''}
               id='custom-select'
-              label={`Kategoriyani Tanlang`}
+              label={`Omborxonani Tanlang`}
               SelectProps={{ displayEmpty: true }}
             >
-              {categoriesLoading ? (
+              {warehousesLoading ? (
                 <CircularProgress />
               ) : (
-                categories?.results?.map((item, index) => (
+                warehouses?.results?.map((item, index) => (
                   <MenuItem key={index} value={item.id}>
                     {item.name}
                   </MenuItem>
@@ -145,37 +129,15 @@ const DrawerEditEntry = ({ toggleDrawer, itemId }) => {
               fullWidth
               name='brand'
               onChange={handleChange}
-              defaultValue={product?.brand?.id || ''}
+              defaultValue={entry?.supplier?.id || ''}
               id='custom-select'
-              label={`Brandni Tanlang`}
+              label={`Yetkazib Beruvchini Tanlang`}
               SelectProps={{ displayEmpty: true }}
             >
-              {brandsLoading ? (
+              {suppliersLoading ? (
                 <CircularProgress />
               ) : (
-                brands?.results?.map((item, index) => (
-                  <MenuItem key={index} value={item.id}>
-                    {item.name}
-                  </MenuItem>
-                ))
-              )}
-            </CustomTextField>
-          </Grid>
-          <Grid item xs={12}>
-            <CustomTextField
-              select
-              fullWidth
-              name='measurements'
-              onChange={handleChange}
-              defaultValue={product?.unit_measure?.id || ''}
-              id='custom-select'
-              label={`O'lchovni Tanlang`}
-              SelectProps={{ displayEmpty: true }}
-            >
-              {measurementsLoading ? (
-                <CircularProgress />
-              ) : (
-                measurements?.results?.map((item, index) => (
+                suppliers?.results?.map((item, index) => (
                   <MenuItem key={index} value={item.id}>
                     {item.name}
                   </MenuItem>
@@ -190,14 +152,38 @@ const DrawerEditEntry = ({ toggleDrawer, itemId }) => {
                 row
                 aria-label='controlled'
                 name='isActive'
-                defaultValue={product?.is_active}
+                defaultValue={entry?.status}
                 onChange={handleChange}
               >
-                <FormControlLabel value={true} control={<Radio />} label='Active' />
-                <FormControlLabel value={false} control={<Radio />} label='Inactive' />
+                <FormControlLabel value={'done'} control={<Radio />} label='Complete' />
+                <FormControlLabel value={'in_progress'} control={<Radio />} label='In Progress' />
               </RadioGroup>
             </Grid>
           </Grid>
+          {entry?.warehouse_items?.map(item => (
+            <Grid key={item.id} item xs={12}>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={6}>
+                  <CustomTextField
+                    fullWidth
+                    name='quantity'
+                    label={`${item?.product?.name} soni`}
+                    defaultValue={item?.quantity || ''}
+                    onChange={e => handleChange(e, item?.id)}
+                  />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <CustomTextField
+                    fullWidth
+                    name='input_price'
+                    label={`${item?.product?.name} kirim narxi`}
+                    defaultValue={item?.input_price || ''}
+                    onChange={e => handleChange(e, item?.id)}
+                  />
+                </Grid>
+              </Grid>
+            </Grid>
+          ))}
         </Grid>
       )}
       <Grid container spacing={6} marginY={4}>
