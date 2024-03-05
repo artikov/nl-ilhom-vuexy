@@ -40,7 +40,7 @@ const AuthProvider = ({ children }) => {
         const refreshAccessToken = async () => {
           try {
             const response = await axios.post(authConfig.refreshEndpoint, {
-              refresh_token: storedRefreshToken
+              refresh: storedRefreshToken
             })
 
             const newAccessToken = response.data.access
@@ -129,6 +129,7 @@ const AuthProvider = ({ children }) => {
       .post(authConfig.loginEndpoint, params)
       .then(async response => {
         params.rememberMe ? window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.access) : null
+        window.localStorage.setItem(authConfig.storageRefreshTokenKeyName, response.data.refresh)
         const returnUrl = router.query.returnUrl
         setUser({
           id: 1,

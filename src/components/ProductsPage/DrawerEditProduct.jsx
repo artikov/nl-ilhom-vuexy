@@ -86,7 +86,7 @@ const DrawerEditProduct = ({ toggleDrawer, itemId }) => {
   }
 
   return (
-    <Box sx={{ width: 'auto', margin: 6 }} role='presentation'>
+    <Box sx={{ maxWidth: '400px', margin: 6 }} role='presentation'>
       <Grid container justifyContent={'space-between'} marginY={4}>
         <Typography variant='h3'>Mahsulotni O'zgartirish</Typography>
         <Button variant='tonal' color='secondary' onClick={toggleDrawer(false)}>

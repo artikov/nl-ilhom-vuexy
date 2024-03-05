@@ -7,16 +7,16 @@ export const entriesApiSlice = apiSlice.injectEndpoints({
       query: ({ supplier, warehouse, status, search }) => {
         let url = `${ENTRIES_URL}?`
         if (supplier) {
-          url += `supplier=${supplier}`
+          url += `supplier=${supplier}&`
         }
         if (warehouse) {
-          url += `warehouse=${warehouse}`
+          url += `warehouse=${warehouse}&`
         }
         if (status) {
-          url += `status=${status}`
+          url += `status=${status}&`
         }
         if (search) {
-          url += `search=${search}`
+          url += `search=${search}&`
         }
 
         return url

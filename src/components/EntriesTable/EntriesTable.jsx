@@ -26,6 +26,7 @@ const EntriesTable = ({
   const [rowsPerPage, setRowsPerPage] = useState(10)
   const [editDrawerOpen, setEditDrawerOpen] = useState(false)
   const [itemId, setItemId] = useState(null)
+  const [filteredData, setFilteredData] = useState(null)
 
   const handleDelete = id => {
     handleDeleteApi(id)
@@ -36,7 +37,7 @@ const EntriesTable = ({
     setItemId(id)
   }
 
-  const finalData = data ? data : rows
+  const finalData = filteredData ? filteredData : data
   const pageCount = Math.ceil(finalData.length / rowsPerPage)
 
   const handlePageChange = (event, value) => {
@@ -103,8 +104,8 @@ const EntriesTable = ({
       valueGetter: params => params?.row?.warehouse?.name || 'N/A'
     },
     {
-      flex: 0.1,
-      width: 150,
+      flex: 0.2,
+      minWidth: 150,
       field: 'status',
       headerName: `Status`,
       renderCell: params =>
@@ -140,15 +141,13 @@ const EntriesTable = ({
     }
   ]
 
-  // const DrawerEdit = (
-  //   // <DrawerEditProduct toggleDrawer={toggleEditDrawer} data={dataWithoutQuery?.results} itemId={itemId} />
-  // )
+  const DrawerEdit = <DrawerEditEntry toggleDrawer={toggleEditDrawer} data={dataWithoutQuery} itemId={itemId} />
 
   return (
     <Card>
-      {/* <Drawer anchor='right' open={editDrawerOpen} onClose={toggleEditDrawer(false)}>
+      <Drawer anchor='right' open={editDrawerOpen} onClose={toggleEditDrawer(false)}>
         {DrawerEdit}
-      </Drawer> */}
+      </Drawer>
       <CardContent>
         <Grid container spacing={6}>
           <EntriesFilters
@@ -156,6 +155,7 @@ const EntriesTable = ({
             dataWithoutQuery={dataWithoutQuery}
             onWarehouseChange={onWarehouseChange}
             onStatusChange={onStatusChange}
+            setFilteredData={setFilteredData}
           />
           <Grid item xs={12} marginBottom={6}>
             <Grid container spacing={6}>

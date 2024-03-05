@@ -1,16 +1,23 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import { Grid, MenuItem, Typography, Divider, Button } from '@mui/material'
+
 import CustomTextField from 'src/@core/components/mui/text-field'
+
+import MinMaxDataPicker from 'src/components/DatePicker/MinMaxDataPicker'
 
 import { useGetWarehousesQuery } from 'src/store/slices/warehousesApiSlice'
 import { useGetSuppliersQuery } from 'src/store/slices/suppliersApiSlice'
 
-const EntriesFilters = ({ onStatusChange, onWarehouseChange, onSupplierChange }) => {
+const EntriesFilters = ({ onStatusChange, onWarehouseChange, onSupplierChange, dataWithoutQuery, setFilteredData }) => {
   const [status, setStatus] = useState('')
   const [selectedWarehouse, setSelectedWarehouse] = useState('')
   const [selectedSupplier, setSelectedSupplier] = useState('')
   const [filtered, setFiltered] = useState(false)
+  const [earliestDate, setEarliestDate] = useState(null)
+  const [latestDate, setLatestDate] = useState(null)
+  const [minDate, setMinDate] = useState(null)
+  const [maxDate, setMaxDate] = useState(new Date())
 
   const { data: warehouses } = useGetWarehousesQuery({ responsible: '' })
   const { data: suppliers } = useGetSuppliersQuery({ person_type: '' })
@@ -43,25 +50,61 @@ const EntriesFilters = ({ onStatusChange, onWarehouseChange, onSupplierChange })
     setFiltered(false)
   }
 
+  useEffect(() => {
+    // Function to parse and find earliest and latest dates
+    const findMinMaxDates = () => {
+      const dates = dataWithoutQuery.map(item => new Date(item.created_at))
+      const earliest = new Date(Math.min(...dates))
+      const latest = new Date(Math.max(...dates))
+
+      setEarliestDate(earliest)
+      setLatestDate(latest)
+    }
+
+    // Call the function to get the earliest and latest dates
+    findMinMaxDates()
+  }, [dataWithoutQuery])
+
+  // Filter data between minDate and maxDate
+
+  useEffect(() => {
+    if (!minDate || !maxDate || !dataWithoutQuery) {
+      // Check if minDate, maxDate, or dataWithoutQuery is not defined
+      return
+    }
+
+    // Set hours, minutes, and seconds of minDate to start of the day
+    const minDateStartOfDay = new Date(minDate)
+    minDateStartOfDay.setHours(0, 0, 0, 0)
+
+    // Set hours, minutes, and seconds of maxDate to end of the day
+    const maxDateEndOfDay = new Date(maxDate)
+    maxDateEndOfDay.setHours(23, 59, 59, 999)
+
+    const filteredData = dataWithoutQuery.filter(entry => {
+      const entryDate = new Date(entry.created_at)
+
+      return entryDate >= minDateStartOfDay && entryDate <= maxDateEndOfDay
+    })
+    console.log(filteredData)
+    setFilteredData(filteredData)
+  }, [minDate, maxDate, dataWithoutQuery, setFilteredData])
+
   return (
     <Grid item xs={12}>
       <Typography variant='h3'>Filter</Typography>
       <Grid container>
         <Grid item xs={12}>
           <Grid container spacing={6}>
-            <Grid item xs={12} md={5}>
-              <CustomTextField select fullWidth defaultValue={''} SelectProps={{ displayEmpty: true }}>
-                <MenuItem disabled value={''}>
-                  <em>17/12/2022</em>
-                </MenuItem>
-              </CustomTextField>
-            </Grid>
-            <Grid item xs={12} md={5}>
-              <CustomTextField select fullWidth defaultValue={''} SelectProps={{ displayEmpty: true }}>
-                <MenuItem disabled value={''}>
-                  <em>17/12/2022</em>
-                </MenuItem>
-              </CustomTextField>
+            <Grid item xs={12} md={10}>
+              <MinMaxDataPicker
+                earliestDate={earliestDate}
+                latestDate={latestDate}
+                minDate={minDate}
+                maxDate={maxDate}
+                setMinDate={setMinDate}
+                setMaxDate={setMaxDate}
+              />
             </Grid>
             <Grid item xs={12} md={2}>
               <Button variant='contained' color='primary' fullWidth disabled>

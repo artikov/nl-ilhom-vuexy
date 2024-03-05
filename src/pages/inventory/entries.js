@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import { Typography, Grid, CircularProgress } from '@mui/material'
 
@@ -12,7 +12,17 @@ const entries = () => {
   const [warehouse, setWarehouse] = useState('')
   const [status, setStatus] = useState('')
   const [search, setSearch] = useState('')
+  const [noQueryData, setNoQueryData] = useState([])
+
   const { data, isLoading } = useGetEntriesQuery({ supplier, warehouse, status, search })
+
+  useEffect(() => {
+    if (!isLoading) {
+      if (!supplier && !warehouse && !search && data) {
+        setNoQueryData(data.results)
+      }
+    }
+  }, [data, supplier, warehouse, search, isLoading])
 
   return (
     <Grid container spacing={6}>
@@ -29,6 +39,7 @@ const entries = () => {
             onWarehouseChange={setWarehouse}
             onStatusChange={setStatus}
             onSearchChange={setSearch}
+            dataWithoutQuery={noQueryData}
           />
         )}
       </Grid>
