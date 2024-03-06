@@ -34,7 +34,6 @@ const DrawerEditEntry = ({ toggleDrawer, itemId }) => {
   const { data: warehouses, isLoading: warehousesLoading } = useGetWarehousesQuery({ responsible })
   const { data: suppliers, isLoading: suppliersLoading } = useGetSuppliersQuery({ person_type })
   const { data: entry, isLoading } = useGetEntryQuery(itemId)
-  console.log(entry)
 
   const handleChange = (e, productId) => {
     const newValue = e.target.type === 'checkbox' ? e.target.checked : e.target.value
@@ -56,8 +55,8 @@ const DrawerEditEntry = ({ toggleDrawer, itemId }) => {
           id: productId,
           quantity:
             e.target.name === 'quantity' ? parseInt(newValue, 10) : updatedProducts[existingProductIndex].quantity,
-          item_price:
-            e.target.name === 'input_price' ? parseInt(newValue, 10) : updatedProducts[existingProductIndex].price
+          input_price:
+            e.target.name === 'input_price' ? parseInt(newValue, 10) : updatedProducts[existingProductIndex].input_price
         }
 
         setProducts(updatedProducts)
@@ -65,8 +64,14 @@ const DrawerEditEntry = ({ toggleDrawer, itemId }) => {
         // Create a new product object with id, quantity, and price
         const newProduct = {
           id: productId,
-          quantity: e.target.name === 'quantity' ? parseInt(newValue, 10) : '',
-          item_price: e.target.name === 'input_price' ? parseInt(newValue, 10) : ''
+          quantity:
+            e.target.name === 'quantity'
+              ? parseInt(newValue, 10)
+              : entry?.warehouse_items?.find(item => item.id === productId).quantity,
+          input_price:
+            e.target.name === 'input_price'
+              ? parseInt(newValue, 10)
+              : entry?.warehouse_items?.find(item => item.id === productId).input_price
         }
 
         // Add the new product to the products array
@@ -83,9 +88,7 @@ const DrawerEditEntry = ({ toggleDrawer, itemId }) => {
       warehouse_items: products
     }
 
-    console.log(updateData)
-
-    updateEntry({ id: itemId, updateData })
+    updateEntry({ id: itemId, body: updateData })
   }
 
   return (
