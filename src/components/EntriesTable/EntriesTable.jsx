@@ -11,11 +11,12 @@ import CustomTextField from 'src/@core/components/mui/text-field'
 import EntriesFilters from './EntriesFilters'
 import DrawerEditEntry from './DrawerEditEntry'
 
+import { useDeleteEntryMutation } from 'src/store/slices/warehouseIncomesApiSlice'
+
 import { rows } from 'src/@fake-db/table/static-data'
 
 const EntriesTable = ({
   data,
-  handleDeleteApi,
   onWarehouseChange,
   onSupplierChange,
   onStatusChange,
@@ -29,11 +30,15 @@ const EntriesTable = ({
   const [itemId, setItemId] = useState(null)
   const [filteredData, setFilteredData] = useState(null)
 
-  const handleDelete = id => {
-    handleDeleteApi(id)
+  const [deleteEntry] = useDeleteEntryMutation()
+
+  const handleDelete = (id, event) => {
+    event.stopPropagation()
+    deleteEntry(id)
   }
 
-  const handleEdit = id => {
+  const handleEdit = (id, event) => {
+    event.stopPropagation()
     setEditDrawerOpen(true)
     setItemId(id)
   }
@@ -123,7 +128,7 @@ const EntriesTable = ({
       field: 'edit',
       maxWidth: 100,
       renderCell: params => (
-        <Button onClick={() => handleEdit(params.row.id)}>
+        <Button onClick={event => handleEdit(params.row.id, event)}>
           <Icon icon='tabler:edit' />
         </Button>
       )
@@ -135,7 +140,7 @@ const EntriesTable = ({
       field: 'delete',
       maxWidth: 100,
       renderCell: params => (
-        <Button color='error' onClick={() => handleDelete(params?.row?.id)}>
+        <Button color='error' onClick={event => handleDelete(params?.row?.id, event)}>
           <Icon icon='tabler:trash' />
         </Button>
       )
