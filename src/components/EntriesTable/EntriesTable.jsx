@@ -1,6 +1,7 @@
 /* eslint-disable lines-around-comment */
 import { useState } from 'react'
 import Link from 'next/link'
+import { router } from 'next/router'
 
 import { Card, Drawer, Box, Grid, MenuItem, CardContent, Button, Pagination, Chip } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
@@ -206,6 +207,10 @@ const EntriesTable = ({
                 }}
                 pagination
                 pageSize={rowsPerPage}
+                onRowClick={row => {
+                  router.push(`./entries/${row.row.id}`)
+                }}
+                sx={{ cursor: 'pointer' }}
               />
             </Box>
           </Grid>
