@@ -13,8 +13,6 @@ import DrawerEditEntry from './DrawerEditEntry'
 
 import { useDeleteEntryMutation } from 'src/store/slices/warehouseIncomesApiSlice'
 
-import { rows } from 'src/@fake-db/table/static-data'
-
 const EntriesTable = ({
   data,
   onWarehouseChange,
@@ -191,7 +189,7 @@ const EntriesTable = ({
                     </CustomTextField>
                   </Grid>
                   <Grid item xs={12} md={'auto'}>
-                    <Link href='./accept-product'>
+                    <Link href='accept-product'>
                       <Button variant='contained' color='primary' fullWidth>
                         {`+ Mahsulot Kirim Qilish`}
                       </Button>

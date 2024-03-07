@@ -1,5 +1,10 @@
 const navigation = () => [
   {
+    title: 'Home',
+    path: '/home',
+    icon: 'tabler:smart-home'
+  },
+  {
     title: 'Mahsulot',
     icon: 'tabler:apps',
     children: [

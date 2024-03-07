@@ -1,7 +1,7 @@
 import { Grid, Button, Typography } from '@mui/material'
 import EntryInfoForm from 'src/components/ProductAcceptPage/EntryInfoForm'
 
-const index = () => {
+const AcceptProduct = () => {
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
@@ -15,4 +15,4 @@ const index = () => {
   )
 }
 
-export default index
+export default AcceptProduct

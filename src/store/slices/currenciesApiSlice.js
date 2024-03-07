@@ -34,7 +34,8 @@ export const currenciesApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['Currency']
     })
-  })
+  }),
+  overrideExisting: false
 })
 
 export const {

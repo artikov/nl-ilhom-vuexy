@@ -6,7 +6,7 @@ import CustomTable from 'src/components/CustomTable/CustomTable'
 
 import { useGetSuppliersQuery, useDeleteSupplierMutation } from 'src/store/slices/suppliersApiSlice'
 
-const suppliers = () => {
+const Suppliers = () => {
   const [person_type, setPersonType] = useState('')
   const [search, setSearch] = useState('')
   const [noQueryData, setNoQueryData] = useState({})
@@ -46,4 +46,4 @@ const suppliers = () => {
   )
 }
 
-export default suppliers
+export default Suppliers

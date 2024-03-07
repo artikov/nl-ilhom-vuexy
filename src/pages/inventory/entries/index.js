@@ -7,7 +7,7 @@ import EntriesTable from 'src/components/EntriesTable/EntriesTable'
 
 import { useGetEntriesQuery } from 'src/store/slices/warehouseIncomesApiSlice'
 
-const entries = () => {
+const Entries = () => {
   const [supplier, setSupplier] = useState('')
   const [warehouse, setWarehouse] = useState('')
   const [status, setStatus] = useState('')
@@ -47,4 +47,4 @@ const entries = () => {
   )
 }
 
-export default entries
+export default Entries

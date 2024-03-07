@@ -47,7 +47,8 @@ export const brandsApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['Brand']
     })
-  })
+  }),
+  overrideExisting: false
 })
 
 export const {

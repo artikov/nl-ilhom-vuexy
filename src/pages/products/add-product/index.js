@@ -2,7 +2,7 @@ import { Grid, Typography } from '@mui/material'
 
 import ProductAddForm from 'src/components/ProductAddPage/ProductAddForm'
 
-const addProduct = () => {
+const AddProduct = () => {
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
@@ -17,4 +17,4 @@ const addProduct = () => {
   )
 }
 
-export default addProduct
+export default AddProduct

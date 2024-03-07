@@ -44,7 +44,8 @@ export const warehousesApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['Warehouse']
     })
-  })
+  }),
+  overrideExisting: false
 })
 
 export const {

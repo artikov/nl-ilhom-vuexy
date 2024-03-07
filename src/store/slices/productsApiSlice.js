@@ -51,7 +51,8 @@ export const productsApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['Product']
     })
-  })
+  }),
+  overrideExisting: false
 })
 
 export const {

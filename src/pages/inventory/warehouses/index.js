@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 import { useState, useEffect } from 'react'
 
 import { Typography, Grid, CircularProgress } from '@mui/material'
@@ -7,7 +6,7 @@ import CustomTable from 'src/components/CustomTable/CustomTable'
 
 import { useGetWarehousesQuery, useDeleteWarehouseMutation } from 'src/store/slices/warehousesApiSlice'
 
-const warehouses = () => {
+const Warehouses = () => {
   const [responsible, setResponsible] = useState('')
   const [search, setSearch] = useState('')
   const [noQueryData, setNoQueryData] = useState([{}])
@@ -47,4 +46,4 @@ const warehouses = () => {
   )
 }
 
-export default warehouses
+export default Warehouses

@@ -3,11 +3,11 @@ import { useState, useEffect } from 'react'
 
 import { Typography, Grid, CircularProgress } from '@mui/material'
 
-import CustomTable from '../../components/CustomTable/CustomTable'
+import CustomTable from '../../../components/CustomTable/CustomTable'
 
 import { useGetBrandsQuery, useAddBrandMutation, useDeleteBrandMutation } from 'src/store/slices/brandsApiSlice'
 
-const brands = () => {
+const Brands = () => {
   const [parent, setParent] = useState('')
   const [search, setSearch] = useState('')
   const [noQueryData, setNoQueryData] = useState(null)
@@ -50,4 +50,4 @@ const brands = () => {
   )
 }
 
-export default brands
+export default Brands

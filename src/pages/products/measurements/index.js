@@ -11,7 +11,7 @@ import {
   useDeleteMeasurementMutation
 } from 'src/store/slices/measurementsApiSlice'
 
-const measurements = () => {
+const Measurements = () => {
   const [search, setSearch] = useState('')
   const [noQueryData, setNoQueryData] = useState(null)
 
@@ -51,4 +51,4 @@ const measurements = () => {
   )
 }
 
-export default measurements
+export default Measurements

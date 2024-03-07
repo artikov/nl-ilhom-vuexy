@@ -46,7 +46,8 @@ export const categoriesApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['Category']
     })
-  })
+  }),
+  overrideExisting: false
 })
 
 export const {

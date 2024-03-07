@@ -11,7 +11,7 @@ import {
   useDeleteCategoryMutation
 } from 'src/store/slices/categoriesApiSlice'
 
-const groups = () => {
+const Categories = () => {
   const [parent, setParent] = useState('')
   const [search, setSearch] = useState('')
   const [noQueryData, setNoQueryData] = useState(null)
@@ -54,4 +54,4 @@ const groups = () => {
   )
 }
 
-export default groups
+export default Categories

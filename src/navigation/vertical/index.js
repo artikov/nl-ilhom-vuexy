@@ -1,5 +1,10 @@
 const navigation = () => [
   {
+    title: 'Home',
+    path: '/home',
+    icon: 'tabler:smart-home'
+  },
+  {
     title: 'Mahsulot',
     icon: 'tabler:apps',
     children: [
@@ -45,11 +50,6 @@ const navigation = () => [
     path: '/currency'
   }
 
-  // {
-  //   title: 'Home',
-  //   path: '/home',
-  //   icon: 'tabler:smart-home'
-  // },
   // {
   //   title: 'Second Page',
   //   path: '/second-page',
