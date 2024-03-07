@@ -20,7 +20,6 @@ const EntryInfoForm = () => {
   const [search, setSearch] = useState('')
   const [quantity, setQuantity] = useState({})
   const [price, setPrice] = useState({})
-  const [sellingPrice, setSellingPrice] = useState({})
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [itemId, setItemId] = useState(null)
   const [selectedSupplier, setSelectedSupplier] = useState('')
@@ -109,13 +108,12 @@ const EntryInfoForm = () => {
       warehouse_items: rows.map(row => ({
         product: row.id,
         quantity: parseInt(quantity[row.id], 10),
-        input_price: parseInt(price[row.id], 10),
-        selling_price: 10000,
+        price: parseInt(price[row.id], 10),
         item_identities: [{}]
       }))
     }
 
-    // console.log(submitData)
+    console.log(submitData)
 
     await addEntry(submitData)
 

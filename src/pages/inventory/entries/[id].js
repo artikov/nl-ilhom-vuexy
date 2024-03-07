@@ -91,12 +91,18 @@ const EntryDetailPage = () => {
                     entry?.status == 'in_progress' ? 'Qabul Qilish Jarayonda' : 'Qabul Qilingan'
                   }`}</Typography>
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} md={6}>
                   <Typography variant='h5'>Qabul Qilgan shaxs:</Typography>
                   <Typography variant='body1'>{`${
                     entry?.created_by?.first_name == '' ? 'root' : entry?.created_by?.first_name
                   } ${entry?.created_by?.last_name == '' ? 'admin' : entry?.created_by?.last_name}`}</Typography>
                 </Grid>
+                <Grid item xs={12} md={6} textAlign={'right'}>
+                  <Typography variant='h5'>
+                    {`Kirim vaqtidagi valyuta kursi: ${entry?.currency_ratio?.ratio} so'm`}
+                  </Typography>
+                </Grid>
+
                 <Grid item xs={12}>
                   <Divider />
                 </Grid>
@@ -122,7 +128,7 @@ const EntryDetailPage = () => {
                                 <TableCell>{index + 1}</TableCell>
                                 <TableCell>{product.product.name}</TableCell>
                                 <TableCell>{product.quantity}</TableCell>
-                                <TableCell>{product.input_price}</TableCell>
+                                <TableCell>{product.price}</TableCell>
                               </TableRow>
                             ))}
                           </TableBody>

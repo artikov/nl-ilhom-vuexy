@@ -52,7 +52,7 @@ export const productsApiSlice = apiSlice.injectEndpoints({
       invalidatesTags: ['Product']
     })
   }),
-  overrideExisting: false
+  overrideExisting: true
 })
 
 export const {
