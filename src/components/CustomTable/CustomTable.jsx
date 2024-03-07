@@ -132,6 +132,8 @@ const CustomTable = ({
       valueGetter: params => {
         if (page === 'Valyuta') {
           return params?.row?.ratio
+        } else {
+          return params?.row?.name
         }
       }
     },
