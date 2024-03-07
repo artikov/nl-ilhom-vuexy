@@ -6,6 +6,8 @@ import DrawerAddWarehouses from './DrawerAddWarehouse'
 import DrawerEditWarehouse from './DrawerEditWarehouse'
 import DrawerAddSupplier from './DrawerAddSupplier'
 import DrawerEditSupplier from './DrawerEditSupplier'
+import DrawerAddCurrency from './DrawerAddCurrency'
+import DrawerEditCurrency from './DrawerEditCurrency'
 
 export {
   DrawerEditBrand,
@@ -15,5 +17,7 @@ export {
   DrawerAddWarehouses,
   DrawerEditWarehouse,
   DrawerAddSupplier,
-  DrawerEditSupplier
+  DrawerEditSupplier,
+  DrawerAddCurrency,
+  DrawerEditCurrency
 }

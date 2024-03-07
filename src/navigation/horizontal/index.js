@@ -38,6 +38,11 @@ const navigation = () => [
         path: '/inventory/entries'
       }
     ]
+  },
+  {
+    title: 'Valyuta',
+    icon: 'tabler:adjustments-dollar',
+    path: '/currency'
   }
 ]
 

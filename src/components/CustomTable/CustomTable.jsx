@@ -14,7 +14,9 @@ import {
   DrawerAddWarehouses,
   DrawerEditWarehouse,
   DrawerAddSupplier,
-  DrawerEditSupplier
+  DrawerEditSupplier,
+  DrawerAddCurrency,
+  DrawerEditCurrency
 } from './Drawers'
 
 import { rows } from 'src/@fake-db/table/static-data'
@@ -79,6 +81,8 @@ const CustomTable = ({
       <DrawerAddWarehouses toggleDrawer={toggleDrawer} />
     ) : page === 'Yetkazuvchi' ? (
       <DrawerAddSupplier toggleDrawer={toggleDrawer} />
+    ) : page === 'Valyuta' ? (
+      <DrawerAddCurrency toggleDrawer={toggleDrawer} page={page} />
     ) : (
       <DrawerAddItem
         toggleDrawer={toggleDrawer}
@@ -107,8 +111,10 @@ const CustomTable = ({
       <DrawerEditMeasurement toggleDrawer={toggleEditDrawer} page={page} itemId={itemId} />
     ) : page === 'Ombor' ? (
       <DrawerEditWarehouse toggleDrawer={toggleEditDrawer} page={page} itemId={itemId} />
+    ) : page === 'Yetkazuvchi' ? (
+      <DrawerEditSupplier toggleDrawer={toggleEditDrawer} itemId={itemId} />
     ) : (
-      page === 'Yetkazuvchi' && <DrawerEditSupplier toggleDrawer={toggleEditDrawer} itemId={itemId} />
+      page === 'Valyuta' && <DrawerEditCurrency toggleDrawer={toggleEditDrawer} itemId={itemId} />
     )
 
   const columns = [
@@ -122,14 +128,19 @@ const CustomTable = ({
       flex: 0.35,
       minWidth: 200,
       field: 'name',
-      headerName: 'Nomi'
+      headerName: page === 'Valyuta' ? 'Kurs' : 'Nomi',
+      valueGetter: params => {
+        if (page === 'Valyuta') {
+          return params?.row?.ratio
+        }
+      }
     },
 
     {
       flex: 0.35,
       minWidth: 230,
       field: 'parent',
-      headerName: page === 'Ombor' ? 'Masul shaxs' : `Asosiy ${page}`,
+      headerName: page === 'Ombor' ? 'Masul shaxs' : page === 'Valyuta' ? 'Sana' : `Asosiy ${page}`,
       valueGetter: params => {
         if (page === 'Ombor') {
           const responsible = params?.row?.responsible
@@ -137,6 +148,11 @@ const CustomTable = ({
           const phoneNumber = responsible?.phone_number || 'N/A'
 
           return `${fullName}\n${phoneNumber}`
+        } else if (page === 'Valyuta') {
+          const createdAt = params?.row?.created_at
+          const date = new Date(createdAt)
+
+          return date.toLocaleDateString()
         } else {
           return params?.row?.parent?.name || 'N/A'
         }
@@ -203,7 +219,7 @@ const CustomTable = ({
       </div>
       <CardContent>
         <Grid container spacing={6}>
-          {page !== "O'lchov" && (
+          {page !== "O'lchov" && page !== 'Valyuta' && (
             <CustomFilter dataWithoutQuery={dataWithoutQuery} page={page} onParentChange={onParentChange} />
           )}
           <Grid item xs={12} marginBottom={6}>
