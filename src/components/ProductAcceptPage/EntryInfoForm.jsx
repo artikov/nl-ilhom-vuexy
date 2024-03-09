@@ -8,6 +8,7 @@ import { DataGrid } from '@mui/x-data-grid'
 import CustomTextField from 'src/@core/components/mui/text-field'
 import CustomAutocomplete from 'src/@core/components/mui/autocomplete'
 import ProductAcceptDialog from './ProductAcceptDialog'
+import Icon from 'src/@core/components/icon'
 
 import { useGetSuppliersQuery } from 'src/store/slices/suppliersApiSlice'
 import { useGetWarehousesQuery } from 'src/store/slices/warehousesApiSlice'
@@ -17,7 +18,6 @@ import { useAddEntryMutation } from 'src/store/slices/warehouseIncomesApiSlice'
 const EntryInfoForm = () => {
   const router = useRouter()
   const [rows, setRows] = useState([])
-  const [search, setSearch] = useState('')
   const [quantity, setQuantity] = useState({})
   const [price, setPrice] = useState({})
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -27,9 +27,11 @@ const EntryInfoForm = () => {
   const [selectedStatus, setSelectedStatus] = useState('')
   const [selectedProduct, setSelectedProduct] = useState('')
   const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const [itemIdentities, setItemIdentities] = useState([])
 
   const person_type = ''
   const responsible = ''
+  const search = ''
 
   const { data: suppliers } = useGetSuppliersQuery({
     person_type
@@ -79,11 +81,15 @@ const EntryInfoForm = () => {
       width: 100,
       renderCell: params => (
         <Button variant='contained' onClick={() => handleDialogOpen(params.id)} fullWidth>
-          Edit
+          <Icon icon='tabler:qrcode' />
         </Button>
       )
     }
   ]
+
+  const handleSaveIdentities = itemIds => {
+    setItemIdentities(prev => [...prev, itemIds])
+  }
 
   const handleAddProductToRow = () => {
     if (selectedProduct) {
@@ -109,11 +115,19 @@ const EntryInfoForm = () => {
         product: row.id,
         quantity: parseInt(quantity[row.id], 10),
         price: parseInt(price[row.id], 10),
-        item_identities: [{}]
+        item_identities: itemIdentities
+          .filter(item => item.id === row.id)
+          .map(item => {
+            const entries = Object.entries(item.serialNumber).map(([key, serial]) => ({
+              serial_number: serial,
+              marking_number: item.markingNumber[key]
+            }))
+
+            return entries
+          })
+          .flat()
       }))
     }
-
-    console.log(submitData)
 
     await addEntry(submitData)
 
@@ -124,7 +138,13 @@ const EntryInfoForm = () => {
 
   return (
     <Grid container spacing={6}>
-      <ProductAcceptDialog dialogOpen={isDialogOpen} onDialogClose={setIsDialogOpen} itemId={itemId} />
+      <ProductAcceptDialog
+        dialogOpen={isDialogOpen}
+        onDialogClose={setIsDialogOpen}
+        itemId={itemId}
+        quantity={quantity}
+        onSave={handleSaveIdentities}
+      />
       <Grid item xs={12}>
         <Card>
           <CardHeader title="Kirim ma'lumotlari" />

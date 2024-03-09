@@ -7,17 +7,17 @@ const EntryDetailsDialog = ({ dialogOpen, onDialogClose, item }) => {
   const columns = [
     { field: 'id', headerName: 'ID', width: 70 },
     {
-      field: 'serialNumber',
+      field: 'serial_number',
       headerName: 'Seriya Raqami',
       sortable: false,
       width: 250,
       renderCell: params => (
-        <>
-          <Typography>{params?.serial_number || 'None'}</Typography>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+          <Typography>{params?.row?.serial_number || 'N/A'}</Typography>
           <Button color='secondary'>
             <Icon icon='tabler:download' />
           </Button>
-        </>
+        </div>
       )
     },
 
@@ -25,7 +25,15 @@ const EntryDetailsDialog = ({ dialogOpen, onDialogClose, item }) => {
       field: 'marking_number',
       headerName: 'Markirovka Raqami',
       sortable: false,
-      width: 250
+      width: 250,
+      renderCell: params => (
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+          <Typography>{params?.row?.marking_number || 'N/A'}</Typography>
+          <Button color='secondary'>
+            <Icon icon='tabler:download' />
+          </Button>
+        </div>
+      )
     }
   ]
 
@@ -61,25 +69,6 @@ const EntryDetailsDialog = ({ dialogOpen, onDialogClose, item }) => {
           />
         </Box>
       </DialogContent>
-      <DialogActions className='dialog-actions-dense'>
-        <Grid container spacing={6} alignItems={'center'}>
-          <Grid item xs={12} md={6}></Grid>
-          <Grid item xs={12} md={6}>
-            <Grid container spacing={6} justifyContent={'end'}>
-              <Grid item>
-                <Button variant='contained' onClick={handleClose}>
-                  Saqlash
-                </Button>
-              </Grid>
-              <Grid item>
-                <Button variant='tonal' color='error' onClick={handleClose}>
-                  Bekor Qilish
-                </Button>
-              </Grid>
-            </Grid>
-          </Grid>
-        </Grid>
-      </DialogActions>
     </Dialog>
   )
 }

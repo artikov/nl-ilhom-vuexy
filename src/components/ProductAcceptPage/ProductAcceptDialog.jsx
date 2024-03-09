@@ -1,37 +1,29 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
-import {
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Box,
-  Checkbox,
-  Typography,
-  Grid,
-  FormControlLabel,
-  FormGroup
-} from '@mui/material'
+import { Button, Dialog, DialogTitle, DialogContent, DialogActions, Box, Typography, Grid } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 
 import CustomTextField from 'src/@core/components/mui/text-field'
 import Icon from 'src/@core/components/icon'
 
-const rows = [
-  { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-  { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-  { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-  { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-  { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null }
-]
-
-const ProductAcceptDialog = ({ dialogOpen, onDialogClose, itemId }) => {
+const ProductAcceptDialog = ({ dialogOpen, onDialogClose, itemId, quantity, onSave }) => {
   const [serialNumber, setSerialNumber] = useState({})
   const [markingNumber, setMarkingNumber] = useState({})
 
-  // const [generateSerialNumber, setGenerateSerialNumber] = useState(false)
-  // const [generateMarkingNumber, setGenerateMarkingNumber] = useState(false)
+  // Get the quantity for the specified category ID
+  const amount = parseInt(quantity[itemId])
+
+  // Create an array with the specified number of items
+  const itemsArray = Array.from({ length: amount }, (_, index) => ({
+    id: index + 1, // Index starts from 1
+    serialNumber: '',
+    markingNumber: ''
+  }))
+
+  useEffect(() => {
+    setSerialNumber({})
+    setMarkingNumber({})
+  }, [itemId])
 
   const columns = [
     { field: 'id', headerName: 'ID', width: 70 },
@@ -53,22 +45,6 @@ const ProductAcceptDialog = ({ dialogOpen, onDialogClose, itemId }) => {
       )
     },
 
-    // {
-    //   field: 'generateSerialNumber',
-    //   headerName: 'Generate',
-    //   width: 150,
-    //   renderCell: params => (
-    //     <Checkbox
-    //       checked={generateSerialNumber[params.id] || false}
-    //       onChange={e =>
-    //         setGenerateSerialNumber({
-    //           ...generateSerialNumber,
-    //           [params.id]: e.target.checked
-    //         })
-    //       }
-    //     />
-    //   )
-    // },
     {
       field: 'markingNumber',
       headerName: 'Markirovka Raqami',
@@ -86,26 +62,32 @@ const ProductAcceptDialog = ({ dialogOpen, onDialogClose, itemId }) => {
         </>
       )
     }
-
-    // {
-    //   field: 'generateMarkingNumber',
-    //   headerName: 'Generate',
-    //   width: 150,
-    //   renderCell: params => (
-    //     <Checkbox
-    //       checked={generateMarkingNumber[params.id] || false}
-    //       onChange={e =>
-    //         setGenerateMarkingNumber({
-    //           ...generateMarkingNumber,
-    //           [params.id]: e.target.checked
-    //         })
-    //       }
-    //     />
-    //   )
-    // }
   ]
 
   const handleClose = () => {
+    onDialogClose(false)
+  }
+
+  const handleSave = () => {
+    // Convert serialNumber and markingNumber values to integers
+    const intSerialNumber = {}
+    const intMarkingNumber = {}
+
+    for (const id in serialNumber) {
+      if (serialNumber.hasOwnProperty(id)) {
+        intSerialNumber[id] = parseInt(serialNumber[id], 10) || 0
+      }
+    }
+
+    for (const id in markingNumber) {
+      if (markingNumber.hasOwnProperty(id)) {
+        intMarkingNumber[id] = parseInt(markingNumber[id], 10) || 0
+      }
+    }
+
+    const itemIdentities = { id: itemId, serialNumber: intSerialNumber, markingNumber: intMarkingNumber }
+
+    onSave(itemIdentities)
     onDialogClose(false)
   }
 
@@ -126,7 +108,7 @@ const ProductAcceptDialog = ({ dialogOpen, onDialogClose, itemId }) => {
       <DialogContent>
         <Box height={400}>
           <DataGrid
-            rows={rows}
+            rows={itemsArray}
             columns={columns}
             initialState={{
               pagination: {
@@ -139,22 +121,10 @@ const ProductAcceptDialog = ({ dialogOpen, onDialogClose, itemId }) => {
       </DialogContent>
       <DialogActions className='dialog-actions-dense'>
         <Grid container spacing={6} alignItems={'center'}>
-          <Grid item xs={12} md={6}>
-            {/* <FormGroup row>
-              <FormControlLabel
-                label='Seriya Raqam Generatsiya Qilish'
-                control={<Checkbox checked={true} onChange={handleClose} name='controlled' />}
-              />
-              <FormControlLabel
-                label='Markirovka Raqam Generatsiya Qilish'
-                control={<Checkbox checked={true} onChange={handleClose} name='controlled' />}
-              />
-            </FormGroup> */}
-          </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12}>
             <Grid container spacing={6} justifyContent={'end'}>
               <Grid item>
-                <Button variant='contained' onClick={handleClose}>
+                <Button variant='contained' onClick={handleSave}>
                   Saqlash
                 </Button>
               </Grid>
