@@ -38,7 +38,7 @@ const DrawerEditEntry = ({ toggleDrawer, itemId }) => {
   const handleChange = (e, productId) => {
     const newValue = e.target.type === 'checkbox' ? e.target.checked : e.target.value
 
-    if (e.target.name !== 'quantity' && e.target.name !== 'input_price') {
+    if (e.target.name !== 'quantity' && e.target.name !== 'price') {
       setBody(prevBody => ({
         ...prevBody,
         [e.target.name]: newValue
@@ -55,8 +55,7 @@ const DrawerEditEntry = ({ toggleDrawer, itemId }) => {
           id: productId,
           quantity:
             e.target.name === 'quantity' ? parseInt(newValue, 10) : updatedProducts[existingProductIndex].quantity,
-          input_price:
-            e.target.name === 'input_price' ? parseInt(newValue, 10) : updatedProducts[existingProductIndex].input_price
+          price: e.target.name === 'price' ? parseInt(newValue, 10) : updatedProducts[existingProductIndex].price
         }
 
         setProducts(updatedProducts)
@@ -68,10 +67,10 @@ const DrawerEditEntry = ({ toggleDrawer, itemId }) => {
             e.target.name === 'quantity'
               ? parseInt(newValue, 10)
               : entry?.warehouse_items?.find(item => item.id === productId).quantity,
-          input_price:
-            e.target.name === 'input_price'
+          price:
+            e.target.name === 'price'
               ? parseInt(newValue, 10)
-              : entry?.warehouse_items?.find(item => item.id === productId).input_price
+              : entry?.warehouse_items?.find(item => item.id === productId).price
         }
 
         // Add the new product to the products array
@@ -178,9 +177,9 @@ const DrawerEditEntry = ({ toggleDrawer, itemId }) => {
                 <Grid item xs={12} md={6}>
                   <CustomTextField
                     fullWidth
-                    name='input_price'
+                    name='price'
                     label={`${item?.product?.name} kirim narxi`}
-                    defaultValue={item?.input_price || ''}
+                    defaultValue={item?.price || ''}
                     onChange={e => handleChange(e, item?.id)}
                   />
                 </Grid>

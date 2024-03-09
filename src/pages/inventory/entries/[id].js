@@ -48,9 +48,6 @@ const EntryDetailPage = () => {
 
   const createdDate = new Date(entry?.created_at).toLocaleDateString('uz-UZ')
 
-  // Calculate total quantity
-  const totalQuantity = entry?.warehouse_items?.reduce((total, item) => total + item.quantity, 0)
-
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
@@ -179,17 +176,17 @@ const EntryDetailPage = () => {
 
                       <Typography style={{ marginBottom: '8px' }}>
                         <b>Jami Miqdor:</b>
-                        <span style={{ marginLeft: '8px' }}>{totalQuantity}</span>
+                        <span style={{ marginLeft: '8px' }}>{entry?.quantity}</span>
                       </Typography>
 
                       <Typography style={{ marginBottom: '8px' }}>
                         <b>Jami Summa So'mda:</b>
-                        <span style={{ marginLeft: '8px' }}>{totalQuantity}</span>
+                        <span style={{ marginLeft: '8px' }}>{entry?.total_price_som.toLocaleString()}</span>
                       </Typography>
 
                       <Typography style={{ marginBottom: '8px' }}>
                         <b>Jami Summa Valyutada:</b>
-                        <span style={{ marginLeft: '8px' }}>{totalQuantity}</span>
+                        <span style={{ marginLeft: '8px' }}>{entry?.total_price.toLocaleString()}</span>
                       </Typography>
                     </Grid>
                   </Grid>
@@ -214,6 +211,7 @@ const EntryDetailPage = () => {
                                   <TableCell>№</TableCell>
                                   <TableCell>Mahsulot</TableCell>
                                   <TableCell>Miqdori</TableCell>
+                                  <TableCell>Mahsulot Narxi</TableCell>
                                   <TableCell>Kirim Narxi</TableCell>
                                   <TableCell>So'mdagi Narxi</TableCell>
                                   <TableCell></TableCell>
@@ -225,8 +223,9 @@ const EntryDetailPage = () => {
                                     <TableCell>{index + 1}</TableCell>
                                     <TableCell>{product.product.name}</TableCell>
                                     <TableCell>{product.quantity}</TableCell>
-                                    <TableCell>{product.price}</TableCell>
-                                    <TableCell>{product.price}</TableCell>
+                                    <TableCell>{product.price.toLocaleString()}</TableCell>
+                                    <TableCell>{product.total_price.toLocaleString()}</TableCell>
+                                    <TableCell>{product.total_price_som.toLocaleString()}</TableCell>
                                     <TableCell>
                                       <Button variant='contained' onClick={e => handleDialog(e, product.id)}>
                                         <Icon icon='tabler:qrcode' />
