@@ -227,13 +227,15 @@ const CustomTable = ({
           <Grid item xs={12} marginBottom={6}>
             <Grid container spacing={6}>
               <Grid item xs={12} md={7}>
-                <CustomTextField
-                  placeholder='Search'
-                  value={search}
-                  name='search'
-                  fullWidth
-                  onChange={({ target }) => handleSearchChange(target.value)}
-                />
+                {page !== 'Valyuta' && (
+                  <CustomTextField
+                    placeholder='Search'
+                    value={search}
+                    name='search'
+                    fullWidth
+                    onChange={({ target }) => handleSearchChange(target.value)}
+                  />
+                )}
               </Grid>
               <Grid item xs={12} md={5}>
                 <Grid container spacing={6} justifyContent={'end'}>
