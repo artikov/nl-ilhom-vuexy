@@ -18,6 +18,7 @@ const EntriesFilters = ({ onStatusChange, onWarehouseChange, onSupplierChange, d
   const [latestDate, setLatestDate] = useState(null)
   const [minDate, setMinDate] = useState(null)
   const [maxDate, setMaxDate] = useState(new Date())
+  const [filteredByDate, setFilteredByDate] = useState(false)
 
   const { data: warehouses } = useGetWarehousesQuery({ responsible: '' })
   const { data: suppliers } = useGetSuppliersQuery({ person_type: '' })
@@ -50,6 +51,12 @@ const EntriesFilters = ({ onStatusChange, onWarehouseChange, onSupplierChange, d
     setFiltered(false)
   }
 
+  const handleResetDate = () => {
+    setMinDate(null)
+    setMaxDate(new Date())
+    setFilteredByDate(false)
+  }
+
   useEffect(() => {
     // Function to parse and find earliest and latest dates
     const findMinMaxDates = () => {
@@ -66,12 +73,12 @@ const EntriesFilters = ({ onStatusChange, onWarehouseChange, onSupplierChange, d
   }, [dataWithoutQuery])
 
   // Filter data between minDate and maxDate
-
   useEffect(() => {
-    if (!minDate || !maxDate || !dataWithoutQuery) {
-      // Check if minDate, maxDate, or dataWithoutQuery is not defined
-      return
-    }
+    // if (!minDate || !maxDate || !dataWithoutQuery) {
+    // Check if minDate, maxDate, or dataWithoutQuery is not defined
+
+    //   return
+    // }
 
     // Set hours, minutes, and seconds of minDate to start of the day
     const minDateStartOfDay = new Date(minDate)
@@ -86,7 +93,7 @@ const EntriesFilters = ({ onStatusChange, onWarehouseChange, onSupplierChange, d
 
       return entryDate >= minDateStartOfDay && entryDate <= maxDateEndOfDay
     })
-    console.log(filteredData)
+
     setFilteredData(filteredData)
   }, [minDate, maxDate, dataWithoutQuery, setFilteredData])
 
@@ -104,10 +111,17 @@ const EntriesFilters = ({ onStatusChange, onWarehouseChange, onSupplierChange, d
                 maxDate={maxDate}
                 setMinDate={setMinDate}
                 setMaxDate={setMaxDate}
+                setFilteredByDate={setFilteredByDate}
               />
             </Grid>
             <Grid item xs={12} md={2}>
-              <Button variant='contained' color='primary' fullWidth disabled>
+              <Button
+                variant='contained'
+                color='primary'
+                fullWidth
+                onClick={handleResetDate}
+                disabled={!filteredByDate}
+              >
                 Reset
               </Button>
             </Grid>

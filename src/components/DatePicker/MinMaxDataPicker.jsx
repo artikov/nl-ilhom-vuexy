@@ -10,7 +10,7 @@ import CustomInput from './PickersCustomInput'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import { Grid } from '@mui/material'
 
-const PickersMinMax = ({ earliestDate, latestDate, minDate, maxDate, setMinDate, setMaxDate }) => {
+const PickersMinMax = ({ earliestDate, latestDate, minDate, maxDate, setMinDate, setMaxDate, setFilteredByDate }) => {
   const theme = useTheme()
   const { direction } = theme
   const popperPlacement = direction === 'ltr' ? 'bottom-start' : 'bottom-end'
@@ -25,7 +25,10 @@ const PickersMinMax = ({ earliestDate, latestDate, minDate, maxDate, setMinDate,
             minDate={subDays(earliestDate, 1) || subDays(new Date(), 5)}
             maxDate={addDays(latestDate, 1) || addDays(new Date(), 5)}
             popperPlacement={popperPlacement}
-            onChange={date => setMinDate(date)}
+            onChange={date => {
+              setMinDate(date)
+              setFilteredByDate(true)
+            }}
             customInput={<CustomInput fullWidth />}
           />
         </Grid>
@@ -36,7 +39,10 @@ const PickersMinMax = ({ earliestDate, latestDate, minDate, maxDate, setMinDate,
             minDate={subDays(earliestDate, 1) || subDays(new Date(), 5)}
             maxDate={addDays(latestDate, 1) || addDays(new Date(), 5)}
             popperPlacement={popperPlacement}
-            onChange={date => setMaxDate(date)}
+            onChange={date => {
+              setMaxDate(date)
+              setFilteredByDate(true)
+            }}
             customInput={<CustomInput fullWidth />}
           />
         </Grid>
