@@ -3,13 +3,12 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { router } from 'next/router'
 
-import { Card, Drawer, Box, Grid, MenuItem, CardContent, Button, Pagination, Chip } from '@mui/material'
+import { Card, Box, Grid, MenuItem, CardContent, Button, Pagination, Chip } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 import Icon from 'src/@core/components/icon'
 
 import CustomTextField from 'src/@core/components/mui/text-field'
 import EntriesFilters from './EntriesFilters'
-import DrawerEditEntry from './DrawerEditEntry'
 
 import { useDeleteEntryMutation } from 'src/store/slices/warehouseIncomesApiSlice'
 
@@ -24,7 +23,6 @@ const EntriesTable = ({
 }) => {
   const [currentPage, setCurrentPage] = useState(1)
   const [rowsPerPage, setRowsPerPage] = useState(10)
-  const [editDrawerOpen, setEditDrawerOpen] = useState(false)
   const [itemId, setItemId] = useState(null)
   const [filteredData, setFilteredData] = useState(null)
 
@@ -33,12 +31,6 @@ const EntriesTable = ({
   const handleDelete = (id, event) => {
     event.stopPropagation()
     deleteEntry(id)
-  }
-
-  const handleEdit = (id, event) => {
-    event.stopPropagation()
-    setEditDrawerOpen(true)
-    setItemId(id)
   }
 
   const finalData = filteredData ? filteredData : data
@@ -58,10 +50,6 @@ const EntriesTable = ({
       color='primary'
     />
   )
-
-  const toggleEditDrawer = open => () => {
-    setEditDrawerOpen(open)
-  }
 
   const columns = [
     {
@@ -120,18 +108,6 @@ const EntriesTable = ({
         )
     },
 
-    // Edit button column
-    {
-      flex: 0.1,
-      field: 'edit',
-      maxWidth: 100,
-      renderCell: params => (
-        <Button onClick={event => handleEdit(params.row.id, event)}>
-          <Icon icon='tabler:edit' />
-        </Button>
-      )
-    },
-
     // Delete button column
     {
       flex: 0.1,
@@ -145,13 +121,8 @@ const EntriesTable = ({
     }
   ]
 
-  const DrawerEdit = <DrawerEditEntry toggleDrawer={toggleEditDrawer} data={dataWithoutQuery} itemId={itemId} />
-
   return (
     <Card>
-      <Drawer anchor='right' open={editDrawerOpen} onClose={toggleEditDrawer(false)}>
-        {DrawerEdit}
-      </Drawer>
       <CardContent>
         <Grid container spacing={6}>
           <EntriesFilters

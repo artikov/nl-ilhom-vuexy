@@ -84,8 +84,24 @@ const EntryInfoForm = () => {
           <Icon icon='tabler:qrcode' />
         </Button>
       )
+    },
+    {
+      field: 'delete',
+      headerName: '',
+      sortable: false,
+      width: 100,
+      renderCell: params => (
+        <Button variant='outlined' color='error' onClick={() => handleDelete(params.id)} fullWidth>
+          <Icon icon='tabler:trash' />
+        </Button>
+      )
     }
   ]
+
+  const handleDelete = id => {
+    const updatedRows = rows.filter(row => row.id !== id)
+    setRows(updatedRows)
+  }
 
   const handleSaveIdentities = itemIds => {
     setItemIdentities(prev => [...prev, itemIds])
