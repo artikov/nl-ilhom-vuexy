@@ -1,5 +1,5 @@
 /* eslint-disable lines-around-comment */
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { router } from 'next/router'
 
@@ -24,7 +24,7 @@ const EntriesTable = ({
   const [currentPage, setCurrentPage] = useState(1)
   const [rowsPerPage, setRowsPerPage] = useState(10)
   const [itemId, setItemId] = useState(null)
-  const [filteredData, setFilteredData] = useState(null)
+  const [filteredData, setFilteredData] = useState(data)
 
   const [deleteEntry] = useDeleteEntryMutation()
 
@@ -32,8 +32,8 @@ const EntriesTable = ({
     event.stopPropagation()
     deleteEntry(id)
   }
+  const finalData = filteredData
 
-  const finalData = filteredData ? filteredData : data
   const pageCount = Math.ceil(finalData.length / rowsPerPage)
 
   const handlePageChange = (event, value) => {

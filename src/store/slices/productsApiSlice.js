@@ -7,16 +7,16 @@ export const productsApiSlice = apiSlice.injectEndpoints({
       query: ({ category, brand, isActive, search }) => {
         let url = `${PRODUCTS_URL}?`
         if (category) {
-          url += `category=${category}`
+          url += `category=${category}&`
         }
         if (search) {
-          url += `search=${search}`
+          url += `search=${search}&`
         }
         if (brand) {
-          url += `brand=${brand}`
+          url += `brand=${brand}&`
         }
         if (isActive !== null) {
-          url += `is_active=${isActive}`
+          url += `is_active=${isActive}&`
         }
 
         return url
