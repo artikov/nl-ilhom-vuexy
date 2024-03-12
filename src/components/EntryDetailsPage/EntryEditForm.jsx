@@ -5,6 +5,8 @@ import { useRouter } from 'next/router'
 import { Card, Grid, CardHeader, CardContent, MenuItem, Button, CircularProgress } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 
+import toast from 'react-hot-toast'
+
 import CustomTextField from 'src/@core/components/mui/text-field'
 import CustomAutocomplete from 'src/@core/components/mui/autocomplete'
 import UpdateIdentitiesDialog from './UpdateIdentitiesDialog'
@@ -20,9 +22,6 @@ const EntryEditForm = ({ entryId }) => {
   const { data: entry, isLoading } = useGetEntryQuery(entryId)
 
   const [rows, setRows] = useState([])
-  useEffect(() => {
-    setRows(entry?.warehouse_items || [])
-  }, [entry])
 
   const quantityObject = entry?.warehouse_items?.reduce((acc, item) => {
     acc[item.id] = item.quantity
@@ -30,10 +29,22 @@ const EntryEditForm = ({ entryId }) => {
     return acc
   }, {})
 
+  const priceObject = entry?.warehouse_items?.reduce((acc, item) => {
+    acc[item.id] = item.price
+
+    return acc
+  }, {})
+
   const [quantity, setQuantity] = useState({
     ...quantityObject
   })
-  const [price, setPrice] = useState({})
+
+  const [price, setPrice] = useState({
+    ...priceObject
+  })
+
+  console.log(rows)
+
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [itemId, setItemId] = useState(null)
   const [selectedSupplier, setSelectedSupplier] = useState('')
@@ -42,6 +53,12 @@ const EntryEditForm = ({ entryId }) => {
   const [selectedProduct, setSelectedProduct] = useState('')
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [itemIdentities, setItemIdentities] = useState([])
+
+  useEffect(() => {
+    setRows(entry?.warehouse_items || [])
+    setQuantity({ ...quantityObject })
+    setPrice({ ...priceObject })
+  }, [entry])
 
   const person_type = ''
   const responsible = ''
@@ -58,9 +75,6 @@ const EntryEditForm = ({ entryId }) => {
   const { data: products, isLoading: productsLoading } = useGetProductsQuery({
     search
   })
-
-  console.log(entry)
-  console.log(rows)
 
   const [updateEntry, { isError }] = useUpdateEntryMutation()
 
@@ -81,7 +95,7 @@ const EntryEditForm = ({ entryId }) => {
       renderCell: params => (
         <CustomTextField
           value={quantity[params.id] || ''}
-          onChange={e => setQuantity({ ...quantity, [params.id]: e.target.value })}
+          onChange={e => setQuantity(prevQuantity => ({ ...prevQuantity, [params.id]: e.target.value }))}
         />
       )
     },
@@ -132,10 +146,19 @@ const EntryEditForm = ({ entryId }) => {
 
   const handleAddProductToRow = () => {
     if (selectedProduct) {
+      if (rows.some(row => row.id === selectedProduct.id || row.product.id === selectedProduct.id)) {
+        toast.error('Bu mahsulot jadvalda mavjud', {
+          position: 'top-center'
+        })
+
+        return
+      }
+
       // Create a new array with the existing rows and the selected product
       const updatedRows = [...rows, selectedProduct]
       setRows(updatedRows) // Assuming setRows is a state update function
     }
+    setSelectedProduct('')
   }
 
   const handleDialogOpen = id => {
@@ -146,33 +169,44 @@ const EntryEditForm = ({ entryId }) => {
   const handleSubmit = async e => {
     e.preventDefault()
 
-    const submitData = {
-      supplier: selectedSupplier,
-      warehouse: selectedWarehouse,
-      status: selectedStatus,
-      warehouse_items: rows.map(row => ({
-        product: row.id,
-        quantity: parseInt(quantity[row.id], 10),
-        price: parseInt(price[row.id], 10),
-        item_identities: itemIdentities
-          .filter(item => item.id === row.id)
-          .map(item => {
-            const entries = Object.entries(item.serialNumber).map(([key, serial]) => ({
-              serial_number: serial,
-              marking_number: item.markingNumber[key]
-            }))
+    const submitDataFiltered = {
+      ...(selectedSupplier && { supplier: selectedSupplier }),
+      ...(selectedWarehouse && { warehouse: selectedWarehouse }),
+      ...(selectedStatus && { status: selectedStatus }),
+      warehouse_items: rows
+        .map(row => {
+          const quantityValue = parseInt(quantity[row.id], 10)
+          const priceValue = parseInt(price[row.id], 10)
 
-            return entries
-          })
-          .flat()
-      }))
+          const item_identities = itemIdentities
+            .filter(item => item.id === row.id)
+            .map(item => {
+              const entries = Object.entries(item.serialNumber).map(([key, serial]) => ({
+                serial_number: serial,
+                marking_number: item.markingNumber[key]
+              }))
+
+              return entries
+            })
+            .flat()
+
+          return {
+            product: row.product.id,
+            ...(quantityValue && { quantity: quantityValue }),
+            price: priceValue,
+            ...(item_identities.length > 0 && { item_identities })
+          }
+        })
+        .filter(item => Object.keys(item).length > 1) // Filter out objects with only product key
     }
 
-    // await updateEntry(submitData)
+    console.log(submitDataFiltered)
 
-    if (!isError) {
-      router.push('./entries')
-    }
+    // await updateEntry({ id: entryId, body: submitDataFiltered })
+
+    // if (!isError) {
+    //   router.push('./entries')
+    // }
   }
 
   return (
@@ -282,7 +316,13 @@ const EntryEditForm = ({ entryId }) => {
                         />
                       </Grid>
                       <Grid item xs={12} md={4}>
-                        <Button variant='contained' color='primary' fullWidth onClick={handleAddProductToRow}>
+                        <Button
+                          variant='contained'
+                          color='primary'
+                          disabled={selectedProduct === '' || selectedProduct === null}
+                          fullWidth
+                          onClick={handleAddProductToRow}
+                        >
                           {`Mahsulotni Jadvalga Qo'shish`}
                         </Button>
                       </Grid>

@@ -5,6 +5,8 @@ import { useRouter } from 'next/router'
 import { Card, Grid, CardHeader, CardContent, MenuItem, Button, CircularProgress } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 
+import toast from 'react-hot-toast'
+
 import CustomTextField from 'src/@core/components/mui/text-field'
 import CustomAutocomplete from 'src/@core/components/mui/autocomplete'
 import ProductAcceptDialog from './ProductAcceptDialog'
@@ -100,6 +102,10 @@ const EntryInfoForm = () => {
 
   const handleDelete = id => {
     const updatedRows = rows.filter(row => row.id !== id)
+    toast.success('Mahsulot olib tashlandi', {
+      position: 'top-center'
+    })
+
     setRows(updatedRows)
   }
 
@@ -109,6 +115,14 @@ const EntryInfoForm = () => {
 
   const handleAddProductToRow = () => {
     if (selectedProduct) {
+      if (rows.some(row => row.id === selectedProduct.id)) {
+        toast.error('Bu mahsulot jadvalda mavjud!', {
+          position: 'top-center'
+        })
+
+        return
+      }
+
       // Create a new array with the existing rows and the selected product
       const updatedRows = [...rows, selectedProduct]
       setRows(updatedRows) // Assuming setRows is a state update function
@@ -266,7 +280,13 @@ const EntryInfoForm = () => {
                     />
                   </Grid>
                   <Grid item xs={12} md={4}>
-                    <Button variant='contained' color='primary' fullWidth onClick={handleAddProductToRow}>
+                    <Button
+                      variant='contained'
+                      color='primary'
+                      fullWidth
+                      disabled={selectedProduct === '' || selectedProduct === null}
+                      onClick={handleAddProductToRow}
+                    >
                       {`Mahsulotni Jadvalga Qo'shish`}
                     </Button>
                   </Grid>
