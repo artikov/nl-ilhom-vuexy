@@ -43,7 +43,14 @@ export const entriesApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['Entry']
     }),
-
+    putEntry: builder.mutation({
+      query: ({ id, body }) => ({
+        url: `${ENTRIES_URL}${id}/`,
+        method: 'PUT',
+        body
+      }),
+      invalidatesTags: ['Entry']
+    }),
     deleteEntry: builder.mutation({
       query: id => ({
         url: `${ENTRIES_URL}${id}/`,
@@ -60,5 +67,6 @@ export const {
   useGetEntryQuery,
   useAddEntryMutation,
   useUpdateEntryMutation,
-  useDeleteEntryMutation
+  useDeleteEntryMutation,
+  usePutEntryMutation
 } = entriesApiSlice

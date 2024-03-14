@@ -25,7 +25,8 @@ const UpdateIdentitiesDialog = ({ dialogOpen, onDialogClose, itemId, quantity, o
     const entryItem = entryItemsArray[index] || {} // Retrieve entry item at the corresponding index
 
     return {
-      id: index + 1,
+      // id: index + 1,
+      id: entryItem.id,
       serialNumber: entryItem.serial_number || '', // Use entry item's serialNumber if available, otherwise ''
       markingNumber: entryItem.serial_number || '' // Use entry item's markingNumber if available, otherwise ''
     }

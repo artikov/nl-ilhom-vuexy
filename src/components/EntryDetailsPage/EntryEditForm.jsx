@@ -15,11 +15,17 @@ import Icon from 'src/@core/components/icon'
 import { useGetSuppliersQuery } from 'src/store/slices/suppliersApiSlice'
 import { useGetWarehousesQuery } from 'src/store/slices/warehousesApiSlice'
 import { useGetProductsQuery } from 'src/store/slices/productsApiSlice'
-import { useUpdateEntryMutation, useGetEntryQuery } from 'src/store/slices/warehouseIncomesApiSlice'
+import {
+  useUpdateEntryMutation,
+  useGetEntryQuery,
+  usePutEntryMutation
+} from 'src/store/slices/warehouseIncomesApiSlice'
 
 const EntryEditForm = ({ entryId }) => {
   const router = useRouter()
   const { data: entry, isLoading } = useGetEntryQuery(entryId)
+
+  console.log(entry)
 
   const [rows, setRows] = useState([])
 
@@ -43,8 +49,6 @@ const EntryEditForm = ({ entryId }) => {
     ...priceObject
   })
 
-  console.log(rows)
-
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [itemId, setItemId] = useState(null)
   const [selectedSupplier, setSelectedSupplier] = useState('')
@@ -53,11 +57,14 @@ const EntryEditForm = ({ entryId }) => {
   const [selectedProduct, setSelectedProduct] = useState('')
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [itemIdentities, setItemIdentities] = useState([])
+  const [newProducts, setNewProducts] = useState([])
+  console.log(rows)
 
   useEffect(() => {
     setRows(entry?.warehouse_items || [])
     setQuantity({ ...quantityObject })
     setPrice({ ...priceObject })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [entry])
 
   const person_type = ''
@@ -77,6 +84,7 @@ const EntryEditForm = ({ entryId }) => {
   })
 
   const [updateEntry, { isError }] = useUpdateEntryMutation()
+  const [putEntry] = usePutEntryMutation()
 
   const columns = [
     { flex: 0.1, field: 'id', headerName: 'ID', width: 70 },
@@ -154,9 +162,13 @@ const EntryEditForm = ({ entryId }) => {
         return
       }
 
-      // Create a new array with the existing rows and the selected product
-      const updatedRows = [...rows, selectedProduct]
-      setRows(updatedRows) // Assuming setRows is a state update function
+      const newProduct = {
+        ...selectedProduct,
+        new: true
+      }
+
+      setNewProducts([...newProducts, selectedProduct])
+      setRows([...rows, newProduct])
     }
     setSelectedProduct('')
   }
@@ -173,40 +185,46 @@ const EntryEditForm = ({ entryId }) => {
       ...(selectedSupplier && { supplier: selectedSupplier }),
       ...(selectedWarehouse && { warehouse: selectedWarehouse }),
       ...(selectedStatus && { status: selectedStatus }),
-      warehouse_items: rows
-        .map(row => {
-          const quantityValue = parseInt(quantity[row.id], 10)
-          const priceValue = parseInt(price[row.id], 10)
 
-          const item_identities = itemIdentities
-            .filter(item => item.id === row.id)
-            .map(item => {
-              const entries = Object.entries(item.serialNumber).map(([key, serial]) => ({
-                serial_number: serial,
-                marking_number: item.markingNumber[key]
-              }))
+      warehouse_items: rows.map(row => {
+        const quantityValue = parseInt(quantity[row.id], 10)
+        const priceValue = parseInt(price[row.id], 10)
 
-              return entries
-            })
-            .flat()
+        const item_identities = itemIdentities
+          .filter(item => item.id === row.id)
+          .map(item => {
+            const entries = Object.entries(item.serialNumber).map(([key, serial]) => ({
+              id: key,
+              serial_number: serial,
+              marking_number: item.markingNumber[key]
+            }))
 
-          return {
-            product: row.product.id,
-            ...(quantityValue && { quantity: quantityValue }),
-            price: priceValue,
-            ...(item_identities.length > 0 && { item_identities })
-          }
-        })
-        .filter(item => Object.keys(item).length > 1) // Filter out objects with only product key
+            return entries
+          })
+          .flat()
+
+        return {
+          [row.new ? 'product' : 'id']: row.id,
+          quantity: quantityValue,
+          price: priceValue,
+          ...(item_identities.length > 0 && { item_identities })
+        }
+      })
+
+      // .filter(item => Object.keys(item).length > 1) // Filter out objects with only product key
     }
 
     console.log(submitDataFiltered)
 
-    // await updateEntry({ id: entryId, body: submitDataFiltered })
+    await updateEntry({ id: entryId, body: submitDataFiltered })
 
-    // if (!isError) {
-    //   router.push('./entries')
-    // }
+    if (!isError) {
+      toast.success("Kirim ma'lumotlari muvaffaqiyatli saqlandi", {
+        position: 'top-center'
+      })
+
+      router.push('/inventory/entries/' + entryId)
+    }
   }
 
   return (
