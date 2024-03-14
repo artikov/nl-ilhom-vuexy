@@ -17,7 +17,6 @@ import CustomTextField from 'src/@core/components/mui/text-field'
 import { useGetEntryQuery, useUpdateEntryMutation } from 'src/store/slices/warehouseIncomesApiSlice'
 import { useGetWarehousesQuery } from 'src/store/slices/warehousesApiSlice'
 import { useGetSuppliersQuery } from 'src/store/slices/suppliersApiSlice'
-import { borderTop } from '@mui/system'
 
 const DrawerEditEntry = ({ toggleDrawer, itemId }) => {
   const [body, setBody] = useState({

@@ -17,12 +17,8 @@ const Entries = () => {
   const { data, isLoading } = useGetEntriesQuery({ supplier, warehouse, status, search })
 
   useEffect(() => {
-    if (!isLoading) {
-      if (!supplier && !warehouse && !search && data) {
-        setNoQueryData(data.results)
-      }
-    }
-  }, [data, supplier, warehouse, search, isLoading])
+    if (!isLoading) setNoQueryData(data.results)
+  }, [data, isLoading])
 
   return (
     <Grid container spacing={6}>

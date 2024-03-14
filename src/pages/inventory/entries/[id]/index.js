@@ -46,7 +46,7 @@ const EntryDetailPage = () => {
 
   console.log(selectedItem)
 
-  const createdDate = new Date(entry?.created_at).toLocaleDateString('uz-UZ')
+  // const createdDate = new Date(entry?.created_at).toLocaleDateString('uz-UZ')
 
   return (
     <Grid container spacing={6}>
@@ -62,10 +62,12 @@ const EntryDetailPage = () => {
         <Typography variant='h1'>Kirim Ma'lumotlari</Typography>
       </Grid>
       <Grid item xs={12} md={6} textAlign={'right'}>
-        <Button variant='contained' color='primary'>
-          <Icon icon='tabler:edit' style={{ marginRight: '0.5rem' }} />
-          O'zgartirish
-        </Button>
+        <Link href={`/inventory/entries/${id}/edit`}>
+          <Button variant='contained' color='primary'>
+            <Icon icon='tabler:edit' style={{ marginRight: '0.5rem' }} />
+            O'zgartirish
+          </Button>
+        </Link>
       </Grid>
       <Grid item xs={12}>
         {isLoading ? (

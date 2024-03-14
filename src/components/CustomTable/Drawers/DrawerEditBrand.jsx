@@ -16,12 +16,12 @@ const DrawerEditBrand = ({ toggleDrawer, page, parents, itemId }) => {
   }
 
   const handleSave = () => {
-    const updatePayload = { id: itemId, name: brand.name, parent: brand.parent }
+    const updatePayload = { id: itemId, name: brand.name, parent: brand.parent.id }
 
     if (body.name.trim() !== '') {
       updatePayload.name = body.name.trim()
     } else if (body.parent !== '') {
-      updatePayload.parent = body.parent
+      updatePayload.parent = body.parent.id
     }
 
     updateBrand(updatePayload)

@@ -227,7 +227,7 @@ const CustomTable = ({
           <Grid item xs={12} marginBottom={6}>
             <Grid container spacing={6}>
               <Grid item xs={12} md={7}>
-                {page !== 'Valyuta' && (
+                {page !== 'Valyuta' && page !== "O'lchov" && (
                   <CustomTextField
                     placeholder='Search'
                     value={search}
