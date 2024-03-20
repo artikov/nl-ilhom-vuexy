@@ -45,9 +45,24 @@ const navigation = () => [
     ]
   },
   {
-    title: 'Valyuta',
-    icon: 'tabler:adjustments-dollar',
-    path: '/currency'
+    title: 'Sozlamalar',
+    icon: 'tabler:settings',
+    children: [
+      {
+        title: 'Valyuta',
+        icon: 'tabler:adjustments-dollar',
+        path: '/currency'
+      }
+    ]
+  },
+  {
+    title: 'Buyurtma',
+    icon: 'tabler:apps',
+    children: [
+      { title: 'Mijoz Kategoriyalari', path: '/orders/customer-categories' },
+      { title: 'Mijozlar', path: '/orders/customers' },
+      { title: 'Buyurtmalar', path: '/orders' }
+    ]
   }
 
   // {

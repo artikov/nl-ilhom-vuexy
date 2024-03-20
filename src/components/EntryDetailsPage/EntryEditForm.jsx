@@ -15,11 +15,8 @@ import Icon from 'src/@core/components/icon'
 import { useGetSuppliersQuery } from 'src/store/slices/suppliersApiSlice'
 import { useGetWarehousesQuery } from 'src/store/slices/warehousesApiSlice'
 import { useGetProductsQuery } from 'src/store/slices/productsApiSlice'
-import {
-  useUpdateEntryMutation,
-  useGetEntryQuery,
-  usePutEntryMutation
-} from 'src/store/slices/warehouseIncomesApiSlice'
+import { useUpdateEntryMutation, useGetEntryQuery } from 'src/store/slices/warehouseIncomesApiSlice'
+import { useDeleteWarehouseItemMutation } from 'src/store/slices/warehouseItemsApiSlice'
 
 const EntryEditForm = ({ entryId }) => {
   const router = useRouter()
@@ -58,7 +55,8 @@ const EntryEditForm = ({ entryId }) => {
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [itemIdentities, setItemIdentities] = useState([])
   const [newProducts, setNewProducts] = useState([])
-  console.log(rows)
+
+  // console.log(rows)
 
   useEffect(() => {
     setRows(entry?.warehouse_items || [])
@@ -83,8 +81,9 @@ const EntryEditForm = ({ entryId }) => {
     search
   })
 
-  const [updateEntry, { isError }] = useUpdateEntryMutation()
-  const [putEntry] = usePutEntryMutation()
+  const [deleteWarehouseItem] = useDeleteWarehouseItemMutation()
+
+  const [updateEntry, { isError, isLoading: entryUpdating }] = useUpdateEntryMutation()
 
   const columns = [
     { flex: 0.1, field: 'id', headerName: 'ID', width: 70 },
@@ -146,6 +145,7 @@ const EntryEditForm = ({ entryId }) => {
   const handleDelete = id => {
     const updatedRows = rows.filter(row => row.id !== id)
     setRows(updatedRows)
+    deleteWarehouseItem(id)
   }
 
   const handleSaveIdentities = itemIds => {
@@ -365,8 +365,9 @@ const EntryEditForm = ({ entryId }) => {
           <Grid item xs={12}>
             <Grid container spacing={4}>
               <Grid item>
-                <Button variant='contained' color='primary' onClick={handleSubmit}>
+                <Button variant='contained' color='primary' onClick={handleSubmit} disabled={entryUpdating}>
                   O'zgartishlarni Saqlash
+                  {entryUpdating && <CircularProgress size={20} />}
                 </Button>
               </Grid>
               <Grid item>

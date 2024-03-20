@@ -1,5 +1,3 @@
-import { useState, useEffect } from 'react'
-
 import { Typography, Grid, CircularProgress } from '@mui/material'
 
 import CustomTable from 'src/components/CustomTable/CustomTable'
