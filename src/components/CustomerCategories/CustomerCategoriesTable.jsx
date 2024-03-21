@@ -1,26 +1,104 @@
 import { useState } from 'react'
 
-import { Card, CardContent, Drawer, Grid, MenuItem, Box, Button } from '@mui/material'
+import { Card, CardContent, Drawer, Grid, MenuItem, Box, Button, Pagination } from '@mui/material'
+import { DataGrid } from '@mui/x-data-grid'
+
+import Icon from 'src/@core/components/icon'
 
 import CustomTextField from 'src/@core/components/mui/text-field'
 
+import CustomerCategoriesDrawer from './CustomerCategoriesDrawer'
+
+import { rows } from 'src/@fake-db/table/static-data'
+
 const CustomerCategoriesTable = () => {
+  const [currentPage, setCurrentPage] = useState(1)
   const [rowsPerPage, setRowsPerPage] = useState(10)
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const [itemId, setItemId] = useState(null)
 
-  const toggleDrawer = () => {
-    console.log('toggleDrawer')
+  const toggleDrawer = open => () => {
+    setDrawerOpen(open)
   }
+
+  const finalData = rows
+  const pageCount = Math.ceil(finalData.length / rowsPerPage)
+
+  const handleDelete = id => {
+    console.log('Deleted ID:', id)
+  }
+
+  const handleEdit = id => {
+    setDrawerOpen(true)
+    setItemId(id)
+  }
+
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value)
+  }
+
+  const CustomPagination = () => (
+    <Pagination
+      count={pageCount}
+      page={currentPage}
+      onChange={handlePageChange}
+      variant='outlined'
+      shape='rounded'
+      color='primary'
+    />
+  )
+
+  const columns = [
+    {
+      flex: 0.1,
+      field: 'id',
+      maxWidth: 80,
+      headerName: 'ID'
+    },
+    {
+      flex: 0.35,
+      minWidth: 200,
+      field: 'name',
+      headerName: 'Kategoriya Nomi'
+    },
+
+    // Edit button column
+    {
+      flex: 0.1,
+      field: 'edit',
+      maxWidth: 100,
+      headerName: '',
+      sortable: false,
+      renderCell: params => (
+        <Button onClick={() => handleEdit(params.row.id)}>
+          <Icon icon='tabler:edit' />
+        </Button>
+      )
+    },
+
+    // Delete button column
+    {
+      flex: 0.1,
+      field: 'delete',
+      maxWidth: 100,
+      headerName: '',
+      sortable: false,
+      renderCell: params => (
+        <Button color='error' onClick={() => handleDelete(params.row.id)}>
+          <Icon icon='tabler:trash' />
+        </Button>
+      )
+    }
+  ]
+
+  const CategoriesDrawer = <CustomerCategoriesDrawer toggleDrawer={toggleDrawer} itemId={itemId} />
 
   return (
     <Card>
       <div>
-        {/* <Drawer anchor='right' open={drawerOpen} onClose={toggleDrawer(false)}>
-          {DrawerList}
+        <Drawer anchor='right' open={drawerOpen} onClose={toggleDrawer(false)}>
+          {CategoriesDrawer}
         </Drawer>
-        <Drawer anchor='right' open={editDrawerOpen} onClose={toggleEditDrawer(false)}>
-          {DrawerEditItem}
-        </Drawer> */}
       </div>
       <CardContent>
         <Grid container spacing={6}>
@@ -50,13 +128,10 @@ const CustomerCategoriesTable = () => {
 
           <Grid item xs={12}>
             <Box sx={{ height: 650 }}>
-              {/* <DataGrid
+              <DataGrid
                 initialState={{
-                  columns: {
-                    columnVisibilityModel: {
-                      parent: page !== "O'lchov" && page !== 'Yetkazuvchi',
-                      phone: page === 'Yetkazuvchi'
-                    }
+                  sorting: {
+                    sortModel: [{ field: 'id', sort: 'asc' }]
                   }
                 }}
                 columns={columns}
@@ -66,7 +141,7 @@ const CustomerCategoriesTable = () => {
                 }}
                 pagination
                 pageSize={rowsPerPage}
-              /> */}
+              />
             </Box>
           </Grid>
         </Grid>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import { Card, Drawer, Box, Typography, Grid, MenuItem, Divider, CardContent, Button, Pagination } from '@mui/material'
+import { Card, Drawer, Box, Typography, Grid, MenuItem, CardContent, Button, Pagination } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 import Icon from 'src/@core/components/icon'
 
