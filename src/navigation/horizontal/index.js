@@ -59,9 +59,9 @@ const navigation = () => [
     title: 'Buyurtma',
     icon: 'tabler:apps',
     children: [
-      { title: 'Mijoz Kategoriyalari', path: '/orders/customer-categories' },
-      { title: 'Mijozlar', path: '/orders/customers' },
-      { title: 'Buyurtmalar', path: '/orders' }
+      { title: 'Mijoz Kategoriyalari', path: '/order/customer-categories' },
+      { title: 'Mijozlar', path: '/order/customers' },
+      { title: 'Buyurtmalar', path: '/order/orders' }
     ]
   }
 ]
