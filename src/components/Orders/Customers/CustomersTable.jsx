@@ -27,7 +27,8 @@ const CustomersTable = () => {
   const finalData = rows
   const pageCount = Math.ceil(finalData.length / rowsPerPage)
 
-  const handleDelete = id => {
+  const handleDelete = (id, event) => {
+    event.stopPropagation()
     console.log('Deleted ID:', id)
   }
 
@@ -97,7 +98,7 @@ const CustomersTable = () => {
       headerName: '',
       sortable: false,
       renderCell: params => (
-        <Button color='error' onClick={() => handleDelete(params.row.id)}>
+        <Button color='error' onClick={e => handleDelete(params.row.id, e)}>
           <Icon icon='tabler:trash' />
         </Button>
       )

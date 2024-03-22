@@ -1,43 +1,32 @@
-/* eslint-disable lines-around-comment */
 import { useState } from 'react'
 import Link from 'next/link'
-import { router } from 'next/router'
+import { useRouter } from 'next/router'
 
-import { Card, Box, Grid, MenuItem, CardContent, Button, Pagination, Chip } from '@mui/material'
+import { Card, CardContent, Grid, Box, Button, MenuItem, Chip, Pagination } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 import Icon from 'src/@core/components/icon'
 
 import CustomTextField from 'src/@core/components/mui/text-field'
-import EntriesFilters from './EntriesFilters'
+import OrdersFilters from './OrdersFilters'
 
-import { useDeleteEntryMutation } from 'src/store/slices/warehouseIncomesApiSlice'
+import { rows } from 'src/@fake-db/table/static-data'
 
-const EntriesTable = ({
-  data,
-  onWarehouseChange,
-  onSupplierChange,
-  onStatusChange,
-  onSearchChange,
-  search,
-  dataWithoutQuery
-}) => {
+const OrdersTable = () => {
+  const router = useRouter()
   const [currentPage, setCurrentPage] = useState(1)
   const [rowsPerPage, setRowsPerPage] = useState(10)
-  const [itemId, setItemId] = useState(null)
-  const [filteredData, setFilteredData] = useState(data)
 
-  const [deleteEntry] = useDeleteEntryMutation()
-
-  const handleDelete = (id, event) => {
-    event.stopPropagation()
-    deleteEntry(id)
-  }
-  const finalData = filteredData
+  const finalData = rows
 
   const pageCount = Math.ceil(finalData.length / rowsPerPage)
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value)
+  }
+
+  const handleDelete = (id, event) => {
+    event.stopPropagation()
+    console.log('Deleted:', id)
   }
 
   const CustomPagination = () => (
@@ -55,23 +44,28 @@ const EntriesTable = ({
     {
       flex: 0.1,
       field: 'id',
-      maxWidth: 80,
+      maxWidth: 50,
       headerName: 'ID'
     },
     {
       flex: 0.2,
-      minWidth: 200,
+      minWidth: 100,
+      field: 'name',
+      headerName: 'Mijoz nomi'
+    },
+
+    {
+      flex: 0.2,
+      minWidth: 150,
       field: 'date',
       headerName: 'Sana',
       valueGetter: params => {
-        const rawDate = params?.row?.created_at
+        const rawDate = params?.row?.start_date
         if (rawDate) {
           const formattedDate = new Intl.DateTimeFormat('uz', {
-            year: 'numeric',
-            month: 'numeric',
             day: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric'
+            month: 'numeric',
+            year: 'numeric'
           }).format(new Date(rawDate))
 
           return formattedDate
@@ -83,21 +77,28 @@ const EntriesTable = ({
 
     {
       flex: 0.2,
-      minWidth: 200,
+      minWidth: 100,
       field: 'quantity',
       headerName: `Miqdor`,
-      valueGetter: params => params?.row?.quantity || 'N/A'
+      valueGetter: params => params?.row?.salary || 'N/A'
     },
     {
       flex: 0.2,
-      minWidth: 200,
+      minWidth: 100,
+      field: 'price',
+      headerName: `Summasi`,
+      valueGetter: params => params?.row?.salary || 'N/A'
+    },
+    {
+      flex: 0.2,
+      minWidth: 50,
       field: 'warehouse',
       headerName: `Omborxona`,
       valueGetter: params => params?.row?.warehouse?.name || 'N/A'
     },
     {
       flex: 0.2,
-      minWidth: 150,
+      minWidth: 50,
       field: 'status',
       headerName: `Status`,
       renderCell: params =>
@@ -112,6 +113,8 @@ const EntriesTable = ({
     {
       flex: 0.1,
       field: 'delete',
+      sortable: false,
+      headerName: '',
       maxWidth: 100,
       renderCell: params => (
         <Button color='error' onClick={event => handleDelete(params?.row?.id, event)}>
@@ -125,24 +128,17 @@ const EntriesTable = ({
     <Card>
       <CardContent>
         <Grid container spacing={6}>
-          <EntriesFilters
-            onSupplierChange={onSupplierChange}
-            dataWithoutQuery={dataWithoutQuery}
-            onWarehouseChange={onWarehouseChange}
-            onStatusChange={onStatusChange}
-            setFilteredData={setFilteredData}
+          <OrdersFilters
+
+          // onSupplierChange={onSupplierChange}
+          // dataWithoutQuery={dataWithoutQuery}
+          // onWarehouseChange={onWarehouseChange}
+          // onStatusChange={onStatusChange}
+          // setFilteredData={setFilteredData}
           />
           <Grid item xs={12} marginBottom={6}>
             <Grid container spacing={6}>
-              <Grid item xs={12} md={7}>
-                <CustomTextField
-                  placeholder='Search'
-                  fullWidth
-                  value={search}
-                  name='search'
-                  onChange={({ target }) => onSearchChange(target.value)}
-                />
-              </Grid>
+              <Grid item xs={12} md={7}></Grid>
               <Grid item xs={12} md={5}>
                 <Grid container spacing={6} justifyContent={'end'}>
                   <Grid item xs={12} md={'auto'}>
@@ -160,9 +156,9 @@ const EntriesTable = ({
                     </CustomTextField>
                   </Grid>
                   <Grid item xs={12} md={'auto'}>
-                    <Link href='accept-product'>
+                    <Link href='create-order'>
                       <Button variant='contained' color='primary' fullWidth>
-                        {`+ Mahsulot Kirim Qilish`}
+                        + Buyurtma Yaratish
                       </Button>
                     </Link>
                   </Grid>
@@ -175,14 +171,14 @@ const EntriesTable = ({
             <Box sx={{ height: 650 }}>
               <DataGrid
                 columns={columns}
-                rows={finalData?.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage)}
+                rows={rows?.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage)}
                 slots={{
                   pagination: CustomPagination
                 }}
                 pagination
                 pageSize={rowsPerPage}
                 onRowClick={row => {
-                  router.push(`./entries/${row.row.id}`)
+                  router.push(`./orders/${row.row.id}`)
                 }}
                 sx={{ cursor: 'pointer' }}
               />
@@ -194,4 +190,4 @@ const EntriesTable = ({
   )
 }
 
-export default EntriesTable
+export default OrdersTable
