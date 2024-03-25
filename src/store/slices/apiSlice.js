@@ -26,7 +26,8 @@ export const apiSlice = createApi({
     'WarehouseItem',
     'Currency',
     'ClientsCategory',
-    'Client'
+    'Client',
+    'Payment'
   ],
   endpoints: builder => ({})
 })
