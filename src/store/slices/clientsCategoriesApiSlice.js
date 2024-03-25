@@ -1,19 +1,19 @@
-import { CLIENTS_CATEGORIES } from 'src/constants'
+import { CLIENTS_CATEGORIES_URL } from 'src/constants'
 import { apiSlice } from './apiSlice'
 
 export const clientsCategoriesApiSlice = apiSlice.injectEndpoints({
   endpoints: builder => ({
     getClientsCategories: builder.query({
-      query: () => CLIENTS_CATEGORIES,
+      query: () => CLIENTS_CATEGORIES_URL,
       providesTags: ['ClientsCategory']
     }),
     getClientsCategory: builder.query({
-      query: id => `${CLIENTS_CATEGORIES}${id}/`,
+      query: id => `${CLIENTS_CATEGORIES_URL}${id}/`,
       providesTags: ['ClientsCategory']
     }),
     updateClientsCategory: builder.mutation({
       query: clientsCategory => ({
-        url: `${CLIENTS_CATEGORIES}${clientsCategory.id}/`,
+        url: `${CLIENTS_CATEGORIES_URL}${clientsCategory.id}/`,
         method: 'PUT',
         body: clientsCategory
       }),
@@ -21,7 +21,7 @@ export const clientsCategoriesApiSlice = apiSlice.injectEndpoints({
     }),
     addClientsCategory: builder.mutation({
       query: clientsCategory => ({
-        url: CLIENTS_CATEGORIES,
+        url: CLIENTS_CATEGORIES_URL,
         method: 'POST',
         body: clientsCategory
       }),
@@ -29,7 +29,7 @@ export const clientsCategoriesApiSlice = apiSlice.injectEndpoints({
     }),
     deleteClientsCategory: builder.mutation({
       query: id => ({
-        url: `${CLIENTS_CATEGORIES}${id}/`,
+        url: `${CLIENTS_CATEGORIES_URL}${id}/`,
         method: 'DELETE'
       }),
       invalidatesTags: ['ClientsCategory']

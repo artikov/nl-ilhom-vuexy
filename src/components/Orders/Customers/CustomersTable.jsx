@@ -10,13 +10,17 @@ import CustomTextField from 'src/@core/components/mui/text-field'
 
 import AddCustomerDrawer from './AddCustomerDrawer'
 
+import { useDeleteClientMutation } from 'src/store/slices/clientsApiSlice'
+
 import { rows } from 'src/@fake-db/table/static-data'
 
-const CustomersTable = () => {
+const CustomersTable = ({ data }) => {
   const [currentPage, setCurrentPage] = useState(1)
   const [rowsPerPage, setRowsPerPage] = useState(10)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [itemId, setItemId] = useState(null)
+
+  const [deleteClient, { isLoading: isDeleting }] = useDeleteClientMutation()
 
   const router = useRouter()
 
@@ -24,12 +28,12 @@ const CustomersTable = () => {
     setDrawerOpen(open)
   }
 
-  const finalData = rows
+  const finalData = data?.length > 0 ? data : rows
   const pageCount = Math.ceil(finalData.length / rowsPerPage)
 
-  const handleDelete = (id, event) => {
+  const handleDelete = async (id, event) => {
     event.stopPropagation()
-    console.log('Deleted ID:', id)
+    await deleteClient(id)
   }
 
   const handleEdit = id => {
@@ -62,25 +66,26 @@ const CustomersTable = () => {
     {
       flex: 0.35,
       minWidth: 200,
-      field: 'name',
+      field: 'full_name',
       headerName: 'Mijoz Nomi'
     },
     {
       flex: 0.35,
       minWidth: 200,
-      field: 'phone',
+      field: 'phone_number',
       headerName: 'Telefon Raqami'
     },
     {
       flex: 0.25,
       minWidth: 100,
       field: 'city',
-      headerName: 'Shahar'
+      headerName: 'Shahar',
+      valueGetter: params => params.row.city?.name
     },
     {
       flex: 0.35,
       minWidth: 200,
-      field: 'post',
+      field: 'company',
       headerName: 'Kompaniya'
     },
     {
@@ -98,7 +103,7 @@ const CustomersTable = () => {
       headerName: '',
       sortable: false,
       renderCell: params => (
-        <Button color='error' onClick={e => handleDelete(params.row.id, e)}>
+        <Button color='error' onClick={e => handleDelete(params.row.id, e)} disabled={isDeleting}>
           <Icon icon='tabler:trash' />
         </Button>
       )
