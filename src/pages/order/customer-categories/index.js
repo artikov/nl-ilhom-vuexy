@@ -2,8 +2,10 @@ import { Grid, Typography, CircularProgress } from '@mui/material'
 
 import CustomerCategoriesTable from 'src/components/Orders/CustomerCategories/CustomerCategoriesTable'
 
+import { useGetClientsCategoriesQuery } from 'src/store/slices/clientsCategoriesApiSlice'
+
 const CustomerCategories = () => {
-  const isLoading = false
+  const { data, isLoading } = useGetClientsCategoriesQuery()
 
   return (
     <Grid container spacing={6}>
@@ -11,7 +13,7 @@ const CustomerCategories = () => {
         <Typography variant='h1'>Mijoz Kategoriyalari</Typography>
       </Grid>
       <Grid item xs={12}>
-        {isLoading ? <CircularProgress /> : <CustomerCategoriesTable />}
+        {isLoading ? <CircularProgress /> : <CustomerCategoriesTable data={data.results} />}
       </Grid>
     </Grid>
   )

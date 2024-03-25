@@ -1,5 +1,7 @@
 import { useState } from 'react'
 
+import toast from 'react-hot-toast'
+
 import { Card, CardContent, Drawer, Grid, MenuItem, Box, Button, Pagination } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 
@@ -9,23 +11,31 @@ import CustomTextField from 'src/@core/components/mui/text-field'
 
 import CustomerCategoriesDrawer from './CustomerCategoriesDrawer'
 
+import { useDeleteClientsCategoryMutation } from 'src/store/slices/clientsCategoriesApiSlice'
+
 import { rows } from 'src/@fake-db/table/static-data'
 
-const CustomerCategoriesTable = () => {
+const CustomerCategoriesTable = ({ data }) => {
   const [currentPage, setCurrentPage] = useState(1)
   const [rowsPerPage, setRowsPerPage] = useState(10)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [itemId, setItemId] = useState(null)
 
+  const [deleteClientsCategory, { isLoading: isDeleting }] = useDeleteClientsCategoryMutation()
+
   const toggleDrawer = open => () => {
     setDrawerOpen(open)
+    setItemId(null)
   }
 
-  const finalData = rows
+  const finalData = data ? data : rows
   const pageCount = Math.ceil(finalData.length / rowsPerPage)
 
-  const handleDelete = id => {
-    console.log('Deleted ID:', id)
+  const handleDelete = async id => {
+    await deleteClientsCategory(id)
+    toast.success('Categoriya olib tashlandi', {
+      position: 'top-center'
+    })
   }
 
   const handleEdit = id => {
@@ -84,7 +94,7 @@ const CustomerCategoriesTable = () => {
       headerName: '',
       sortable: false,
       renderCell: params => (
-        <Button color='error' onClick={() => handleDelete(params.row.id)}>
+        <Button color='error' onClick={() => handleDelete(params.row.id)} disabled={isDeleting}>
           <Icon icon='tabler:trash' />
         </Button>
       )
