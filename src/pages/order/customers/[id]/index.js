@@ -17,15 +17,14 @@ const buttonStyle = {
   }
 }
 
+import { useGetClientQuery } from 'src/store/slices/clientsApiSlice'
+
 const Customer = () => {
   const router = useRouter()
   const { id } = router.query
   const [page, setPage] = useState(1)
-  console.log(page)
-
-  const handlePageChange = page => () => {
-    setPage(page)
-  }
+  const { data: client } = useGetClientQuery(id)
+  console.log(client)
 
   return (
     <Grid container spacing={6}>
@@ -85,7 +84,7 @@ const Customer = () => {
       <Grid item xs={12}>
         <Card>
           <CardContent>
-            {page === 1 && <CustomerDetails />}
+            {page === 1 && <CustomerDetails client={client} />}
             {page === 2 && <CustomerOrders />}
             {page === 3 && <CustomerPayments />}
           </CardContent>
