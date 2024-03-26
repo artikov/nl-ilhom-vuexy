@@ -1,7 +1,19 @@
 import { useState } from 'react'
 import { useRouter } from 'next/router'
 
-import { Card, CardContent, Drawer, Grid, MenuItem, Box, Button, Pagination } from '@mui/material'
+import {
+  Card,
+  CardContent,
+  Drawer,
+  Grid,
+  MenuItem,
+  Box,
+  Button,
+  Pagination,
+  Typography,
+  Divider,
+  CircularProgress
+} from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 
 import Icon from 'src/@core/components/icon'
@@ -10,16 +22,20 @@ import CustomTextField from 'src/@core/components/mui/text-field'
 
 import AddCustomerDrawer from './AddCustomerDrawer'
 
-import { useDeleteClientMutation } from 'src/store/slices/clientsApiSlice'
+import { useDeleteClientMutation, useGetClientsQuery } from 'src/store/slices/clientsApiSlice'
+import { useGetClientsCategoriesQuery } from 'src/store/slices/clientsCategoriesApiSlice'
 
 import { rows } from 'src/@fake-db/table/static-data'
 
-const CustomersTable = ({ data }) => {
+const CustomersTable = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [rowsPerPage, setRowsPerPage] = useState(10)
   const [drawerOpen, setDrawerOpen] = useState(false)
-  const [itemId, setItemId] = useState(null)
+  const [selectedCategory, setSelectedCategory] = useState('')
+  const [search, setSearch] = useState('')
 
+  const { data, isLoading } = useGetClientsQuery({ category: selectedCategory, search })
+  const { data: clientsCategories } = useGetClientsCategoriesQuery()
   const [deleteClient, { isLoading: isDeleting }] = useDeleteClientMutation()
 
   const router = useRouter()
@@ -28,17 +44,12 @@ const CustomersTable = ({ data }) => {
     setDrawerOpen(open)
   }
 
-  const finalData = data?.length > 0 ? data : rows
+  const finalData = data?.results || rows
   const pageCount = Math.ceil(finalData.length / rowsPerPage)
 
   const handleDelete = async (id, event) => {
     event.stopPropagation()
     await deleteClient(id)
-  }
-
-  const handleEdit = id => {
-    setDrawerOpen(true)
-    setItemId(id)
   }
 
   const handlePageChange = (event, value) => {
@@ -91,8 +102,11 @@ const CustomersTable = ({ data }) => {
     {
       flex: 0.25,
       minWidth: 100,
-      field: 'salary',
-      headerName: 'Balans'
+      field: 'balance_usd',
+      headerName: 'Balans',
+      renderCell: params => (
+        <Typography color={params.row.balance_usd < 0 ? 'error' : 'success'}>{params.row.balance_usd}</Typography>
+      )
     },
 
     // Delete button column
@@ -110,7 +124,7 @@ const CustomersTable = ({ data }) => {
     }
   ]
 
-  const AddCustomer = <AddCustomerDrawer toggleDrawer={toggleDrawer} itemId={itemId} />
+  const AddCustomer = <AddCustomerDrawer toggleDrawer={toggleDrawer} />
 
   return (
     <Card>
@@ -121,8 +135,51 @@ const CustomersTable = ({ data }) => {
       </div>
       <CardContent>
         <Grid container spacing={6}>
-          <Grid item xs={12} marginBottom={6}>
-            <Grid container spacing={6} justifyContent={'end'}>
+          <Grid item xs={12}>
+            <Typography variant='h3' mb={6}>
+              Filter
+            </Typography>
+            <Grid container item xs={12} md={6} spacing={2}>
+              <Grid item md={10}>
+                <CustomTextField
+                  select
+                  fullWidth
+                  defaultValue=''
+                  SelectProps={{ displayEmpty: true }}
+                  onChange={({ target }) => setSelectedCategory(target.value)}
+                >
+                  <MenuItem value='' disabled>
+                    <em>Kategoriya</em>
+                  </MenuItem>
+                  {clientsCategories?.results?.map(category => (
+                    <MenuItem key={category.id} value={category.id}>
+                      {category.name}
+                    </MenuItem>
+                  ))}
+                </CustomTextField>
+              </Grid>
+              <Grid item>
+                <Button variant='contained' onClick={() => setSelectedCategory('')}>
+                  Reset
+                </Button>
+              </Grid>
+            </Grid>
+
+            <Divider sx={{ marginY: '1rem' }} />
+          </Grid>
+          <Grid container item xs={12}>
+            <Grid item xs={12} md={6}>
+              <CustomTextField
+                fullWidth
+                placeholder='Search'
+                value={search}
+                onChange={({ target }) => setSearch(target.value)}
+                InputProps={{
+                  startAdornment: <Icon icon='fluent:search-20-regular' sx={{ color: 'text.disabled', mr: 1 }} />
+                }}
+              ></CustomTextField>
+            </Grid>
+            <Grid item container xs={12} md={6} spacing={6} justifyContent={'end'}>
               <Grid item xs={12} md={'auto'}>
                 <CustomTextField
                   select
@@ -145,27 +202,31 @@ const CustomersTable = ({ data }) => {
             </Grid>
           </Grid>
 
-          <Grid item xs={12}>
-            <Box sx={{ height: 650 }}>
-              <DataGrid
-                initialState={{
-                  sorting: {
-                    sortModel: [{ field: 'id', sort: 'asc' }]
-                  }
-                }}
-                columns={columns}
-                rows={finalData?.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage)}
-                slots={{
-                  pagination: CustomPagination
-                }}
-                pagination
-                pageSize={rowsPerPage}
-                onRowClick={row => {
-                  router.push(`/order/customers/${row.row.id}`)
-                }}
-              />
-            </Box>
-          </Grid>
+          {isLoading ? (
+            <CircularProgress />
+          ) : (
+            <Grid item xs={12}>
+              <Box sx={{ height: 650 }}>
+                <DataGrid
+                  initialState={{
+                    sorting: {
+                      sortModel: [{ field: 'id', sort: 'asc' }]
+                    }
+                  }}
+                  columns={columns}
+                  rows={finalData?.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage)}
+                  slots={{
+                    pagination: CustomPagination
+                  }}
+                  pagination
+                  pageSize={rowsPerPage}
+                  onRowClick={row => {
+                    router.push(`/order/customers/${row.row.id}`)
+                  }}
+                />
+              </Box>
+            </Grid>
+          )}
         </Grid>
       </CardContent>
     </Card>

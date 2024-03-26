@@ -1,12 +1,14 @@
 import { useState } from 'react'
 
+import toast from 'react-hot-toast'
+
 import { Box, Button, Divider, Grid, Typography, MenuItem } from '@mui/material'
 import CustomTextField from 'src/@core/components/mui/text-field'
 
 import { useGetClientsCategoriesQuery } from 'src/store/slices/clientsCategoriesApiSlice'
 import { useGetRegionsQuery } from 'src/store/slices/regionsApiSlice'
 import { useGetCitiesQuery } from 'src/store/slices/citiesApiSlice'
-import { useAddClientMutation } from 'src/store/slices/clientsApiSlice'
+import { useAddClientMutation, useUpdateClientMutation, useGetClientQuery } from 'src/store/slices/clientsApiSlice'
 
 const AddCustomerDrawer = ({ toggleDrawer, customerId }) => {
   const [fullName, setFullName] = useState('')
@@ -21,7 +23,10 @@ const AddCustomerDrawer = ({ toggleDrawer, customerId }) => {
   const { data: categories } = useGetClientsCategoriesQuery()
   const { data: regions } = useGetRegionsQuery()
   const { data: cities } = useGetCitiesQuery(region)
+  const { data: client } = useGetClientQuery(customerId)
   const [addClient] = useAddClientMutation()
+  const [updateClient] = useUpdateClientMutation()
+  console.log(client)
 
   const handleSave = async () => {
     const data = {
@@ -33,16 +38,27 @@ const AddCustomerDrawer = ({ toggleDrawer, customerId }) => {
       city,
       category
     }
-    console.log(data)
-    await addClient(data)
 
+    console.log(data)
+    if (customerId) {
+      const filteredData = Object.fromEntries(Object.entries(data).filter(([_, v]) => v != ''))
+      await updateClient({ id: customerId, body: filteredData })
+      toast.success("Mijoz ma'lumotlari muvaffaqiyatli o'zgartirildi", {
+        position: 'top-center'
+      })
+    } else {
+      await addClient(data)
+      toast.success("Mijoz muvaffaqiyatli qo'shildi", {
+        position: 'top-center'
+      })
+    }
     toggleDrawer(false)
   }
 
   return (
     <Box sx={{ width: '500px', margin: 6 }} role='presentation'>
       <Grid container justifyContent={'space-between'} marginY={4}>
-        <Typography variant='h3'>Mijoz Kategoriyasini Qo'shish</Typography>
+        <Typography variant='h3'>{`Mijoz ${customerId ? "O'zgartirish" : "Qo'shish"}`}</Typography>
         <Button variant='tonal' color='secondary' onClick={toggleDrawer(false)}>
           X
         </Button>
@@ -73,7 +89,7 @@ const AddCustomerDrawer = ({ toggleDrawer, customerId }) => {
         <Grid item xs={12}>
           <CustomTextField
             label={`Mijoz Nomi`}
-            placeholder={`Mijoz Nomi`}
+            placeholder={client?.full_name || `Mijoz Nomi`}
             name='fullName'
             value={fullName}
             onChange={({ target }) => setFullName(target.value)}
@@ -84,7 +100,7 @@ const AddCustomerDrawer = ({ toggleDrawer, customerId }) => {
         <Grid item xs={12}>
           <CustomTextField
             label={`Telefon Raqami`}
-            placeholder={`Telefon Raqami`}
+            placeholder={client?.phone_number || `Telefon Raqami`}
             name='phoneNumber'
             value={phoneNumber}
             onChange={({ target }) => setPhoneNumber(target.value)}
@@ -95,7 +111,7 @@ const AddCustomerDrawer = ({ toggleDrawer, customerId }) => {
         <Grid item xs={12}>
           <CustomTextField
             label={`Kompaniya`}
-            placeholder={`Kompaniyasi`}
+            placeholder={client?.company || `Kompaniyasi`}
             name='company'
             value={company}
             onChange={({ target }) => setCompany(target.value)}
@@ -106,7 +122,7 @@ const AddCustomerDrawer = ({ toggleDrawer, customerId }) => {
         <Grid item xs={12}>
           <CustomTextField
             select
-            defaultValue=''
+            defaultValue={client?.city?.region?.id || ''}
             label='Viloyat'
             id='custom-select'
             fullWidth
@@ -149,7 +165,7 @@ const AddCustomerDrawer = ({ toggleDrawer, customerId }) => {
         <Grid item xs={12}>
           <CustomTextField
             label={`Manzil`}
-            placeholder={`Manzil`}
+            placeholder={client?.address || `Manzil`}
             name='address'
             value={address}
             onChange={({ target }) => setAddress(target.value)}
@@ -160,7 +176,7 @@ const AddCustomerDrawer = ({ toggleDrawer, customerId }) => {
         <Grid item xs={12}>
           <CustomTextField
             label={`Izoh`}
-            placeholder={`Izoh`}
+            placeholder={client?.note || `Izoh`}
             name='note'
             value={note}
             onChange={({ target }) => setNote(target.value)}

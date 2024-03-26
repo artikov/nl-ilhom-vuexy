@@ -4,7 +4,17 @@ import { apiSlice } from './apiSlice'
 export const clientsApiSlice = apiSlice.injectEndpoints({
   endpoints: builder => ({
     getClients: builder.query({
-      query: () => CLIENTS_URL,
+      query: ({ category, search }) => {
+        let url = `${CLIENTS_URL}?`
+        if (category) {
+          url += `category=${category}&`
+        }
+        if (search) {
+          url += `search=${search}&`
+        }
+
+        return url
+      },
       providesTags: ['Client']
     }),
     getClient: builder.query({

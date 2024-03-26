@@ -27,7 +27,6 @@ const Customer = () => {
 
   const [page, setPage] = useState(1)
   const [drawerOpen, setDrawerOpen] = useState(false)
-  const [itemId, setItemId] = useState(null)
 
   const { data: client } = useGetClientQuery(id)
 
@@ -35,7 +34,7 @@ const Customer = () => {
     setDrawerOpen(open)
   }
 
-  const AddCustomer = <AddCustomerDrawer toggleDrawer={toggleDrawer} itemId={itemId} />
+  const AddCustomer = <AddCustomerDrawer toggleDrawer={toggleDrawer} customerId={id} />
 
   return (
     <>

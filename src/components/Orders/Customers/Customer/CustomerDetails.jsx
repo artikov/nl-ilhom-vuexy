@@ -26,7 +26,7 @@ const CustomerDetails = ({ client }) => {
             <b>Kompaniyasi: </b> {client?.company}
           </Typography>
           <Typography style={{ marginBottom: 8 }}>
-            <b>Viloyati: </b> {regions?.results?.find(region => region.id === client?.city.region)?.name}
+            <b>Viloyati: </b> {client?.city?.region?.name}
           </Typography>
           <Typography style={{ marginBottom: 8 }}>
             <b>Shahari: </b> {client?.city.name}
