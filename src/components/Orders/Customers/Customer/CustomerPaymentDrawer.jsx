@@ -23,7 +23,7 @@ const CustomerPaymentDrawer = ({ toggleDrawer, itemId, clientId }) => {
   console.log(payment)
 
   const [createPayment, { isLoading: isAdding }] = useCreatePaymentMutation()
-  const [updatePayment, { isLoading: isUpdating }] = useUpdatePaymentMutation()
+  const [updatePayment, { isLoading: isUpdating, isError: updateError }] = useUpdatePaymentMutation()
 
   const handleSave = async () => {
     const newPayment = {
@@ -37,10 +37,21 @@ const CustomerPaymentDrawer = ({ toggleDrawer, itemId, clientId }) => {
 
     // Filtering out keys with empty values
     const filteredNewPayment = Object.fromEntries(Object.entries(newPayment).filter(([_, value]) => value !== ''))
-    console.log(filteredNewPayment)
 
     if (itemId) {
-      await updatePayment({ id: itemId, body: filteredNewPayment })
+      const updatedPayment = Object.fromEntries(
+        Object.entries(newPayment).filter(([key, value]) => key !== 'client' && value !== '')
+      )
+
+      await updatePayment({ id: itemId, body: updatedPayment })
+      if (updateError) {
+        toast.error("To'lovni tahrirlashda xatolik yuz berdi", {
+          position: 'top-center'
+        })
+        console.log(updateError)
+
+        return
+      }
       toast.success("To'lov muvaffaqiyatli tahrirlandi", {
         position: 'top-center'
       })

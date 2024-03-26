@@ -27,7 +27,7 @@ export const paymentsApiSlice = apiSlice.injectEndpoints({
       invalidatesTags: ['Payment']
     }),
     updatePayment: builder.mutation({
-      query: ({ id, ...body }) => ({
+      query: ({ id, body }) => ({
         url: `${PAYMENTS_URL}${id}/`,
         method: 'PATCH',
         body

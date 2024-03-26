@@ -1,19 +1,18 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 
 import toast from 'react-hot-toast'
 
-import { Typography, Divider, Grid, MenuItem, Box, Button, Pagination, Drawer } from '@mui/material'
+import { Typography, Divider, Grid, MenuItem, Box, Button, Pagination, Drawer, CircularProgress } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 
 import CustomTextField from 'src/@core/components/mui/text-field'
 import Icon from 'src/@core/components/icon'
 
 import CustomerPaymentDrawer from './CustomerPaymentDrawer'
+import MinMaxDataPicker from 'src/components/DatePicker/MinMaxDataPicker'
 
 import { useGetPaymentsQuery, useDeletePaymentMutation } from 'src/store/slices/paymentsApiSlice'
-
-import { rows } from 'src/@fake-db/table/static-data'
 
 const CustomerPayments = () => {
   const [selectedPaymentType, setSelectedPaymentType] = useState('')
@@ -22,19 +21,28 @@ const CustomerPayments = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [itemId, setItemId] = useState(null)
+  const [earliestDate, setEarliestDate] = useState(null)
+  const [latestDate, setLatestDate] = useState(null)
+  const [minDate, setMinDate] = useState(null)
+  const [maxDate, setMaxDate] = useState(new Date())
+  const [filteredByDate, setFilteredByDate] = useState(false)
+  const [filtered, setFiltered] = useState(false)
+  const [filteredData, setFilteredData] = useState([])
 
   const router = useRouter()
   const clientId = router.query.id
 
-  const { data: payments } = useGetPaymentsQuery({ client: clientId })
+  const { data: payments, isLoading } = useGetPaymentsQuery({ client: clientId })
   const [deletePayment] = useDeletePaymentMutation()
 
   const handleSelectedPaymentTypeChange = event => {
     setSelectedPaymentType(event.target.value)
+    setFiltered(true)
   }
 
   const handleSelectedCurrencyChange = event => {
     setSelectedCurrency(event.target.value)
+    setFiltered(true)
   }
 
   const CustomPagination = () => (
@@ -51,6 +59,56 @@ const CustomerPayments = () => {
   const handlePageChange = (event, value) => {
     setCurrentPage(value)
   }
+
+  const handleReset = () => {
+    setSelectedPaymentType('')
+    setSelectedCurrency('')
+    setFiltered(false)
+  }
+
+  const handleResetDate = () => {
+    setMinDate(null)
+    setMaxDate(new Date())
+    setFilteredByDate(false)
+  }
+
+  useEffect(() => {
+    if (!isLoading) {
+      const findMinMaxDates = () => {
+        const dates = payments?.results?.map(item => new Date(item.created_at))
+        const earliest = new Date(Math.min(...dates))
+        const latest = new Date(Math.max(...dates))
+
+        setEarliestDate(earliest)
+        setLatestDate(latest)
+      }
+
+      findMinMaxDates()
+    }
+  }, [payments, isLoading])
+
+  // Filter data between minDate and maxDate
+  useEffect(() => {
+    // if (!minDate || !maxDate || !dataWithoutQuery) {
+    // Check if minDate, maxDate, or dataWithoutQuery is not defined
+
+    //   return
+    // }
+
+    const minDateStartOfDay = new Date(minDate)
+    minDateStartOfDay.setHours(0, 0, 0, 0)
+
+    const maxDateEndOfDay = new Date(maxDate)
+    maxDateEndOfDay.setHours(23, 59, 59, 999)
+
+    const filteredData = payments?.results?.filter(entry => {
+      const entryDate = new Date(entry.created_at)
+
+      return entryDate >= minDateStartOfDay && entryDate <= maxDateEndOfDay
+    })
+
+    setFilteredData(filteredData)
+  }, [minDate, maxDate, payments, setFilteredData])
 
   const handleEdit = id => {
     setItemId(id)
@@ -70,8 +128,8 @@ const CustomerPayments = () => {
     setItemId(null)
   }
 
-  const finalData = payments?.results?.length > 0 ? payments?.results : rows
-  const pageCount = Math.ceil(finalData.length / rowsPerPage)
+  const finalData = filteredData || payments?.results
+  const pageCount = Math.ceil(finalData?.length / rowsPerPage)
 
   const columns = [
     {
@@ -139,100 +197,127 @@ const CustomerPayments = () => {
 
   return (
     <>
-      <Drawer anchor='right' open={drawerOpen} onClose={toggleDrawer(false)}>
-        {AddPaymentDrawer}
-      </Drawer>
-      <Typography variant='h2' pb={6}>
-        To'lovlar
-      </Typography>
-      <Divider />
-      <Typography variant='h3' py={6}>
-        Filter
-      </Typography>
-      <Grid container spacing={2} pb={6}>
-        <Grid item xs={12} md={6}>
-          <CustomTextField></CustomTextField>
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <CustomTextField></CustomTextField>
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <CustomTextField
-            select
-            defaultValue=''
-            id='custom-select'
-            fullWidth
-            SelectProps={{ displayEmpty: true }}
-            value={selectedPaymentType}
-            onChange={handleSelectedPaymentTypeChange}
-          >
-            <MenuItem disabled value=''>
-              <em>To'lov Turi</em>
-            </MenuItem>
+      {isLoading ? (
+        <CircularProgress />
+      ) : (
+        <>
+          <Drawer anchor='right' open={drawerOpen} onClose={toggleDrawer(false)}>
+            {AddPaymentDrawer}
+          </Drawer>
+          <Typography variant='h2' pb={6}>
+            To'lovlar
+          </Typography>
+          <Divider />
+          <Typography variant='h3' py={6}>
+            Filter
+          </Typography>
+          <Grid container spacing={2} pb={6}>
+            <Grid item xs={12} md={10}>
+              <MinMaxDataPicker
+                earliestDate={earliestDate}
+                latestDate={latestDate}
+                minDate={minDate}
+                maxDate={maxDate}
+                setMinDate={setMinDate}
+                setMaxDate={setMaxDate}
+                setFilteredByDate={setFilteredByDate}
+              />
+            </Grid>
+            <Grid item xs={12} md={2}>
+              <Button
+                variant='contained'
+                color='primary'
+                fullWidth
+                onClick={handleResetDate}
+                disabled={!filteredByDate}
+              >
+                Reset
+              </Button>
+            </Grid>
+            <Grid item xs={12} md={5}>
+              <CustomTextField
+                select
+                defaultValue=''
+                id='custom-select'
+                fullWidth
+                SelectProps={{ displayEmpty: true }}
+                value={selectedPaymentType}
+                onChange={handleSelectedPaymentTypeChange}
+              >
+                <MenuItem disabled value=''>
+                  <em>To'lov Turi</em>
+                </MenuItem>
 
-            <MenuItem value='CASH'>Naxd</MenuItem>
-            <MenuItem value='TRANSFER'>O'tkazma</MenuItem>
-          </CustomTextField>
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <CustomTextField
-            select
-            defaultValue=''
-            id='custom-select'
-            fullWidth
-            SelectProps={{ displayEmpty: true }}
-            value={selectedCurrency}
-            onChange={handleSelectedCurrencyChange}
-          >
-            <MenuItem disabled value=''>
-              <em>Valyuta</em>
-            </MenuItem>
+                <MenuItem value='CASH'>Naxd</MenuItem>
+                <MenuItem value='TRANSFER'>O'tkazma</MenuItem>
+              </CustomTextField>
+            </Grid>
+            <Grid item xs={12} md={5}>
+              <CustomTextField
+                select
+                defaultValue=''
+                id='custom-select'
+                fullWidth
+                SelectProps={{ displayEmpty: true }}
+                value={selectedCurrency}
+                onChange={handleSelectedCurrencyChange}
+              >
+                <MenuItem disabled value=''>
+                  <em>Valyuta</em>
+                </MenuItem>
 
-            <MenuItem value='UZS'>So'm</MenuItem>
-            <MenuItem value='USD'>Dollar</MenuItem>
-          </CustomTextField>
-        </Grid>
-      </Grid>
-      <Divider />
-      <Grid item xs={12} py={6}>
-        <Grid container spacing={6} justifyContent={'end'}>
-          <Grid item xs={12} md={'auto'}>
-            <CustomTextField
-              select
-              fullWidth
-              defaultValue='10'
-              id='custom-select'
-              SelectProps={{ displayEmpty: true }}
-              onChange={({ target }) => setRowsPerPage(target.value)}
-            >
-              <MenuItem value={10}>10</MenuItem>
-              <MenuItem value={15}>15</MenuItem>
-              <MenuItem value={20}>20</MenuItem>
-            </CustomTextField>
+                <MenuItem value='UZS'>So'm</MenuItem>
+                <MenuItem value='USD'>Dollar</MenuItem>
+              </CustomTextField>
+            </Grid>
+            <Grid item xs={12} md={2}>
+              <Button variant='contained' color='primary' fullWidth onClick={handleReset} disabled={!filtered}>
+                Reset
+              </Button>
+            </Grid>
           </Grid>
-          <Grid item xs={12} md={'auto'}>
-            <Button variant='contained' color='primary' fullWidth onClick={toggleDrawer(true)}>
-              {`+ To'lov Yaratish`}
-            </Button>
+          <Divider />
+          <Grid item xs={12} py={6}>
+            <Grid container spacing={6} justifyContent={'end'}>
+              <Grid item xs={12} md={'auto'}>
+                <CustomTextField
+                  select
+                  fullWidth
+                  defaultValue='10'
+                  id='custom-select'
+                  SelectProps={{ displayEmpty: true }}
+                  onChange={({ target }) => setRowsPerPage(target.value)}
+                >
+                  <MenuItem value={10}>10</MenuItem>
+                  <MenuItem value={15}>15</MenuItem>
+                  <MenuItem value={20}>20</MenuItem>
+                </CustomTextField>
+              </Grid>
+              <Grid item xs={12} md={'auto'}>
+                <Button variant='contained' color='primary' fullWidth onClick={toggleDrawer(true)}>
+                  {`+ To'lov Yaratish`}
+                </Button>
+              </Grid>
+            </Grid>
           </Grid>
-        </Grid>
-      </Grid>
-      <Box sx={{ height: 650 }}>
-        <DataGrid
-          initialState={{
-            sorting: {
-              sortModel: [{ field: 'id', sort: 'asc' }]
-            }
-          }}
-          columns={columns}
-          rows={finalData?.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage)}
-          slots={{
-            pagination: CustomPagination
-          }}
-          pagination
-          pageSize={rowsPerPage}
-        />
-      </Box>
+          <Box sx={{ height: 650 }}>
+            <DataGrid
+              initialState={{
+                sorting: {
+                  sortModel: [{ field: 'id', sort: 'asc' }]
+                }
+              }}
+              columns={columns}
+              rows={finalData?.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage)}
+              slots={{
+                pagination: CustomPagination
+              }}
+              pagination
+              pageSize={rowsPerPage}
+            />
+          </Box>
+        </>
+      )}
     </>
   )
 }
