@@ -8,7 +8,7 @@ import { useGetRegionsQuery } from 'src/store/slices/regionsApiSlice'
 import { useGetCitiesQuery } from 'src/store/slices/citiesApiSlice'
 import { useAddClientMutation } from 'src/store/slices/clientsApiSlice'
 
-const AddCustomerDrawer = ({ toggleDrawer }) => {
+const AddCustomerDrawer = ({ toggleDrawer, customerId }) => {
   const [fullName, setFullName] = useState('')
   const [phoneNumber, setPhoneNumber] = useState('')
   const [company, setCompany] = useState('')

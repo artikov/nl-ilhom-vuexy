@@ -110,13 +110,13 @@ const CustomersTable = ({ data }) => {
     }
   ]
 
-  const CategoriesDrawer = <AddCustomerDrawer toggleDrawer={toggleDrawer} itemId={itemId} />
+  const AddCustomer = <AddCustomerDrawer toggleDrawer={toggleDrawer} itemId={itemId} />
 
   return (
     <Card>
       <div>
         <Drawer anchor='right' open={drawerOpen} onClose={toggleDrawer(false)}>
-          {CategoriesDrawer}
+          {AddCustomer}
         </Drawer>
       </div>
       <CardContent>
