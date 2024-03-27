@@ -7,7 +7,6 @@ import { DataGrid } from '@mui/x-data-grid'
 import Icon from 'src/@core/components/icon'
 
 import CustomTextField from 'src/@core/components/mui/text-field'
-import OrdersFilters from './OrdersFilters'
 
 import MinMaxDataPicker from 'src/components/DatePicker/MinMaxDataPicker'
 
@@ -149,36 +148,53 @@ const OrdersTable = () => {
         <Typography variant='h3' py={6}>
           Filter
         </Typography>
-        <Grid container spacing={6}>
-          <Grid item container xs={12}>
-            <Grid container item spacing={2}>
-              <Grid container spacing={2} pb={6}>
-                <Grid item xs={12} md={10}>
-                  <MinMaxDataPicker
-                    earliestDate={earliestDate}
-                    latestDate={latestDate}
-                    minDate={minDate}
-                    maxDate={maxDate}
-                    setMinDate={setMinDate}
-                    setMaxDate={setMaxDate}
-                    setFilteredByDate={setFilteredByDate}
-                  />
-                </Grid>
-                <Grid item xs={12} md={2}>
-                  <Button
-                    variant='contained'
-                    color='primary'
-                    fullWidth
-                    onClick={handleResetDate}
-                    disabled={!filteredByDate}
-                  >
-                    Reset
-                  </Button>
-                </Grid>
-              </Grid>
+        <Grid container spacing={4}>
+          <Grid container item spacing={2}>
+            <Grid item xs={12} md={10}>
+              <MinMaxDataPicker
+                earliestDate={earliestDate}
+                latestDate={latestDate}
+                minDate={minDate}
+                maxDate={maxDate}
+                setMinDate={setMinDate}
+                setMaxDate={setMaxDate}
+                setFilteredByDate={setFilteredByDate}
+              />
+            </Grid>
+            <Grid item xs={12} md={2}>
+              <Button
+                variant='contained'
+                color='primary'
+                fullWidth
+                onClick={handleResetDate}
+                disabled={!filteredByDate}
+              >
+                Reset
+              </Button>
             </Grid>
           </Grid>
-          <Grid item container xs={12}></Grid>
+          <Grid item container xs={12} spacing={2}>
+            <Grid item xs={12} md={4}>
+              <CustomTextField fullWidth select></CustomTextField>
+            </Grid>
+            <Grid item xs={12} md={3}>
+              <CustomTextField fullWidth select></CustomTextField>
+            </Grid>
+            <Grid item xs={12} md={3}>
+              <CustomTextField fullWidth select></CustomTextField>
+            </Grid>
+            <Grid item xs={12} md={2}>
+              <Button
+                variant='contained'
+                color='primary'
+                fullWidth
+                onClick={handleResetDate}
+                disabled={!filteredByDate}
+              >
+                Reset
+              </Button>
+            </Grid>
+          </Grid>
 
           <Grid item container xs={12} marginBottom={6}>
             <Grid item xs={12} md={7}></Grid>
