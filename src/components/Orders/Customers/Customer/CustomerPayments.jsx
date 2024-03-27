@@ -32,7 +32,11 @@ const CustomerPayments = () => {
   const router = useRouter()
   const clientId = router.query.id
 
-  const { data: payments, isLoading } = useGetPaymentsQuery({ client: clientId })
+  const { data: payments, isLoading } = useGetPaymentsQuery({
+    client: clientId,
+    payment_type: selectedPaymentType,
+    currency: selectedCurrency
+  })
   const [deletePayment] = useDeletePaymentMutation()
 
   const handleSelectedPaymentTypeChange = event => {

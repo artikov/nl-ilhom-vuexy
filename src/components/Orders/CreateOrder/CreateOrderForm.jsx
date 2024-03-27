@@ -10,6 +10,8 @@ import Icon from 'src/@core/components/icon'
 import CustomTextField from 'src/@core/components/mui/text-field'
 import CustomAutocomplete from 'src/@core/components/mui/autocomplete'
 
+import CreateOrderDialog from './CreateOrderDialog'
+
 import { useGetClientsQuery } from 'src/store/slices/clientsApiSlice'
 import { useGetProductsQuery } from 'src/store/slices/productsApiSlice'
 import { useCreateOrderMutation } from 'src/store/slices/ordersApiSlice'
@@ -22,8 +24,11 @@ const CreateOrderForm = () => {
   const [selectedStatus, setSelectedStatus] = useState('')
   const [selectedProduct, setSelectedProduct] = useState('')
   const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [itemId, setItemId] = useState('')
+  const [itemIdentities, setItemIdentities] = useState([])
 
-  const { data: clients } = useGetClientsQuery()
+  const { data: clients } = useGetClientsQuery({ category: '' })
   const { data: products, isLoading: productsLoading } = useGetProductsQuery({ category: '' })
   const [createOrder] = useCreateOrderMutation()
 
@@ -109,18 +114,27 @@ const CreateOrderForm = () => {
     setRows(updatedRows)
   }
 
+  const handleDialogOpen = id => {
+    setItemId(id)
+    setIsDialogOpen(true)
+  }
+
+  const handleSaveIdentities = itemIds => {
+    setItemIdentities(prev => [...prev, itemIds])
+  }
+
   return (
     <Grid container spacing={6}>
-      {/* <ProductAcceptDialog
+      <CreateOrderDialog
         dialogOpen={isDialogOpen}
         onDialogClose={setIsDialogOpen}
         itemId={itemId}
         quantity={quantity}
         onSave={handleSaveIdentities}
-      /> */}
+      />
       <Grid item xs={12}>
         <Card>
-          <CardHeader title="Kirim ma'lumotlari" />
+          <CardHeader title="Buyurtma ma'lumotlari" />
           <CardContent>
             <form onSubmit={e => e.preventDefault()}>
               <Grid container spacing={5}>

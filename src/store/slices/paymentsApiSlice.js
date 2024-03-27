@@ -4,10 +4,16 @@ import { apiSlice } from './apiSlice'
 export const paymentsApiSlice = apiSlice.injectEndpoints({
   endpoints: builder => ({
     getPayments: builder.query({
-      query: ({ client }) => {
+      query: ({ client, payment_type, currency }) => {
         let url = `${PAYMENTS_URL}?`
         if (client) {
           url += `client=${client}&`
+        }
+        if (payment_type) {
+          url += `payment_type=${payment_type}&`
+        }
+        if (currency) {
+          url += `currency=${currency}&`
         }
 
         return url

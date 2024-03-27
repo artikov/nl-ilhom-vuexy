@@ -2,12 +2,14 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
-import { Card, CardContent, Grid, Box, Button, MenuItem, Chip, Pagination } from '@mui/material'
+import { Card, CardContent, Grid, Box, Button, MenuItem, Chip, Pagination, Typography } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 import Icon from 'src/@core/components/icon'
 
 import CustomTextField from 'src/@core/components/mui/text-field'
 import OrdersFilters from './OrdersFilters'
+
+import MinMaxDataPicker from 'src/components/DatePicker/MinMaxDataPicker'
 
 import { rows } from 'src/@fake-db/table/static-data'
 
@@ -15,6 +17,11 @@ const OrdersTable = () => {
   const router = useRouter()
   const [currentPage, setCurrentPage] = useState(1)
   const [rowsPerPage, setRowsPerPage] = useState(10)
+  const [earliestDate, setEarliestDate] = useState(null)
+  const [latestDate, setLatestDate] = useState(null)
+  const [minDate, setMinDate] = useState(null)
+  const [maxDate, setMaxDate] = useState(new Date())
+  const [filteredByDate, setFilteredByDate] = useState(false)
 
   const finalData = rows
 
@@ -27,6 +34,18 @@ const OrdersTable = () => {
   const handleDelete = (id, event) => {
     event.stopPropagation()
     console.log('Deleted:', id)
+  }
+
+  const handleReset = () => {
+    setSelectedPaymentType('')
+    setSelectedCurrency('')
+    setFiltered(false)
+  }
+
+  const handleResetDate = () => {
+    setMinDate(null)
+    setMaxDate(new Date())
+    setFilteredByDate(false)
   }
 
   const CustomPagination = () => (
@@ -127,41 +146,64 @@ const OrdersTable = () => {
   return (
     <Card>
       <CardContent>
+        <Typography variant='h3' py={6}>
+          Filter
+        </Typography>
         <Grid container spacing={6}>
-          <OrdersFilters
+          <Grid item container xs={12}>
+            <Grid container item spacing={2}>
+              <Grid container spacing={2} pb={6}>
+                <Grid item xs={12} md={10}>
+                  <MinMaxDataPicker
+                    earliestDate={earliestDate}
+                    latestDate={latestDate}
+                    minDate={minDate}
+                    maxDate={maxDate}
+                    setMinDate={setMinDate}
+                    setMaxDate={setMaxDate}
+                    setFilteredByDate={setFilteredByDate}
+                  />
+                </Grid>
+                <Grid item xs={12} md={2}>
+                  <Button
+                    variant='contained'
+                    color='primary'
+                    fullWidth
+                    onClick={handleResetDate}
+                    disabled={!filteredByDate}
+                  >
+                    Reset
+                  </Button>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item container xs={12}></Grid>
 
-          // onSupplierChange={onSupplierChange}
-          // dataWithoutQuery={dataWithoutQuery}
-          // onWarehouseChange={onWarehouseChange}
-          // onStatusChange={onStatusChange}
-          // setFilteredData={setFilteredData}
-          />
-          <Grid item xs={12} marginBottom={6}>
-            <Grid container spacing={6}>
-              <Grid item xs={12} md={7}></Grid>
-              <Grid item xs={12} md={5}>
-                <Grid container spacing={6} justifyContent={'end'}>
-                  <Grid item xs={12} md={'auto'}>
-                    <CustomTextField
-                      select
-                      fullWidth
-                      defaultValue='10'
-                      id='custom-select'
-                      SelectProps={{ displayEmpty: true }}
-                      onChange={({ target }) => setRowsPerPage(target.value)}
-                    >
-                      <MenuItem value={10}>10</MenuItem>
-                      <MenuItem value={20}>15</MenuItem>
-                      <MenuItem value={30}>20</MenuItem>
-                    </CustomTextField>
-                  </Grid>
-                  <Grid item xs={12} md={'auto'}>
-                    <Link href='create-order'>
-                      <Button variant='contained' color='primary' fullWidth>
-                        + Buyurtma Yaratish
-                      </Button>
-                    </Link>
-                  </Grid>
+          <Grid item container xs={12} marginBottom={6}>
+            <Grid item xs={12} md={7}></Grid>
+            <Grid item xs={12} md={5}>
+              <Grid container spacing={6} justifyContent={'end'}>
+                <Grid item xs={12} md={'auto'}>
+                  <CustomTextField
+                    select
+                    fullWidth
+                    defaultValue='10'
+                    id='custom-select'
+                    SelectProps={{ displayEmpty: true }}
+                    onChange={({ target }) => setRowsPerPage(target.value)}
+                  >
+                    <MenuItem value={10}>10</MenuItem>
+                    <MenuItem value={20}>15</MenuItem>
+                    <MenuItem value={30}>20</MenuItem>
+                  </CustomTextField>
+                </Grid>
+                <Grid item xs={12} md={'auto'}>
+                  <Link href='create-order'>
+                    <Button variant='contained' color='primary' fullWidth>
+                      + Buyurtma Yaratish
+                    </Button>
+                  </Link>
                 </Grid>
               </Grid>
             </Grid>
