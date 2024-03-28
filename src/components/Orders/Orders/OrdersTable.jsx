@@ -1,6 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+
+import toast from 'react-hot-toast'
 
 import { Card, CardContent, Grid, Box, Button, MenuItem, Chip, Pagination, Typography } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
@@ -10,19 +12,37 @@ import CustomTextField from 'src/@core/components/mui/text-field'
 
 import MinMaxDataPicker from 'src/components/DatePicker/MinMaxDataPicker'
 
-import { rows } from 'src/@fake-db/table/static-data'
+import { useGetOrdersQuery, useDeleteOrderMutation } from 'src/store/slices/ordersApiSlice'
+import { useGetWarehousesQuery } from 'src/store/slices/warehousesApiSlice'
+import { useGetClientsQuery } from 'src/store/slices/clientsApiSlice'
 
 const OrdersTable = () => {
   const router = useRouter()
+
   const [currentPage, setCurrentPage] = useState(1)
   const [rowsPerPage, setRowsPerPage] = useState(10)
   const [earliestDate, setEarliestDate] = useState(null)
   const [latestDate, setLatestDate] = useState(null)
   const [minDate, setMinDate] = useState(null)
   const [maxDate, setMaxDate] = useState(new Date())
+  const [filteredData, setFilteredData] = useState([])
   const [filteredByDate, setFilteredByDate] = useState(false)
+  const [filtered, setFiltered] = useState(false)
+  const [selectedClient, setSelectedClient] = useState('')
+  const [selectedWarehouse, setSelectedWarehouse] = useState('')
+  const [status, setStatus] = useState('')
 
-  const finalData = rows
+  const { data: orders, isLoading } = useGetOrdersQuery({
+    client: selectedClient,
+    warehouse: selectedWarehouse,
+    status
+  })
+  const { data: warehouses } = useGetWarehousesQuery({ responsible: '' })
+  const { data: clients } = useGetClientsQuery({ category: '' })
+
+  const [deleteOrder] = useDeleteOrderMutation()
+
+  const finalData = filteredData || []
 
   const pageCount = Math.ceil(finalData.length / rowsPerPage)
 
@@ -30,14 +50,23 @@ const OrdersTable = () => {
     setCurrentPage(value)
   }
 
-  const handleDelete = (id, event) => {
+  const handleDelete = async (id, event) => {
     event.stopPropagation()
     console.log('Deleted:', id)
+
+    try {
+      await deleteOrder(id)
+      toast.success('Deleted successfully')
+    } catch (error) {
+      console.error(error)
+      toast.error('Failed to delete')
+    }
   }
 
   const handleReset = () => {
-    setSelectedPaymentType('')
-    setSelectedCurrency('')
+    setSelectedClient('')
+    setSelectedWarehouse('')
+    setStatus('')
     setFiltered(false)
   }
 
@@ -46,6 +75,59 @@ const OrdersTable = () => {
     setMaxDate(new Date())
     setFilteredByDate(false)
   }
+
+  const handleCustomerChange = ({ target }) => {
+    setSelectedClient(target.value)
+    setFiltered(true)
+  }
+
+  const handleWarehouseChange = ({ target }) => {
+    setSelectedWarehouse(target.value)
+    setFiltered(true)
+  }
+
+  const handleStatusChange = ({ target }) => {
+    setStatus(target.value)
+    setFiltered(true)
+  }
+
+  useEffect(() => {
+    if (!isLoading) {
+      const findMinMaxDates = () => {
+        const dates = orders?.results?.map(item => new Date(item.created_at))
+        const earliest = new Date(Math.min(...dates))
+        const latest = new Date(Math.max(...dates))
+
+        setEarliestDate(earliest)
+        setLatestDate(latest)
+      }
+
+      findMinMaxDates()
+    }
+  }, [orders, isLoading])
+
+  // Filter data between minDate and maxDate
+  useEffect(() => {
+    // if (!minDate || !maxDate || !dataWithoutQuery) {
+    // Check if minDate, maxDate, or dataWithoutQuery is not defined
+
+    //   return
+    // }
+
+    const minDateStartOfDay = new Date(minDate)
+    minDateStartOfDay.setHours(0, 0, 0, 0)
+
+    const maxDateEndOfDay = new Date(maxDate)
+    maxDateEndOfDay.setHours(23, 59, 59, 999)
+
+    const filteredData = orders?.results?.filter(entry => {
+      const entryDate = new Date(entry.created_at)
+
+      return entryDate >= minDateStartOfDay && entryDate <= maxDateEndOfDay
+    })
+
+    setFilteredData(filteredData)
+  }, [minDate, maxDate, orders, setFilteredData])
 
   const CustomPagination = () => (
     <Pagination
@@ -75,10 +157,10 @@ const OrdersTable = () => {
     {
       flex: 0.2,
       minWidth: 150,
-      field: 'date',
+      field: 'created_at',
       headerName: 'Sana',
       valueGetter: params => {
-        const rawDate = params?.row?.start_date
+        const rawDate = params?.row?.created_at
         if (rawDate) {
           const formattedDate = new Intl.DateTimeFormat('uz', {
             day: 'numeric',
@@ -98,14 +180,14 @@ const OrdersTable = () => {
       minWidth: 100,
       field: 'quantity',
       headerName: `Miqdor`,
-      valueGetter: params => params?.row?.salary || 'N/A'
+      valueGetter: params => params?.row?.quantity_sum || 'N/A'
     },
     {
       flex: 0.2,
       minWidth: 100,
       field: 'price',
       headerName: `Summasi`,
-      valueGetter: params => params?.row?.salary || 'N/A'
+      valueGetter: params => params?.row?.order_sum_usd || 'N/A'
     },
     {
       flex: 0.2,
@@ -120,7 +202,7 @@ const OrdersTable = () => {
       field: 'status',
       headerName: `Status`,
       renderCell: params =>
-        params?.row?.status === 'done' ? (
+        params?.row?.status === 'DONE' ? (
           <Chip label='Complete' color='success' />
         ) : (
           <Chip label='Pending' color='warning' />
@@ -175,22 +257,58 @@ const OrdersTable = () => {
           </Grid>
           <Grid item container xs={12} spacing={2}>
             <Grid item xs={12} md={4}>
-              <CustomTextField fullWidth select></CustomTextField>
+              <CustomTextField
+                fullWidth
+                select
+                defaultValue=''
+                SelectProps={{ displayEmpty: true }}
+                onChange={handleCustomerChange}
+              >
+                <MenuItem value='' disabled>
+                  <em>Mijoz</em>
+                </MenuItem>
+                {clients?.results?.map(client => (
+                  <MenuItem key={client.id} value={client.id}>
+                    {client.full_name}
+                  </MenuItem>
+                ))}
+              </CustomTextField>
             </Grid>
             <Grid item xs={12} md={3}>
-              <CustomTextField fullWidth select></CustomTextField>
+              <CustomTextField
+                fullWidth
+                select
+                defaultValue=''
+                SelectProps={{ displayEmpty: true }}
+                onChange={handleWarehouseChange}
+              >
+                <MenuItem value='' disabled>
+                  <em>Omborxona</em>
+                </MenuItem>
+                {warehouses?.results?.map(warehouse => (
+                  <MenuItem key={warehouse.id} value={warehouse.id}>
+                    {warehouse.name}
+                  </MenuItem>
+                ))}
+              </CustomTextField>
             </Grid>
             <Grid item xs={12} md={3}>
-              <CustomTextField fullWidth select></CustomTextField>
+              <CustomTextField
+                fullWidth
+                select
+                defaultValue=''
+                SelectProps={{ displayEmpty: true }}
+                onChange={handleStatusChange}
+              >
+                <MenuItem value='' disabled>
+                  <em>Status</em>
+                </MenuItem>
+                <MenuItem value='DONE'>Tugagan</MenuItem>
+                <MenuItem value='IN_PROGRESS'>Jarayonda</MenuItem>
+              </CustomTextField>
             </Grid>
             <Grid item xs={12} md={2}>
-              <Button
-                variant='contained'
-                color='primary'
-                fullWidth
-                onClick={handleResetDate}
-                disabled={!filteredByDate}
-              >
+              <Button variant='contained' color='primary' fullWidth onClick={handleReset} disabled={!filtered}>
                 Reset
               </Button>
             </Grid>
@@ -229,7 +347,7 @@ const OrdersTable = () => {
             <Box sx={{ height: 650 }}>
               <DataGrid
                 columns={columns}
-                rows={rows?.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage)}
+                rows={finalData?.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage)}
                 slots={{
                   pagination: CustomPagination
                 }}

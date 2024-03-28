@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import useRouter from 'next/router'
 
 import toast from 'react-hot-toast'
 
@@ -14,9 +15,10 @@ import EditOrderDialog from './EditOrderDialog'
 
 import { useGetClientsQuery } from 'src/store/slices/clientsApiSlice'
 import { useGetProductsQuery } from 'src/store/slices/productsApiSlice'
-import { useCreateOrderMutation } from 'src/store/slices/ordersApiSlice'
+import { useGetOrderQuery, useUpdateOrderMutation } from 'src/store/slices/ordersApiSlice'
 
 const EditOrderForm = ({ orderId }) => {
+  const router = useRouter
   const [rows, setRows] = useState([])
   const [quantity, setQuantity] = useState({})
   const [price, setPrice] = useState({})
@@ -30,11 +32,25 @@ const EditOrderForm = ({ orderId }) => {
 
   const { data: clients } = useGetClientsQuery({ category: '' })
   const { data: products, isLoading: productsLoading } = useGetProductsQuery({ category: '' })
-  const [createOrder] = useCreateOrderMutation()
+  const { data: order, isLoading: ordersLoading } = useGetOrderQuery(orderId)
+
+  const [updateOrder] = useUpdateOrderMutation()
+
+  useEffect(() => {
+    if (order) {
+      setRows(order?.order_items)
+    }
+  }, [order])
 
   const columns = [
     { flex: 0.1, field: 'id', headerName: 'ID', width: 70 },
-    { flex: 0.3, field: 'name', headerName: 'Nomi', minWidth: 230 },
+    {
+      flex: 0.3,
+      field: 'name',
+      headerName: 'Nomi',
+      minWidth: 230,
+      valueGetter: params => params.row?.product?.name || params.row?.name
+    },
     {
       field: 'quantity',
       headerName: 'Miqdori',
@@ -99,14 +115,37 @@ const EditOrderForm = ({ orderId }) => {
     }
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const order = {
       client: selectedClient,
       status: selectedStatus
     }
 
-    console.log(order)
-    createOrder({ order })
+    const filteredOrder = Object.fromEntries(
+      Object.entries(order).filter(([key, value]) => {
+        // Filter out empty values
+        if (Array.isArray(value)) {
+          // If value is an array, filter out items with empty price or quantity
+          return value.every(item => item.price !== '' && item.quantity !== '')
+        } else {
+          // For other values, keep non-empty ones
+          return value !== ''
+        }
+      })
+    )
+
+    console.log(filteredOrder)
+    try {
+      await updateOrder({ id: orderId, order: filteredOrder }).unwrap()
+      toast.success('Buyurtma muvaffaqiyatli saqlandi', {
+        position: 'top-center'
+      })
+      router.push('/order/orders/' + orderId)
+    } catch (error) {
+      toast.error('Xatolik yuz berdi, iltimos qayta urinib ko`ring', {
+        position: 'top-center'
+      })
+    }
   }
 
   const handleDelete = id => {
@@ -134,52 +173,56 @@ const EditOrderForm = ({ orderId }) => {
       />
       <Grid item xs={12}>
         <Card>
-          <CardHeader title="Buyurtma ma'lumotlari" />
-          <CardContent>
-            <form onSubmit={e => e.preventDefault()}>
-              <Grid container spacing={5}>
-                <Grid item xs={12}>
-                  <CustomTextField
-                    select
-                    defaultValue=''
-                    label='Mijoz'
-                    id='custom-select'
-                    fullWidth
-                    SelectProps={{ displayEmpty: true }}
-                    value={selectedClient}
-                    onChange={({ target }) => setSelectedClient(target.value)}
-                  >
-                    <MenuItem disabled value=''>
-                      <em>Mijozni Tanlang</em>
-                    </MenuItem>
-                    {clients?.results?.map(client => (
-                      <MenuItem key={client.id} value={client.id}>
-                        {client.full_name}
-                      </MenuItem>
-                    ))}
-                  </CustomTextField>
-                </Grid>
-                <Grid item xs={12}>
-                  <CustomTextField
-                    select
-                    defaultValue=''
-                    label='Status'
-                    id='custom-select'
-                    fullWidth
-                    SelectProps={{ displayEmpty: true }}
-                    value={selectedStatus}
-                    onChange={({ target }) => setSelectedStatus(target.value)}
-                  >
-                    <MenuItem disabled value=''>
-                      <em>Status</em>
-                    </MenuItem>
-                    <MenuItem value={'in_progress'}>Jarayonda</MenuItem>
-                    <MenuItem value={'done'}>Yakunlangan</MenuItem>
-                  </CustomTextField>
-                </Grid>
-              </Grid>
-            </form>
-          </CardContent>
+          {ordersLoading ? (
+            <CircularProgress />
+          ) : (
+            <>
+              <CardHeader title="Buyurtma ma'lumotlari" />
+              <CardContent>
+                <form onSubmit={e => e.preventDefault()}>
+                  <Grid container spacing={5}>
+                    <Grid item xs={12}>
+                      <CustomTextField
+                        select
+                        fullWidth
+                        defaultValue={order?.client?.id || ''}
+                        label='Mijoz'
+                        id='custom-select'
+                        SelectProps={{ displayEmpty: true }}
+                        onChange={({ target }) => setSelectedClient(target.value)}
+                      >
+                        <MenuItem disabled value=''>
+                          <em>Mijozni Tanlang</em>
+                        </MenuItem>
+                        {clients?.results?.map(client => (
+                          <MenuItem key={client.id} value={client.id}>
+                            {client.full_name}
+                          </MenuItem>
+                        ))}
+                      </CustomTextField>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <CustomTextField
+                        select
+                        defaultValue={order?.status || ''}
+                        label='Status'
+                        id='custom-select'
+                        fullWidth
+                        SelectProps={{ displayEmpty: true }}
+                        onChange={({ target }) => setSelectedStatus(target.value)}
+                      >
+                        <MenuItem disabled value=''>
+                          <em>Status</em>
+                        </MenuItem>
+                        <MenuItem value={'IN_PROGRESS'}>Jarayonda</MenuItem>
+                        <MenuItem value={'DONE'}>Yakunlangan</MenuItem>
+                      </CustomTextField>
+                    </Grid>
+                  </Grid>
+                </form>
+              </CardContent>
+            </>
+          )}
         </Card>
       </Grid>
       <Grid item xs={12}>

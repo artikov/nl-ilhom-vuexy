@@ -28,6 +28,8 @@ import { useGetClientsCategoriesQuery } from 'src/store/slices/clientsCategories
 import { rows } from 'src/@fake-db/table/static-data'
 
 const CustomersTable = () => {
+  const router = useRouter()
+
   const [currentPage, setCurrentPage] = useState(1)
   const [rowsPerPage, setRowsPerPage] = useState(10)
   const [drawerOpen, setDrawerOpen] = useState(false)
@@ -37,8 +39,6 @@ const CustomersTable = () => {
   const { data, isLoading } = useGetClientsQuery({ category: selectedCategory, search })
   const { data: clientsCategories } = useGetClientsCategoriesQuery()
   const [deleteClient, { isLoading: isDeleting }] = useDeleteClientMutation()
-
-  const router = useRouter()
 
   const toggleDrawer = open => () => {
     setDrawerOpen(open)

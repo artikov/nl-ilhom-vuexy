@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 
 import { Grid, Typography } from '@mui/material'
-import EditOrderForm from 'src/components/Orders/Orders/EditOrderForm'
+import EditOrderForm from 'src/components/Orders/Orders/Order/EditOrderForm'
 
 const EditOrder = () => {
   const router = useRouter()

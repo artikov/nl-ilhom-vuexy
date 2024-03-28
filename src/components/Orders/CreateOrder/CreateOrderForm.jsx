@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 import toast from 'react-hot-toast'
 
@@ -17,6 +18,7 @@ import { useGetProductsQuery } from 'src/store/slices/productsApiSlice'
 import { useCreateOrderMutation } from 'src/store/slices/ordersApiSlice'
 
 const CreateOrderForm = () => {
+  const router = useRouter()
   const [rows, setRows] = useState([])
   const [quantity, setQuantity] = useState({})
   const [price, setPrice] = useState({})
@@ -30,7 +32,7 @@ const CreateOrderForm = () => {
 
   const { data: clients } = useGetClientsQuery({ category: '' })
   const { data: products, isLoading: productsLoading } = useGetProductsQuery({ category: '' })
-  const [createOrder] = useCreateOrderMutation()
+  const [createOrder, { isSuccess, isError }] = useCreateOrderMutation()
 
   const columns = [
     { flex: 0.1, field: 'id', headerName: 'ID', width: 70 },
@@ -99,14 +101,31 @@ const CreateOrderForm = () => {
     }
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const order = {
       client: selectedClient,
-      status: selectedStatus
+      status: selectedStatus,
+      order_items: rows.map(row => ({
+        product: row.id,
+        quantity: quantity[row.id],
+        price: price[row.id]
+      }))
     }
 
     console.log(order)
-    createOrder({ order })
+    try {
+      await createOrder(order)
+      toast.success('Buyurtma muvaffaqiyatli qo`shildi', {
+        position: 'top-center'
+      })
+      router.push('/order/orders')
+    } catch (error) {
+      // Handle error
+      console.error('Error occurred while creating order:', error)
+      toast.error('Buyurtma qo`shishda xatolik yuz berdi', {
+        position: 'top-center'
+      })
+    }
   }
 
   const handleDelete = id => {
@@ -173,8 +192,8 @@ const CreateOrderForm = () => {
                     <MenuItem disabled value=''>
                       <em>Status</em>
                     </MenuItem>
-                    <MenuItem value={'in_progress'}>Jarayonda</MenuItem>
-                    <MenuItem value={'done'}>Yakunlangan</MenuItem>
+                    <MenuItem value={'IN_PROGRESS'}>Jarayonda</MenuItem>
+                    <MenuItem value={'DONE'}>Yakunlangan</MenuItem>
                   </CustomTextField>
                 </Grid>
               </Grid>
