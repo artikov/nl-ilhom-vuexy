@@ -147,12 +147,13 @@ const OrdersTable = () => {
       maxWidth: 50,
       headerName: 'ID'
     },
-    {
-      flex: 0.2,
-      minWidth: 100,
-      field: 'name',
-      headerName: 'Mijoz nomi'
-    },
+
+    // {
+    //   flex: 0.2,
+    //   minWidth: 100,
+    //   field: 'name',
+    //   headerName: 'Mijoz nomi'
+    // },
 
     {
       flex: 0.2,

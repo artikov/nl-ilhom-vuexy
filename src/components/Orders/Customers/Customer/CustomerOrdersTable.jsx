@@ -129,7 +129,7 @@ const CustomerOrdersTable = () => {
 
   const handleRowClick = row => {
     const currentPath = router.asPath // Get the current path with query parameters
-    const newPath = `${currentPath}/order/${row.row.id}` // Concatenate with the new route
+    const newPath = `${currentPath}order/${row.row.id}` // Concatenate with the new route
     router.push(newPath) // Push the new route
   }
 
@@ -150,12 +150,6 @@ const CustomerOrdersTable = () => {
       field: 'id',
       maxWidth: 50,
       headerName: 'ID'
-    },
-    {
-      flex: 0.2,
-      minWidth: 100,
-      field: 'name',
-      headerName: 'Mijoz nomi'
     },
 
     {
@@ -319,7 +313,7 @@ const CustomerOrdersTable = () => {
                   </CustomTextField>
                 </Grid>
                 <Grid item xs={12} md={'auto'}>
-                  <Link href='create-order'>
+                  <Link href={`${clientId}/create-order`}>
                     <Button variant='contained' color='primary' fullWidth>
                       + Buyurtma Yaratish
                     </Button>
